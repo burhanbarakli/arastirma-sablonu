@@ -1,0 +1,130 @@
+{
+  "proje": "Depo robotu: kayan zemin (örnek)",
+  "tur": "ana",
+  "olusturma": "2026-11-18",
+  "temel_yontem": "Makaledeki denetleyici",
+  "bozulma": "Denetleyici ıslak zeminde başarıyı %96'dan %70'e düşürüyor (3 tohum).",
+  "tez_cumlesi": {
+    "metin": "Ani kaymayı ilk tekerlek dönüşünden kestiren bir model, ıslak zeminde en iyi kuralı en az 5 puan geçer.",
+    "tarih": "2026-11-25"
+  },
+  "uc_sayi": {
+    "birim": "puan",
+    "esik": 5,
+    "kahin_tanimi": "Kaymayı ilk tekerlek dönüşünden itibaren bilen politika (benzetimdeki gerçek sürtünme)",
+    "basit_care_tanimi": "Tekerlek ve IMU hızı tutmazsa yavaşla kuralı",
+    "basit_care_yontemden_once": true,
+    "satirlar": [
+      {
+        "kosul": "Halı",
+        "taban": 88,
+        "basit_care": 93,
+        "kahin": 94,
+        "tohum": 3
+      },
+      {
+        "kosul": "Islak zemin",
+        "taban": 70,
+        "basit_care": 76,
+        "kahin": 92,
+        "tohum": 3
+      }
+    ]
+  },
+  "asamalar": {
+    "okuma": {
+      "durum": "gecti",
+      "tarih": "2026-11-19",
+      "not": "3 zayıf nokta; en umut verici: zemin değişimi",
+      "dosya": "zayif-nokta-denetleyici.md"
+    },
+    "soru": {
+      "durum": "gecti",
+      "tarih": "2026-11-21",
+      "not": "Islak zeminde ölçülmüş düşüş: 96 → 70"
+    },
+    "yeniden_uretim": {
+      "durum": "gecti",
+      "tarih": "2026-11-20",
+      "not": "Betonda %96, makale %95"
+    },
+    "uc_sayi": {
+      "durum": "gecti",
+      "tarih": "2026-11-25",
+      "not": "Halı kapandı (boşluk 1); ıslak zemin açık (boşluk 16)"
+    },
+    "rakip_adaleti": {
+      "durum": "kosullu",
+      "tarih": "2026-11-26",
+      "not": "Literatürdeki ani kayma algılayıcı 50 epoch'la eğitildi, özgünü 200"
+    },
+    "protokol": {
+      "durum": "bekliyor",
+      "tarih": "",
+      "not": ""
+    },
+    "ana_kosu": {
+      "durum": "bekliyor",
+      "tarih": "",
+      "not": ""
+    },
+    "gerceklik": {
+      "durum": "bekliyor",
+      "tarih": "",
+      "not": ""
+    },
+    "kor_denetim": {
+      "durum": "bekliyor",
+      "tarih": "",
+      "not": ""
+    },
+    "yazim": {
+      "durum": "bekliyor",
+      "tarih": "",
+      "not": ""
+    }
+  },
+  "tohum": {
+    "plan": 3,
+    "kosulan": 0
+  },
+  "donus": {
+    "sinir": 3,
+    "kayit": [
+      {
+        "tarih": "2026-11-25",
+        "neden": "Halıda boşluk eşiğin altında; ıslak zemine odaklanıldı"
+      }
+    ]
+  },
+  "rakipler": [
+    {
+      "ad": "Basit kural",
+      "butce_esit": true,
+      "ayar_esit": true,
+      "bilgi_esit": true
+    },
+    {
+      "ad": "Ani kayma algılayıcı (literatür)",
+      "butce_esit": false,
+      "ayar_esit": true,
+      "bilgi_esit": true
+    }
+  ],
+  "benzetim_kusursuzluklari": [
+    "Sürtünme modeli tek parametreli",
+    "Tekerlek kodlayıcısı gürültüsüz"
+  ],
+  "gercek_dunya_testi": {
+    "plan": "Laboratuvar zemininde 3 koşul × 20 deneme × 3 tohum",
+    "durum": "bekliyor"
+  },
+  "sinirliliklar": [],
+  "sapmalar": [],
+  "son_karar": {
+    "karar": "KOŞULLU DEVAM",
+    "tarih": "2026-11-26",
+    "neden": "Kapı 4: literatürdeki rakip özgün bütçesinin dörtte biriyle eğitildi.",
+    "siradaki_adim": "Ani kayma algılayıcıyı 200 epoch'la yeniden eğit, sonra protokolü yaz."
+  }
+}

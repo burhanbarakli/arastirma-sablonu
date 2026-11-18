@@ -1,0 +1,36 @@
+{
+  "proje": "PROJE_ADI",
+  "tur": "ana",
+  "olusturma": "YYYY-AA-GG",
+  "temel_yontem": "",
+  "bozulma": "",
+  "tez_cumlesi": {"metin": "", "tarih": ""},
+  "uc_sayi": {
+    "birim": "puan",
+    "esik": null,
+    "kahin_tanimi": "",
+    "basit_care_tanimi": "",
+    "basit_care_yontemden_once": null,
+    "satirlar": []
+  },
+  "asamalar": {
+    "okuma":       {"durum": "bekliyor", "tarih": "", "not": "", "dosya": ""},
+    "soru":        {"durum": "bekliyor", "tarih": "", "not": ""},
+    "yeniden_uretim": {"durum": "bekliyor", "tarih": "", "not": ""},
+    "uc_sayi":     {"durum": "bekliyor", "tarih": "", "not": ""},
+    "rakip_adaleti": {"durum": "bekliyor", "tarih": "", "not": ""},
+    "protokol":    {"durum": "bekliyor", "tarih": "", "not": ""},
+    "ana_kosu":    {"durum": "bekliyor", "tarih": "", "not": ""},
+    "gerceklik":   {"durum": "bekliyor", "tarih": "", "not": ""},
+    "kor_denetim": {"durum": "bekliyor", "tarih": "", "not": ""},
+    "yazim":       {"durum": "bekliyor", "tarih": "", "not": ""}
+  },
+  "tohum": {"plan": 3, "kosulan": 0},
+  "donus": {"sinir": 3, "kayit": []},
+  "rakipler": [],
+  "benzetim_kusursuzluklari": [],
+  "gercek_dunya_testi": {"plan": "", "durum": "bekliyor"},
+  "sinirliliklar": [],
+  "sapmalar": [],
+  "son_karar": {"karar": "", "tarih": "", "neden": "", "siradaki_adim": ""}
+}
