@@ -151,6 +151,7 @@ Her aşamada: kapı kararından sonra `durum.html` güncellenir. İkinci görü�
 - [`docs/NEDEN.md`](docs/NEDEN.md): her kuralın hangi hatadan ya da dersten doğduğu ve tarihli kararlar günlüğü.
 - [`docs/skill-haritasi.html`](docs/skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
 - [`docs/ornekler/arama-cumlesi-gda.md`](docs/ornekler/arama-cumlesi-gda.md): GDA çalışması için arama cümlesi örneği.
+- [`docs/notlar/arastirma-pusulasi.html`](docs/notlar/arastirma-pusulasi.html): **Araştırma pusulası**, hepsinin özeti: hatalarım, yol, makale okuma, kâhin, yedi kapı, arama, komutlar.
 - `docs/notlar/`: araştırma notları (Boşluğu önce ölç, Problemden başla, Claude ile okumak, Dört ayın karnesi).
 
 HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tıkla (GitHub HTML'yi kod olarak gösterir).
