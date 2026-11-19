@@ -119,6 +119,9 @@ hatalarımızdan biri; arama tam bu hataya kapı açabilir. Amaca göre üç yol
 
 Sonuç `alan-taramasi-<konu>.md` dosyasına yazılır.
 
+**Örnek:** GDA çalışması için kötü ve iyi arama cümleleri, amaç A/B/C ve uyarlanmış eleme tablosu:
+[`docs/ornekler/arama-cumlesi-gda.md`](docs/ornekler/arama-cumlesi-gda.md).
+
 > **Dikkat:** Aramanın sonu "**bunu kimse yapmamış**" cümlesine çıkıyorsa, kapı orada DUR der. Kör nokta bir problem
 > adayıdır, henüz problem değildir. Doğru sonraki adım: kör noktanın bozduğunu düşündüğün yöntemi seçip o koşulda
 > bozulmayı ölçmek (Kapı 1).
@@ -147,6 +150,7 @@ Her aşamada: kapı kararından sonra `durum.html` güncellenir. İkinci görü�
 
 - [`docs/NEDEN.md`](docs/NEDEN.md): her kuralın hangi hatadan ya da dersten doğduğu ve tarihli kararlar günlüğü.
 - [`docs/skill-haritasi.html`](docs/skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
+- [`docs/ornekler/arama-cumlesi-gda.md`](docs/ornekler/arama-cumlesi-gda.md): GDA çalışması için arama cümlesi örneği.
 - `docs/notlar/`: araştırma notları (Boşluğu önce ölç, Problemden başla, Claude ile okumak, Dört ayın karnesi).
 
 HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tıkla (GitHub HTML'yi kod olarak gösterir).
