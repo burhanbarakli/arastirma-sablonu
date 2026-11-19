@@ -1,6 +1,6 @@
 ---
 name: zayif-nokta-raporu
-description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has a guided reading mode that coaches the user to find weak points themselves instead of handing over a report: use it for "rehberli oku", "rehberli okuma", "birlikte okuyalım", "okurken bana soru sor", "ipucu ver", "zayıf nokta bulmayı öğrenmek istiyorum". Not for summarising a paper or writing a review of the user's own manuscript.
+description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has a guided reading mode that coaches the user to find weak points themselves instead of handing over a report: use it for "rehberli oku", "rehberli okuma", "birlikte okuyalım", "okurken bana soru sor", "ipucu ver", "zayıf nokta bulmayı öğrenmek istiyorum". Also has a field survey mode for literature search on a topic: use it for "alan taraması", "literatür tara", "makale ara", "bu konuda ne var", "alanı tanımak istiyorum", "temel makale bul", "bunu kim çözmüş". Not for summarising a paper or writing a review of the user's own manuscript.
 ---
 
 # Zayıf nokta raporu (0. adım)
@@ -25,9 +25,11 @@ user's language (Turkish unless they write in another language).
 6. **Privacy.** Send only public identifiers (paper title, arXiv id, DOI, repo name) to outside services. Never send
    the user's own unpublished ideas, drafts or data.
 
-## Two modes
+## Three modes
 
 - **Rapor modu** (default): the steps below, ending in a written report.
+- **Alan taraması modu**: when the user wants to search the literature on a topic, get to know a field, find a base
+  paper to stress, or find who already solved a property. See "Alan taraması modu" near the end.
 - **Rehberli okuma modu**: when the user asks to read together, to be asked questions, for hints, or to learn to find
   weak points. The user finds the weak points; you coach. See "Rehberli okuma modu" near the end. If the user has not
   read the paper yet and only asks for "zayıf nokta raporu", mention once that guided mode exists, then do what they
@@ -194,6 +196,41 @@ more than one you list.
 
 All ground rules still apply: quotes are checked in the source, and anything you derive yourself (like a bound from
 the equations) is labelled as yours and left for the user to check by hand.
+
+## Alan taraması modu
+
+Goal: a verified, bounded map of a topic that ends in a base paper to stress or a blind spot, never in "nobody has
+done X". The user's record: literature search tended to end in a method idea; keep it on problems.
+
+1. **Purpose first.** Ask which one, if not clear:
+   - **A. Temel makale:** find the method to stress (current best or most used for the task) → 1–2 papers, then the
+     normal report.
+   - **B. Alanı tanımak:** 5–10 core papers → assumption table and blind spot.
+   - **C. Kim çözmüş:** a field-free property sentence from method search (arastirma-kapisi) → candidates from any
+     field.
+2. **Search sentence, not a method name.** Write it with the user: task + condition (e.g. "policies that learn
+   contact-rich insertion under noisy force sensing"), plus an optional field-free property sentence. A method name
+   in the sentence locks the search onto that method; say so if the user proposes one.
+3. **Seeds.** Two or three known papers or a survey from the user; otherwise find candidates with `search_works` /
+   `paper-search` (OpenAlex) and arXiv, and let the user pick.
+4. **Snowball.** For each seed, backward (its references) and forward (papers citing it) with `citation_neighbours`
+   (OpenAlex) or the Semantic Scholar API; add keyword searches with the sentence. Use `deep-research` only for a wide
+   sweep. Record which papers were expanded.
+5. **Triage table** from title and abstract, one row per candidate: paper (year, venue, link) | task | what is varied |
+   simple baseline? | real robot / real data? | seeds | code. Mark unknown cells "?".
+6. **Core and depth.** Pick 5–10 with the user (purpose A: 1–2). For B, fill the assumption table from the PDFs (the
+   "Assumption table" section above) and name the blind spot. For A, hand over to the normal report. For C, run the
+   transfer check in arastirma-kapisi on each candidate.
+7. **Verify existence.** Every paper listed is checked through OpenAlex, arXiv or its DOI (`verify_reference` where
+   available) and linked. Nothing from memory. Unverifiable items go to "Doğrulanamayanlar".
+8. **Stop rule.** Agree a time box (default: one to two working sessions). Stop when new papers add no new column
+   value or finding to the table (saturation), and write which rounds added nothing.
+
+Save as `alan-taramasi-<short-topic>.md`: purpose, search sentence, seeds, snowball log, triage table, core list,
+assumption table and blind spot (B), stop note, Doğrulanamayanlar. End with one next step: for A the weak-point
+report on the chosen paper; for B "the blind spot is a candidate problem, not a problem yet: pick a method it would
+break and measure the drop" (Kapı 1); for C the transfer check. If the conclusion drifts to "kimse yapmamış", say
+plainly that this is mistake 1 and give the Kapı 1 step instead.
 
 ## Blind audit (optional, on request)
 
