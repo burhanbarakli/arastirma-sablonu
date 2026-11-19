@@ -1,0 +1,190 @@
+<title>Araştırma skill haritası</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500;600&display=swap">
+<style>
+/* Layout: a vertical stage rail (gate number + stage) with three lanes per stage: ana skill, yardımcı, dikkat. Stacks on phones. */
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --fg:#1b1f27; --muted:#5b6372; --line:#dde1e8;
+  --main:#3b3fb6; --main-bg:#ecedfd; --main-fg:#262a8a;
+  --help:#0d7a63; --help-bg:#e3f4ef; --help-fg:#0a5a49;
+  --warn:#a5431f; --warn-bg:#fbede6; --warn-fg:#7a2f14;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151b; --panel:#1a1e26; --fg:#e7e9ee; --muted:#9aa2b1; --line:#2b313c;
+  --main:#a9acf5; --main-bg:#262a5c; --main-fg:#dcdefd;
+  --help:#6fd3b7; --help-bg:#123d33; --help-fg:#d3f3ea;
+  --warn:#f0a585; --warn-bg:#4a2416; --warn-fg:#fbe2d7; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151b; --panel:#1a1e26; --fg:#e7e9ee; --muted:#9aa2b1; --line:#2b313c;
+  --main:#a9acf5; --main-bg:#262a5c; --main-fg:#dcdefd;
+  --help:#6fd3b7; --help-bg:#123d33; --help-fg:#d3f3ea;
+  --warn:#f0a585; --warn-bg:#4a2416; --warn-fg:#fbe2d7; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.6 var(--body);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2{font-family:var(--display);font-weight:600;text-wrap:balance;letter-spacing:-.01em}
+h1{font-size:clamp(28px,4vw,40px);margin:0 0 8px}
+h2{font-size:22px;margin:48px 0 12px}
+.lede{color:var(--muted);max-width:65ch;margin:0}
+code{font-family:var(--mono);font-size:.88em}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:24px 0 8px;font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:14px;height:14px;border-radius:3px;display:inline-block}
+.sw.m{background:var(--main-bg);border:1px solid var(--main)} .sw.h{background:var(--help-bg);border:1px solid var(--help)} .sw.w{background:var(--warn-bg);border:1px solid var(--warn)}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+.core{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.core b{font-family:var(--mono);font-weight:500;color:var(--main);display:block;margin-bottom:4px}
+.core p{margin:0;font-size:14px;color:var(--muted)}
+.rail{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:170px repeat(3,minmax(0,1fr));gap:8px;align-items:stretch}
+.hdr{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 12px}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;gap:10px;align-items:flex-start}
+.gate{font-family:var(--mono);font-size:12px;min-width:30px;height:30px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);flex:none}
+.stage b{display:block;font-weight:500;line-height:1.3}
+.stage small{color:var(--muted);font-size:13px}
+.cell{border-radius:10px;padding:12px;font-size:14px;line-height:1.5;min-width:0}
+.cell.m{background:var(--main-bg);color:var(--main-fg);border:1px solid color-mix(in srgb,var(--main) 40%,transparent)}
+.cell.h{background:var(--help-bg);color:var(--help-fg);border:1px solid color-mix(in srgb,var(--help) 40%,transparent)}
+.cell.w{background:var(--warn-bg);color:var(--warn-fg);border:1px solid color-mix(in srgb,var(--warn) 40%,transparent)}
+.cell.e{color:var(--muted);border:1px dashed var(--line)}
+.lab{display:none;font-size:11px;letter-spacing:.06em;text-transform:uppercase;opacity:.75;margin-bottom:2px}
+.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.note h3{font-family:var(--display);font-size:17px;font-weight:600;margin:0 0 6px}
+.note p,.note li{font-size:15px;color:var(--fg)}
+.note p{margin:0 0 8px} .note ul{margin:0;padding-left:20px} .note li{margin:4px 0}
+.note .q{color:var(--muted)}
+pre{font-family:var(--mono);font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;margin:0;line-height:1.55}
+footer{margin-top:48px;color:var(--muted);font-size:13px}
+@media (max-width:760px){
+  .row{grid-template-columns:1fr}
+  .hdr-row{display:none}
+  .lab{display:block}
+  .cell.e{display:none}
+  .three,.notes{grid-template-columns:1fr}
+}
+</style>
+
+<div class="wrap">
+  <h1>Araştırma skill haritası</h1>
+  <p class="lede">Bir işe başlarken hangi skill'i ne zaman kullanacağımız. Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır; turuncu sütun, dört ayın karnesindeki hataların tam yerinde duran uyarılar.</p>
+
+  <div class="three">
+    <div class="core"><b>proje-baslat</b><p>Yeni proje klasörünü kurar: karar.json, KARAR.md, durum.html paneli, commit kilidi. Odak kontrolü yapar.</p></div>
+    <div class="core"><b>zayif-nokta-raporu</b><p>Yeniden üretmeden önce makalenin nerede bozulabileceğini kaynakla gösterir. Kör denetim bölümü de burada.</p></div>
+    <div class="core"><b>arastirma-kapisi</b><p>Yedi kapı ve aktarım kontrolü. DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller.</p></div>
+  </div>
+
+  <h2>Aşama aşama</h2>
+  <div class="legend">
+    <span><i class="sw m"></i>Ana skill</span>
+    <span><i class="sw h"></i>Yardımcı skill</span>
+    <span><i class="sw w"></i>Dikkat: eski hata buraya düşer</span>
+  </div>
+
+  <div class="rail">
+    <div class="row hdr-row"><div class="hdr">Aşama</div><div class="hdr">Ana skill</div><div class="hdr">Yardımcı</div><div class="hdr">Dikkat</div></div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">0</span><div><b>Başlangıç</b><small>yeni klasör</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>proje-baslat</code>: şablonu kopyalar, commit kilidini takar, projeyi kayda ekler, paneli üretir.</div>
+      <div class="cell e">—</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Bir ana proje, bir küçük yan iş. Başka aktif ana proje varsa önce hangisinin duracağına karar verilir.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">1</span><div><b>Okuma</b><small>temel makale</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span>Önce kendi tablon (Ne / Yeri / Şüphem), sonra <code>zayif-nokta-raporu</code>. İki listeyi karşılaştır.</div>
+      <div class="cell h"><span class="lab">Yardımcı</span><code>research-litnote</code> okuma notu · <code>paper-search</code> makale var mı doğrula · birkaç makale için varsayım tablosu</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Aklına gelen yöntem fikrini bir kenara yaz, peşine düşme. Okuma, boşluk cümlesi yarı dolunca biter.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">K1</span><div><b>Soru</b><small>Kapı 1</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: "M yöntemi, C koşulunda, Q ölçütünü A'dan B'ye düşürüyor" cümlesi ölçümle kurulur.</div>
+      <div class="cell h"><span class="lab">Yardımcı</span><code>hypothesis-generation</code>, sadece bozulma ölçüldükten sonra: rakip açıklamalar, ayırt edici tahminler.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>"Bunu kimse yapmamış" bir motivasyon değil: DUR.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">K2</span><div><b>Yeniden üretim</b><small>Kapı 2</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: makalenin sayısı ile bizim sayımız yan yana.</div>
+      <div class="cell e">—</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Yeniden üretilmeden yeni yöntem kodu yazılmaz; sadece okuma ve zorlama planı.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">K3</span><div><b>Üç sayı</b><small>Kapı 3</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: taban, en güçlü basit çare, adil kâhin. Başka alandan yöntem gelirse aktarım kontrolü.</div>
+      <div class="cell h"><span class="lab">Yardımcı</span><code>paper-compare</code> rakip seçimi · <code>decision-matrix</code> hangi koşulu zorlayacağımız</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Basit çare yöntemden önce kurulur. Kâhin − basit çare eşiğin altındaysa yöntem için yer yok; bulgu olarak yaz.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">K4</span><div><b>Rakip adaleti, protokol</b><small>Kapı 4–5</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: eşit bütçe, ayar ve bilgi; karar kuralı, tohum, durma kuralı, dönüş sayacı yazılı.</div>
+      <div class="cell e">—</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Sonuçtan sonra eşik veya kâhin tanımı değişirse commit kilidi durdurur; önce Sapma yazılır.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">K6</span><div><b>Ana koşu, gerçeklik</b><small>Kapı 6</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: benzetimin kusursuz varsaydıkları, tavana yakın sonuçlar, küçük gerçek test planı.</div>
+      <div class="cell e">—</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Tohumu değil koşulu azalt. Fark tohum dağılımının içindeyse sonuç yok sayılır.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">KD</span><div><b>Kör denetim</b><small>sonuçtan sonra</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>zayif-nokta-raporu</code> kör denetim bölümü: ayrı bir ajan kodu, veriyi ve protokolü alır, yeniden hesaplar.</div>
+      <div class="cell e">—</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Denetçiye sonucu söyleme; yoksa sonucu onaylar.</div>
+    </div>
+
+    <div class="row">
+      <div class="stage"><span class="gate">K7</span><div><b>Yazım</b><small>Kapı 7</small></div></div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: iddia ölçülen boşlukla aynı boyda, sınırlılıklar yerinde.</div>
+      <div class="cell h"><span class="lab">Yardımcı</span><code>related-work</code> kendi kaynaklarından · <code>paper-critique</code> hakem gözü · <code>citation-check</code> kaynaklar gerçek mi</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Sınırlılık silinmez. "Hakem sorarsa ekleriz" yok.</div>
+    </div>
+  </div>
+
+  <h2>Her aşamada</h2>
+  <div class="notes">
+    <div class="note">
+      <h3>Panel</h3>
+      <p>Her kapı kararından sonra <code>karar.json</code> güncellenir ve <code>durum.html</code> yeniden üretilir.</p>
+      <p class="q">Haftada bir paneli aç: hangi aşamadayım, açık uyarı var mı, dönüş sayacı nerede? Danışman görüşmesinden önce paylaş.</p>
+    </div>
+    <div class="note">
+      <h3>İkinci görüş</h3>
+      <p><code>llm-council</code> veya <code>claude-council</code> zor bir kararda farklı bakışlar getirir.</p>
+      <p class="q"><code>claude-council</code> soruyu dış servislere (Gemini, OpenAI…) gönderir. Yayımlanmamış fikir, veri veya taslak oraya girmez.</p>
+    </div>
+    <div class="note">
+      <h3>Kapıyı ne çağırır?</h3>
+      <ul>
+        <li>Yeni bir çalışma veya yön</li>
+        <li>"X ekleyelim", "şu yöntemi deneyelim"</li>
+        <li>Başka alandan bir yöntem getirmek</li>
+        <li>Olumsuz sonuçtan sonra yeni koşul</li>
+        <li>Eşik, kural, tohum veya rakip ayarı değişikliği</li>
+        <li>Gönderim hazırlığı</li>
+      </ul>
+    </div>
+    <div class="note">
+      <h3>Haritada olmayanlar</h3>
+      <p><code>pdf</code>, <code>docs</code>, <code>engineering:*</code>, <code>design:*</code> araştırma akışının parçası değil; PDF'ten tablo çekmek veya kod incelemek gibi bir iş çıkınca kullanılır.</p>
+      <p class="q">Kaldırılanlar: iki fikir üretme skill'i, <code>superpowers</code>, <code>research-superpowers</code>.</p>
+    </div>
+  </div>
+
+  <h2>Nerede duruyor</h2>
+  <pre>~/CALISMALAR/_arastirma-sablonu/     şablon (özel GitHub deposu), skill'lerin asıl kopyası skills/ içinde
+~/.claude/skills/                    Claude'un kullandığı kopya (kur.sh / kur.ps1 kurar)
+~/.claude/arastirma/projeler.json    aktif ve arşiv projeler</pre>
+
+  <footer>Güncelleme: 19 Kasım 2026. Skill'de değişiklik şablon deposunda yapılır, kur betiği çalıştırılır, commit edilir.</footer>
+</div>

@@ -54,6 +54,26 @@ ya da "yeni bir araştırma projesi başlat" demen yeterli. `proje-baslat` skill
 | Kör denetim | | Sonucu bilmeyen yeniden hesap |
 | 7. Yazım | `arastirma-kapisi` | Sınırlılıklar |
 
+## Skill haritası
+
+Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. Sayfa hâli: `docs/skill-haritasi.html`
+(claude.ai'de: https://claude.ai/artifact/KYYD2wqtncysDKgH51Qz8F).
+
+| Aşama | Ana skill | Yardımcı | Dikkat |
+|---|---|---|---|
+| 0. Başlangıç | `proje-baslat` | | Bir ana proje, bir küçük yan iş |
+| 1. Okuma | önce kendi tablon, sonra `zayif-nokta-raporu` | `research-litnote`, `paper-search` | Yöntem fikrini yaz, peşine düşme |
+| Kapı 1: Soru | `arastirma-kapisi` | `hypothesis-generation` (sadece ölçümden sonra) | "Kimse yapmamış" = DUR |
+| Kapı 2: Yeniden üretim | `arastirma-kapisi` | | Henüz yeni yöntem kodu yok |
+| Kapı 3: Üç sayı | `arastirma-kapisi` (+ aktarım kontrolü) | `paper-compare`, `decision-matrix` | Basit çare yöntemden önce |
+| Kapı 4–5: Adalet, protokol | `arastirma-kapisi` | | Kural sonradan değişirse commit durur |
+| Kapı 6: Ana koşu, gerçeklik | `arastirma-kapisi` | | Tohumu değil koşulu azalt |
+| Kör denetim | `zayif-nokta-raporu` (kör denetim bölümü) | | Denetçi sonucu bilmez |
+| Kapı 7: Yazım | `arastirma-kapisi` | `related-work`, `paper-critique`, `citation-check` | Sınırlılık silinmez |
+
+Her aşamada: kapı kararından sonra `durum.html` güncellenir. İkinci görüş için `llm-council` / `claude-council`;
+`claude-council` soruyu dış servislere gönderir, yayımlanmamış fikir girmez.
+
 ## Dosyalar
 
 - `CLAUDE.md`: Claude'a bu yapıyı her oturumda kullanmasını söyler.
