@@ -113,6 +113,7 @@ Save the report as a Markdown file next to the paper, or in the current director
    Dayanak: <location and short quote>
    Kaynak türü: makalede yazıyor | dış kaynak (link) | ajanın kendi çıkarımı
    Ajanın güveni: yüksek | orta | düşük, with one reason
+   Denetçi: doğrulandı | alıntı hatalı | akıl yürütme zayıf | abartılı, with one reason
 
    Senin değerlendirmen: [ ] doğru  [ ] yanlış  [ ] abartılı  [ ] emin değilim
    Makalede kontrol ettiğin yer:
@@ -140,6 +141,18 @@ simple rule and fair oracle). Do not start that experiment without the user's go
 A–C and the report). Give it only the paper, the official code and review links, and this skill's rules, not the
 conversation and not the user's hypothesis, so it does not confirm anyone's hunch. Then check its quotes yourself
 (ground rule 2) before showing the report.
+
+**Verifier.** After the reader's draft, start one more separate agent as verifier. Give it the paper, the code and
+review links and the draft report, not the conversation. Its tasks, per claim block:
+- quote and location: is the quoted sentence really at that place?
+- reasoning: for "ajanın kendi çıkarımı" claims, check the derivation step by step; flag overstatement ("bozulur"
+  where only "bozulabilir" is supported);
+- coverage: list at most three weak points the reader missed, each with location and quote.
+Add one line to each claim block: `Denetçi: doğrulandı | alıntı hatalı | akıl yürütme zayıf | abartılı` with one
+sentence why, and put the verifier's additions under a short "Denetçinin eklediği" list (each also as a claim block).
+Fix plain quote errors before showing the report and say which ones were fixed. Keep it to one verifier: agreement of
+two agents is not proof, since they share blind spots; the last checks are the user and the experiment. Say this once
+in the report header.
 
 **After the user judges the claims.** When the user brings the filled claim blocks back:
 - for every "doğru" without a checked location, ask where they checked it;

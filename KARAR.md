@@ -41,6 +41,12 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 |---|---|---|---|
 | | | | |
 
+## Yöntem arama (Kapı 3'ten sonra)
+
+| Tarih | Kâhin ne biliyor | Basit çareler (ölçüldü mü) | Boşluğun nedeni (kanıt) | Gereken özellik | Literatür (yayımlanmış mı) | Şeytanın avukatı: 3 neden | En küçük test |
+|---|---|---|---|---|---|---|---|
+| | | | | | | | |
+
 ## Aktarım (başka alandan yöntem)
 
 | Tarih | Bozulan parça (ölçüm) | Gereken özellik (alandan bağımsız) | Kaynak alan | O alanın basit aracı (sonuç) | Kaynak varsayımı burada geçerli mi | Parçanın kâhin tavanı |

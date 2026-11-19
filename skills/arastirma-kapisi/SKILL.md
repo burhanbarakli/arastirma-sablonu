@@ -1,6 +1,6 @@
 ---
 name: arastirma-kapisi
-description: Research gatekeeper that stops the user's known research mistakes before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım"); wants to bring a method or component from another field into a paper's method ("başka alandan bir yöntem koyalım", "X alanındaki şeyi buraya uygulayalım", "bu parçayı Y ile değiştirelim"); pivots or changes the research question; adds a new condition after a negative result; changes a threshold, decision rule, seed count or rival setting; or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the eight recorded mistakes, reads and updates the project's KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
+description: Research gatekeeper that stops the user's known research mistakes before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım"); asks how to find or design a new method for a measured weak point ("yeni yöntem bul", "buna ne yöntem önerirsin", "boşluğu nasıl kapatırız"); wants to bring a method or component from another field into a paper's method ("başka alandan bir yöntem koyalım", "X alanındaki şeyi buraya uygulayalım", "bu parçayı Y ile değiştirelim"); pivots or changes the research question; adds a new condition after a negative result; changes a threshold, decision rule, seed count or rival setting; or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the eight recorded mistakes, reads and updates the project's KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
 ---
 
 # Araştırma kapısı
@@ -87,6 +87,32 @@ differences are within seed spread: **KOŞULLU DEVAM** with a harder condition o
 **Kapı 7: Yazım (mistake 8).** Before writing or submitting: every real limitation stays in the text; claims match
 the measured gap; a blind audit was run (separate session, given code + data + protocol, not the result). Missing:
 **KOŞULLU DEVAM** with the list.
+
+## Method search (only after Kapı 3)
+
+Run this when the user asks for a new method for a weak point. Precondition: Kapı 3 passed, meaning the three
+numbers were measured and Y − Z is above the threshold. If not, **DUR**: "Önce boşluğu ölçelim; yöntem aramak için
+erken." The idea: a new method is a way to estimate from observations what the fair oracle knows. Steps, each written
+to KARAR.md under "Yöntem arama":
+
+1. **What does the oracle know, and from when?** One sentence (e.g. "the true decay rate of the system, from the first
+   second of data"). This names what the method has to estimate.
+2. **Simple remedies first, cheapest to dearest.** List three to five: a rule, a tuning, a classical estimator from
+   the field (system identification, filtering, calibration…), an existing published method. Any not yet measured
+   goes back into the three-numbers table before anything new is built.
+3. **Why does a gap remain?** From the measurements, give rival explanations and a prediction that tells them apart
+   (the `hypothesis-generation` skill fits here). Pick the explanation the data supports; if none, design the cheap
+   run that separates them.
+4. **The needed property, field-free.** One sentence for what the remaining gap requires (e.g. "a stability condition
+   that allows a state-dependent decay rate"). If the candidate comes from another field, run the transfer check.
+5. **Who solved it?** Search the literature with that sentence (`paper-search`, reference-lookup tools, `deep-research`
+   for wide searches). Verify every paper exists and say plainly if the idea is already published; then the work is
+   a comparison, not a new method.
+6. **Devil's advocate, before any code.** Write three reasons the candidate will tie with the best simple remedy, and
+   the measurement that would show each. Remind the user once of their record: in past projects the simple rival tied
+   or won weeks later.
+7. **Smallest test.** A toy version (afternoon-sized) with baseline, best simple remedy, oracle and the candidate, on
+   the pre-registered seeds and threshold. Only if it beats the simple remedy by the threshold does it go to Kapı 4–5.
 
 ## Transfer check: a method from another field
 

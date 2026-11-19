@@ -58,17 +58,19 @@ ya da "yeni bir araştırma projesi başlat" demen yeterli. `proje-baslat` skill
 
 1. **Projeyi kur.** Yeni klasörde Claude Code'da `/proje-baslat`. Üç soruyu cevapla (proje adı ve amacı, temel makale
    ve kodu, şüphelendiğin koşul). `durum.html` paneli açılır.
-2. **Makaleyi ver.** "zayıf nokta raporu: makale.pdf". Ayrı bir ajan okur; açık rapor ve "Değerlendirilecek iddialar"
-   gelir. Yeni alandaysan ya da takılıyorsan "rehberli oku".
+2. **Makaleyi ver.** "zayıf nokta raporu: makale.pdf". Ayrı bir ajan okur, denetçi ajan kontrol eder;
+   açık rapor ve "Değerlendirilecek iddialar" gelir. Yeni alandaysan ya da takılıyorsan "rehberli oku".
 3. **Kendin oku, iddiaları yargıla.** Kendi tablonu tut (Ne / Yeri / Şüphem). Her iddiayı doğru / yanlış / abartılı /
    emin değilim diye işaretle, makalede kontrol ettiğin yeri yaz. Getir; kontrol edilir, `okuma-gunlugu.md`'ye işlenir.
    "Ajanın kendi çıkarımı" etiketli iddiaları elle kontrol et.
 4. **En umut veren zayıf noktayı seç.** Okuma, boşluk cümlesi yarı dolunca biter; rapor en ucuz deneyi önerir.
 5. **Kapıya sor.** "kapı" / "doğru yolda mıyım?". Kapı 1 ölçülmüş bozulma ister: oyuncak versiyon ya da resmî kodla
    hedefli koşu.
-6. **Kapıları sırayla geç.** Yeniden üretim, üç sayı, rakip adaleti, protokol, ana koşu, gerçeklik. Her karardan sonra
+6. **Boşluk kalırsa yöntem ara.** Kapı 3 geçildiyse "yeni yöntem bul": kâhin ne biliyor, basit çareler, boşluğun
+   nedeni, gereken özellik, literatür, şeytanın avukatı, en küçük test.
+7. **Kapıları sırayla geç.** Yeniden üretim, üç sayı, rakip adaleti, protokol, ana koşu, gerçeklik. Her karardan sonra
    panel güncellenir.
-7. **Sonuçtan sonra.** Kör denetim, sonra yazım (`paper-critique`, `citation-check`, Kapı 7).
+8. **Sonuçtan sonra.** Kör denetim, sonra yazım (`paper-critique`, `citation-check`, Kapı 7).
 
 ## Skill haritası
 
@@ -81,7 +83,7 @@ Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. 
 | 1. Okuma | `zayif-nokta-raporu` (ayrı ajan, açık rapor, iddiaları sen yargılarsın; takılırsan "rehberli oku") | `research-litnote`, `paper-search` | Yöntem fikrini yaz, peşine düşme |
 | Kapı 1: Soru | `arastirma-kapisi` | `hypothesis-generation` (sadece ölçümden sonra) | "Kimse yapmamış" = DUR |
 | Kapı 2: Yeniden üretim | `arastirma-kapisi` | | Henüz yeni yöntem kodu yok |
-| Kapı 3: Üç sayı | `arastirma-kapisi` (+ aktarım kontrolü) | `paper-compare`, `decision-matrix` | Basit çare yöntemden önce |
+| Kapı 3: Üç sayı | `arastirma-kapisi` (+ yöntem arama, aktarım kontrolü) | `paper-compare`, `decision-matrix` | Basit çare yöntemden önce |
 | Kapı 4–5: Adalet, protokol | `arastirma-kapisi` | | Kural sonradan değişirse commit durur |
 | Kapı 6: Ana koşu, gerçeklik | `arastirma-kapisi` | | Tohumu değil koşulu azalt |
 | Kör denetim | `zayif-nokta-raporu` (kör denetim bölümü) | | Denetçi sonucu bilmez |
