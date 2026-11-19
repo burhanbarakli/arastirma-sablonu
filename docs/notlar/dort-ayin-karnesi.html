@@ -1,0 +1,404 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Dört Ayın Karnesi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: same notebook column as the other notes; each mistake is a card with "you did / better" side by side; an invented project is told twice, wrong road and right road. */
+  :root {
+    --bg: #f3f6f5;
+    --paper: #ffffff;
+    --fg: #17211f;
+    --muted: #56635f;
+    --accent: #0f6b63;
+    --accent-soft: #e1eeeb;
+    --rule: #d3dcd9;
+    --warn: #8a4b12;
+    --warn-soft: #f6ebdf;
+    --f-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae;
+      --accent-soft: #1b2b29; --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae;
+    --accent-soft: #1b2b29; --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 18px; line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 48px 72px;
+  }
+  .wrap { max-width: 50rem; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+  h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.6rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--f-display); font-weight: 500; font-size: 1.2rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  section { display: flex; flex-direction: column; gap: 16px; }
+  .lede { font-size: 1.1rem; color: var(--muted); }
+  .thesis { font-family: var(--f-display); font-weight: 500; font-size: 1.35rem; line-height: 1.35; border-left: 3px solid var(--accent); padding-left: 16px; text-wrap: balance; }
+  ul, ol { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 8px; }
+  code { font-family: var(--f-mono); font-size: .85em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+  .note { font-size: 15px; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 10px; }
+
+  .tablewrap { overflow-x: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 44rem; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  td.bad { color: var(--warn); }
+
+  .good { list-style: none; padding: 0; gap: 12px; }
+  .good li { background: var(--paper); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 12px 16px; }
+
+  .mistake { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+  .mistake .head { display: flex; gap: 14px; align-items: baseline; padding: 16px 20px; border-bottom: 1px solid var(--rule); }
+  .mistake .num { font-family: var(--f-mono); font-size: 13px; color: var(--warn); flex: none; }
+  .mistake .where { padding: 14px 20px; font-size: 16px; color: var(--muted); }
+  .vs { display: grid; grid-template-columns: 1fr 1fr; }
+  .vs > div { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; min-width: 0; font-size: 16.5px; }
+  .vs .did { background: var(--warn-soft); }
+  .vs .should { background: var(--accent-soft); }
+  .lbl { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; }
+  .did .lbl { color: var(--warn); }
+  .should .lbl { color: var(--accent); }
+  .rule-line { padding: 12px 20px; font-family: var(--f-display); font-weight: 500; font-size: 1.02rem; border-top: 1px solid var(--rule); }
+  .rule-line span { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 8px; }
+
+  /* invented example */
+  .story { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .tag { display: inline-block; font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--warn-soft); color: var(--warn); }
+  .roads { display: grid; grid-template-columns: 1fr 1.25fr; gap: 16px; align-items: start; }
+  .road { display: flex; flex-direction: column; min-width: 0; }
+  .road > h3 { padding-bottom: 10px; }
+  .road.wrong > h3 { color: var(--warn); }
+  .road.right > h3 { color: var(--accent); }
+  .step { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; font-size: 15.5px; }
+  .road.wrong .step { border-color: var(--warn); border-style: dashed; }
+  .road.right .step { border-color: var(--accent); }
+  .when { font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
+  .step b { font-family: var(--f-display); font-weight: 500; font-size: 1rem; }
+  .down { height: 22px; display: flex; justify-content: center; position: relative; }
+  .down::before { content: ""; width: 2px; background: var(--rule); }
+  .down::after { content: ""; position: absolute; bottom: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 7px solid var(--muted); }
+  .decision { border: 2px dashed var(--fg); border-radius: 10px; padding: 10px 12px; text-align: center; font-family: var(--f-display); font-weight: 500; font-size: 15.5px; }
+  .fork { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fork .lbl2 { font-family: var(--f-mono); font-size: 11.5px; text-align: center; color: var(--muted); padding: 4px 0; display: block; }
+  .step.closed { border-color: var(--rule) !important; background: var(--bg); }
+  .step.open { border-width: 2px; }
+  .mini { width: 100%; min-width: 0; font-size: 14px; border-collapse: collapse; }
+  .mini td, .mini th { padding: 3px 6px; border-bottom: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+  .mini th { font-size: 10.5px; }
+  .mini td:first-child { white-space: normal; }
+  .outcome { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .outcome > div { border-radius: 10px; padding: 14px 16px; font-size: 16px; min-width: 0; }
+  .outcome .w { background: var(--warn-soft); }
+  .outcome .r { background: var(--accent-soft); }
+  .quote { font-family: var(--f-display); font-size: 1.05rem; line-height: 1.45; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 16px 18px; }
+
+  .recs { list-style: none; padding: 0; counter-reset: r; gap: 14px; }
+  .recs li { display: grid; grid-template-columns: 2rem 1fr; gap: 10px; counter-increment: r; }
+  .recs li::before { content: counter(r); font-family: var(--f-mono); font-size: 13px; color: var(--paper); background: var(--accent); width: 1.7rem; height: 1.7rem; border-radius: 50%; display: grid; place-items: center; margin-top: 2px; }
+  .recs li > div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .closing { font-family: var(--f-display); font-size: 1.3rem; line-height: 1.4; border-top: 2px solid var(--accent); padding-top: 20px; text-wrap: balance; }
+  footer { font-size: 15px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (max-width: 720px) {
+    body { font-size: 17px; padding-block: 32px 56px; }
+    .vs, .roads, .outcome { grid-template-columns: 1fr; }
+    .wrap { gap: 44px; }
+  }
+</style>
+
+<main class="wrap">
+  <header>
+    <span class="eyebrow">Araştırma notları · Değerlendirme raporu</span>
+    <h1>Dört ayın karnesi</h1>
+    <p class="lede">Temmuz–Kasım arasındaki araştırma projelerinin, depolarındaki notlar, kararlar, sonuçlar ve commit geçmişi üzerinden değerlendirmesi. Projelerin çoğunu ajanlar okudu ve özetledi; her ayrıntı tek tek doğrulanmadı, ama aşağıdaki kalıplar birden çok projede aynı şekilde tekrar ediyor.</p>
+  </header>
+
+  <section aria-labelledby="k">
+    <h2 id="k">Kısa cevap</h2>
+    <p class="thesis">Yanlış yöntemle değil, yanlış sırayla çalışmışsın.</p>
+    <p>İyi araştırmanın aletleri sende var: yeniden üretim, kâhin ve tavan ölçümü, basit rakipler, önceden kayıt, dürüst olumsuz sonuç. Bunları birçok projede kullanmışsın. Sorun, bu aletleri <strong>yöntemi seçtikten sonra</strong>, onu savunmak için kullanman; yöntemi seçmek için kullanmıyorsun. Bu yüzden aynı hikâye tekrarlanıyor: bir yöntem fikri doğuyor, haftalarca kuruluyor, sonra basit bir rakip ekleniyor ve o rakip berabere kalıyor ya da kazanıyor.</p>
+    <p>İkinci sorun: <strong>çok fazla şeyi aynı anda yapmışsın.</strong> Dört ayda dokuz ayrı araştırma hattı. Hız var, derinlik yok. Tohum sayıları, rakip ayarları ve gerçek dünya deneyleri bu hızın kurbanı olmuş.</p>
+    <p>İyi haber: süreç zaman içinde gözle görülür şekilde iyileşmiş.</p>
+  </section>
+
+  <section aria-labelledby="m">
+    <h2 id="m">Ne yapmışsın: dört ayın haritası</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Proje</th><th>Ne sordun?</th><th>Ne buldun?</th><th>Nasıl bitti?</th></tr></thead>
+        <tbody>
+          <tr><td>dcovf (Temmuz)</td><td>Görülmemiş, değişken uzunlukta bir gösterimden ağırlık güncellemeden alan üretilebilir mi?</td><td class="bad">Basit bir GPI eşdeğeri, öğrenilmiş operatörü doğrulukta, yolda, hızda ve bellekte geçti</td><td>Donduruldu</td></tr>
+          <tr><td>SETONET (Eylül)</td><td>"SCI düzeyinde bir takip makalesi çıkaracak yöntem bul"</td><td>Altı kez yön değişti; FNO sabit sensörlerde herkesi geçti</td><td>Tek tohum, yazım durdu</td></tr>
+          <tr><td>GDA (Eylül–Kasım)</td><td>Az gerçek, bol simülasyon verisiyle öğrenen robot görmediği koşullarda nasıl başarılı olur?</td><td>GDA'nın kazancı gürültü içinde (52'ye 48); asıl etki hizalamadan değil, kapsamdan</td><td>Üç tez cümlesi, ~8 dönüş; Tez 1 makalesi hazırlanıyor</td></tr>
+          <tr><td>Residual RL (Eylül)</td><td>ResiP'i başka benzetimde üret, sorulmamış soruları sor</td><td>Kendi tarifinin iki bileşeni de tutmadı</td><td>Sonucunu açıkça geri çektin</td></tr>
+          <tr><td>SkyJEPA (Ekim)</td><td>Başkasının JEPA uygulamasını denetle</td><td class="bad">Sade otoregresif model JEPA'yı geçti</td><td>Durduruldu</td></tr>
+          <tr><td>V2G güvenli RL (Ekim–Kasım)</td><td>Dikkat tabanlı RL ile güvenli şarj</td><td class="bad">Basit fiyat kuralı yöntemi geçti</td><td>Yeniden çerçevelendi; 5 tohum planlandı, 2 koşuldu</td></tr>
+          <tr><td>V2G conformal (Ekim–Kasım)</td><td>"Kimse bu üçünü birleştirmemiş"</td><td class="bad">Ayarlı basit marj yöntemle berabere</td><td>Gönderildi</td></tr>
+          <tr><td>Measure-aware (Ekim–Kasım)</td><td>Küme operatörü temsil ettiği ölçüyü bilmeli</td><td class="bad">Basit yeniden örnekleme yöntemi geçti; önceden kaydedilen robot tahmini tutmadı ve bunu dürüstçe yazdın</td><td>Taslaklar, iddialar daraltıldı</td></tr>
+          <tr><td>BCSDM + dünya modeli (Kasım)</td><td>Dünya modeli BCSDM'ye ne katar?</td><td class="bad">Altı denemede el kuralları yetti</td><td>Olumsuz sonuç olarak yayımlandı</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Üç dikkat çekici şey: neredeyse her satırda basit bir rakip yöntemle berabere ya da önde; BCSDM'ye dört kez dönülmüş ve dördünde de basit yöntem yetmiş; projeler üst üste binmiş.</p>
+  </section>
+
+  <section aria-labelledby="g">
+    <h2 id="g">Doğru yaptıkların</h2>
+    <ul class="good">
+      <li><strong>Dürüstlük.</strong> Residual RL'de kendi tarifini geri çektin; measure-aware'de tutmayan önceden kaydı "tutmadı" diye yazdın; GDA Tez 3'ün ana iddiasının doğrulanmadığını kaydettin. Bu, çoğu araştırmacıda olmayan bir özellik.</li>
+      <li><strong>Kâhin ve tavan ölçümünü biliyorsun.</strong> GDA'da ayrıcalıklı pozlar ve kâhin çevirmen, SETONET'te "≥2 kat boşluk yoksa adım atma" kapısı, residual RL'de dal tavanı, SkyJEPA'da gerçek parametreli fizik.</li>
+      <li><strong>Yeniden üretim.</strong> GDA'yı beş yöntemle üretip kazancın gürültü içinde olduğunu gösterdin; o hattaki en sağlam bulgun bu. Measure-aware'de makalenin sayılarını birebir tutturdun.</li>
+      <li><strong>İstatistik güçlendi.</strong> GDA'da Ekim ortasından sonra eşli denemeler, McNemar, üç tohum ve Holm düzeltmesi standart oldu.</li>
+      <li><strong>Kendi hatanı görebiliyorsun.</strong> GDA'daki geriye bakış notun: "Bileşenin katkısı ölçülmeden bileşen iyileştirildi."</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="h">
+    <h2 id="h">Hatalar: ne yaptın, ne yapsaydın daha iyiydi</h2>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 1</span><h3>Önce makale ya da yöntem, sonra ihtiyaç</h3></div>
+      <p class="where"><strong>Senin projende:</strong> V2G güvenli RL.</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>İlk gün bir boşluk analizi yazıp "bu çalışmanın katkıları C1, C2, C3 olacak" dedin. Makale taslağını sonuçlar daha yokken yazdın. Sonra dikkat tabanlı RL'yi kurdun. Haftalar sonra eklenen basit fiyat kuralı yöntemi geçti (boşluk 0.82'ye karşı 1.27) ve makale "güvenlik katmanı" diye yeniden çerçevelendi.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>İlk hafta yalnız üç şeyi ölçerdin: hiçbir şey yapmayan şarj, basit fiyat kuralı ve geleceği bilen kâhin (tam bilgiyle en iyi plan). Kural kâhine zaten yakın olduğunu ilk hafta gösterirdi. O zaman ya "RL'ye gerek yok" diye kısa bir bulgu yazar ya da kuralın bozulduğu koşulu (örneğin belirsiz kalkış saatleri) arar ve oraya odaklanırdın. Makale taslağı ancak bu üç sayıdan sonra yazılırdı.</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>"Kimse yapmamış" bir neden değil. Önce "bu ölçülebilir biçimde bozuluyor mu?" diye sor.</p>
+    </article>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 2</span><h3>Basit rakip hep geç geliyor</h3></div>
+      <p class="where"><strong>Senin projende:</strong> dcovf, measure-aware, SkyJEPA, V2G conformal, BCSDM dünya modeli.</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>dcovf'ta öğrenilmiş operatörü kurdun, değerlendirme hattını kurdun, sonra basit GPI eşdeğerini ekledin; o kazandı. Measure-aware'de ölçü farkındalıklı dalı geliştirdin; sonra eklenen yay uzunluğuyla yeniden örnekleme (<code>flat_arc</code>) onu geçti (0.125'e karşı 0.173). Aynı hikâye SkyJEPA'da, V2G conformal'da ve bu BCSDM çalışmasında tekrarlandı.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>İlk gün kendine şunu sorardın: "Bir mühendis bu sorunu öğle yemeğinden önce nasıl çözerdi?" Cevabı (GPI, yeniden örnekleme, fiyat kuralı, otoregresif model) yöntemden önce, bir günde kurardın. Rakip berabere kalıyorsa yöntem projesini hiç açmaz, bu bulguyu yazardın. Haftalar değil, günler harcanırdı.</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>Basit rakip ilk gün kurulur, yöntem ondan sonra.</p>
+    </article>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 3</span><h3>Rakiplere eşit emek verilmemesi</h3></div>
+      <p class="where"><strong>Senin projende:</strong> GDA Tez 1.</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>Rakip GDA'yı 100 epoch'la eğittin; özgün protokol 500 epoch. λ'yı hiç ayarlamadın. Kendi yöntemine ayrıcalıklı benzetim konum bilgisi verdin. Sonuç: "GDA'yı geçiyoruz". Ama aynı konum bilgisini alan EDI köprüsü yöntemle berabere.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>Rakip GDA'yı özgün protokolle (500 epoch) eğitir, λ için küçük bir tarama yapardın; kendi yöntemine verdiğin ayar emeğinin aynısını. Yöntemine ek bilgi veriyorsan, aynı bilgiyi alan bir rakibi (EDI) ana tabloya koyar ve iddiayı ona göre kurardın: "Kazanç, konum denetiminden geliyor; şu koşulda EDI'yi şu kadar geçiyoruz ya da geçmiyoruz."</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>Rakibe kendi yöntemine verdiğin emeği ve bilgiyi ver.</p>
+    </article>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 4</span><h3>Sonuç görüldükten sonra yapılan seçimler</h3></div>
+      <p class="where"><strong>Senin projende:</strong> GDA (K-19, K-20), measure-aware.</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>GDA'da tez cümlesini işe yarayan şeye göre yeniden yazdın; karar kuralını birçok sonuçtan sonra değiştirdin; rastgeleleştirmeyi hedef masaları gördükten sonra tasarladın. Measure-aware'de bir kesme eşiğini (s &lt; 0.9) veriye baktıktan sonra seçtin.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>Her deneyden önce bir sayfalık bir protokol yazardın: karar kuralı, eşik, hangi koşullar, kaç tohum. Bir şeyi değiştirmen gerekirse "Sapmalar" bölümüne yazar, ve sonucu hem eski hem yeni kuralla raporlardın. Rastgeleleştirmeyi hedef masaları görmeden tasarlar, hedef masaları ayrı bir "kilitli" küme olarak en sona saklardın.</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>Kural sonuçtan önce yazılır; değişirse açıkça yazılır.</p>
+    </article>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 5</span><h3>Tohumlar plandan az</h3></div>
+      <p class="where"><strong>Senin projende:</strong> SETONET, GDA Eylül, V2G güvenli RL, SkyJEPA.</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>SETONET'te ve GDA'nın Eylül'ünde her şey tek tohum. V2G güvenli RL'de 5 tohum planladın, 2 koştun. SkyJEPA bunun neden tehlikeli olduğunu gösterdi: aynı ayarla 72 denemede 5, 19 ve 38 çarpışma.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>Protokolde "en az 3 tohum" yazardın. Hesaplama yetmiyorsa tohumu değil koşul sayısını azaltırdın: 12 koşul × 1 tohum yerine 4 koşul × 3 tohum. Böylece her fark için bir aralık olurdu ve hangi farkın gerçek olduğunu bilirdin.</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>Az koşul, çok tohum. Tersi değil.</p>
+    </article>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 6</span><h3>Durma kuralı yok, sürekli dönüş var</h3></div>
+      <p class="where"><strong>Senin projende:</strong> GDA (~8 dönüş), SETONET (6 dönüş), BCSDM (6 kapı).</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>GDA'da 10 haftada üç tez cümlesi ve yaklaşık sekiz dönüş. 22 Ekim'de "simülasyon kapandı, sıradaki iş gerçek robot" dedin; ertesi gün yeni bir simülasyon teziyle geri açtın. SETONET'te sensör yerleşimi, fiziksel kayıp, omurgadan bağımsız kayıp, kriging kodlayıcı, BCSDM... her kapı kapandığında yenisi açıldı.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>Projenin ilk sayfasına "Üç kapı üst üste kapanırsa olumsuz sonucu yazar, dururum" yazardın. Dönüşleri sayardın. Üçüncü dönüşte danışmanınla oturup "devam mı, bırak mı" kararı verirdin. 22 Ekim kararına sadık kalıp gerçek robota geçerdin.</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>Çıkış noktasını en başta yaz; gelecekteki seni bugünkü inadından korur.</p>
+    </article>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 7</span><h3>Hep benzetim, gerçek dünyaya hiç temas yok</h3></div>
+      <p class="where"><strong>Senin projende:</strong> GDA, measure-aware, BCSDM.</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>GDA'da "hedef alan" yeniden boyanmış benzetim masalarıydı; Dobot deneyi planlandı ama yapılmadı. Measure-aware'de gerçek robot bölümü boş. Birçok sonuç tavana yakın: GDA'da yöntem %99–100, measure-aware'de 50/50'ye karşı 45/50.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>Projenin ortasında, sonuçlar daha netleşmeden, en küçük bir gerçek deney yapardın: Dobot'la 3 koşul × 20 deneme. Benzetimin hangi kusursuzluğunun sonucu taşıdığını erken görürdün. Tavana dayanan bir görevi de zorlaştırırdın: daha az gösterim, daha sert bozucu.</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>Benzetim fikri sınar; gerçek dünya sonucu sınar.</p>
+    </article>
+
+    <article class="mistake">
+      <div class="head"><span class="num">Hata 8</span><h3>Sınırlılıkların zayıflatılması</h3></div>
+      <p class="where"><strong>Senin projende:</strong> V2G conformal.</p>
+      <div class="vs">
+        <div class="did"><span class="lbl">Sen böyle yaptın</span>
+          <p>Sınırlılıklardan "tek saha" cümlesini "hakem sorarsa revizyonda ele alınır" diye çıkardın. İkinci saha (JPL) çalışmasını da bıraktın.</p>
+        </div>
+        <div class="should"><span class="lbl">Böyle yapsaydın daha iyiydi</span>
+          <p>Cümleyi bırakır, hatta öne alırdın: "Sonuçlar tek bir sahadan; başka sahaya genelleme sınanmadı." Mümkünse ikinci sahada küçük bir kontrol koşardın. Hakemin bulduğu sınırlılık güven kaybettirir, senin yazdığın güven kazandırır.</p>
+        </div>
+      </div>
+      <p class="rule-line"><span>Kural</span>Gerçek bir kısıt yazılır, saklanmaz.</p>
+    </article>
+  </section>
+
+  <section aria-labelledby="kok">
+    <h2 id="kok">Kök neden</h2>
+    <p class="thesis">Hedef "makale çıkarmak" olunca yöntem önce seçiliyor; ölçme aletleri de yöntemi seçmek için değil, savunmak için kullanılıyor.</p>
+    <p>Buna bir hız sorunu ekleniyor. Aynı anda çok proje yürütmek her projeye düşen hesaplamayı ve dikkati azaltıyor: tohumlar kesiliyor, rakipler eksik ayarlanıyor, gerçek dünya deneyleri erteleniyor. Notlarındaki iki ipucu bunu gösteriyor: GDA'daki çoklu ajan hattı "test edilen hipotez sayısı 0" denerek bırakılmış, ve Eylül sonunda "önce sonuç, sonra titizlik" diye sıfırlanmış. Asıl ilerleme, durup ölçtüğün yerlerden gelmiş.</p>
+  </section>
+
+  <section aria-labelledby="yon">
+    <h2 id="yon">Doğru mu gitmişsin, yanlış mı?</h2>
+    <p><strong>Süreç olarak doğru yöne gidiyorsun.</strong> Temmuz'daki dcovf ile Kasım'daki işler arasında açık bir gelişme var.</p>
+    <p><strong>Yön olarak iki yerde yanlış gidiyorsun:</strong></p>
+    <ul>
+      <li><strong>BCSDM ailesinde ısrar.</strong> Dört proje, dördünde basit yöntem yetti. Veri sana bu görev ailesinde öğrenilmiş bileşene az yer olduğunu söylüyor. Beşinci bir BCSDM projesi yerine bu bulgunun kendisini değerlendir.</li>
+      <li><strong>Doktora hattının dağılması.</strong> GDA'da gerçekten değerli bir bulgun var (hizalama değil, kapsam), ama üç tez cümlesi ve birçok ek modül arasında dağılıyor.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="ornek">
+    <h2 id="ornek">Uydurma bir örnekle akış: aynı proje, iki yol</h2>
+    <div class="story">
+      <span class="tag">Uydurma örnek · sayılar hayalî</span>
+      <p><strong>Proje:</strong> Bir depo robotu farklı zeminlerde (beton, halı, ıslak zemin) hedefe gidiyor. Bir makaledeki denetleyiciyle betonda iyi çalışıyor. Araştırmacının fikri: "Tekerlek kaymasını tahmin eden bir dünya modeli ekleyelim; literatürde bu zemin + bu denetleyici + dünya modeli birleşimini kimse yapmamış."</p>
+      <p>İki araştırmacı aynı fikirle, aynı 8 haftayla başlıyor.</p>
+    </div>
+
+    <div class="roads">
+      <div class="road wrong" aria-label="Yanlış yol">
+        <h3>Yanlış yol: önce yöntem</h3>
+        <div class="step"><span class="when">Hafta 1</span><b>Fikir ve taslak</b><p>"Kaymayı tahmin eden transformer dünya modeli" seçilir. Literatürde boşluk yazılır, makale girişi taslak hâlinde hazır.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 2–5</span><b>Model kurulur</b><p>Veri toplanır, model eğitilir, tek tohum. Hepsi zeminde birlikte değerlendirilir: ortalama başarı %91.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 6</span><b>Basit rakip eklenir</b><p>Hakem sorar diye: "tekerlek hızı ile IMU hızı tutmuyorsa yavaşla" kuralı. Kural: %90. Fark gürültü içinde.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 7</span><b>Yeniden çerçeveleme</b><p>Makale "verimli hesaplama" diye yeniden yazılır. Kural için eşik sonuçlara bakarak seçilir.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 8</span><b>Yeni dönüş</b><p>"Belki eğimli zeminde fark çıkar" diye yeni bir koşul eklenir. Soru hâlâ açık, makale zayıf.</p></div>
+      </div>
+
+      <div class="road right" aria-label="Doğru yol">
+        <h3>Doğru yol: önce bozulma</h3>
+        <div class="step"><span class="when">Hafta 1, gün 1–2</span><b>Yeniden üret</b><p>Makaledeki denetleyici benzetimde kurulur. Betonda %96; makale %95 diyor. Tamam.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 1, gün 3–5</span><b>Zorla</b><p>Halıda başarı %88'e, ıslak zeminde %70'e düşüyor. Bozulma var.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 2</span><b>Her zemin için üç sayı (3 tohum)</b>
+          <table class="mini">
+            <thead><tr><th>Zemin</th><th>Taban</th><th>Basit kural</th><th>Adil kâhin</th><th>Kâhin − kural</th></tr></thead>
+            <tbody>
+              <tr><td>Halı</td><td>88</td><td>93</td><td>94</td><td>1</td></tr>
+              <tr><td>Islak</td><td>70</td><td>76</td><td>92</td><td><strong>16</strong></td></tr>
+            </tbody>
+          </table>
+          <p>Adil kâhin: kaymayı ilk tekerlek dönüşünden itibaren bilen politika. Eşik önceden 5 puan olarak yazılmış.</p>
+        </div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="decision">Kâhin − kural ≥ 5 mi?</div>
+        <div class="fork">
+          <div><span class="lbl2">Halı: hayır (1)</span><div class="step closed"><b>Kapı kapandı</b><p>Halıda basit kural yetiyor. Bu bir bulgu olarak not edilir, model kurulmaz.</p></div></div>
+          <div><span class="lbl2">Islak: evet (16)</span><div class="step open"><b>Kapı açık</b><p>Islak zeminde bir modele gerçek yer var.</p></div></div>
+        </div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 3</span><b>Teşhis ve hedefli literatür</b><p>Islakta kayma ani; kural onu 300 ms geç fark ediyor. "Ani kayma algılama" diye aranır, bir yöntem bulunur ve rakip olarak eklenir: %81.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 4</span><b>Protokol</b><p>Karar kuralı: model, en güçlü rakipten (81) en az 5 puan iyi ve %95 aralığın alt ucu 0'ın üstünde. 3 tohum. Durma kuralı: iki tasarım denemesinde tutmazsa olumsuz sonuç yazılır.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 5–7</span><b>Model kurulur, yalnız ıslak zemin için</b><p>Sonuç: %88 ± 1.5 (3 tohum). Rakibe göre +7 puan, aralık [+3, +11]. Kural sağlandı.</p></div>
+        <div class="down" aria-hidden="true"></div>
+        <div class="step"><span class="when">Hafta 8</span><b>Kör denetim ve yazım</b><p>Sonucu bilmeyen biri hesabı baştan yapar. Makalenin girişi zaten hazır (aşağıda).</p></div>
+      </div>
+    </div>
+
+    <div class="outcome">
+      <div class="w"><strong>Yanlış yolun sonu:</strong> 8 hafta, gürültü içinde bir fark, sonradan seçilmiş bir eşik ve yeniden çerçevelenmiş, hakemin ilk soruda zorlanacağı bir makale. Soru hâlâ açık.</div>
+      <div class="r"><strong>Doğru yolun sonu:</strong> aynı 8 hafta, savunulabilir bir kazanç ve bir yan bulgu (halıda basit kural yetiyor). Model tutmasaydı bile, temiz ve erken bir olumsuz sonuç olurdu.</div>
+    </div>
+    <p>Doğru yoldaki araştırmacının makale girişi, deneyin kendisinden çıkıyor:</p>
+    <p class="quote">"Denetleyici ıslak zeminde başarıyı %96'dan %70'e düşürüyor. Kaymayı bilen bir kâhin 22 puan kazandırıyor. En iyi basit kural ve literatürdeki en iyi yöntem bunun 11 puanını kapatıyor. Önerdiğimiz model kalan farkın 7 puanını alıyor."</p>
+    <p class="note">İki yol arasındaki tek fark sıra: aynı aletler (kural, kâhin, model, istatistik) iki yolda da var. Doğru yolda ölçüm yöntemden önce geliyor, yanlış yolda sonra.</p>
+  </section>
+
+  <section aria-labelledby="t">
+    <h2 id="t">Tavsiyeler</h2>
+    <ol class="recs">
+      <li><div><strong>Bir doktora, bir soru.</strong><p>Yeni araştırma hattı açmayı durdur. GDA'daki en sağlam bulguyu ("kazanç hizalamadan değil, kapsamdan") tezin omurgası yap. Aynı anda en çok bir ana proje ve bir küçük yan iş.</p></div></li>
+      <li><div><strong>Her yeni soruda ilk hafta üç sayı.</strong><p>Taban, en güçlü basit çare, adil kâhin. Şu cümleyi rakamlarla dolduramıyorsan yöntem kurma: "[Yöntem], [koşul] altında [X] kadar düşüyor; kâhin [Y] kazandırıyor; basit çare [Z] kadarını kapatıyor; kalan [Y − Z] benim hedefim."</p></div></li>
+      <li><div><strong>Rakibi sen kur, ilk sen kur, eşit emekle kur.</strong><p>Aynı epoch, aynı ayar taraması. Yöntemine ek bilgi veriyorsan aynı bilgiyi alan bir rakip koy.</p></div></li>
+      <li><div><strong>Durma kuralı ve dönüş bütçesi.</strong><p>"Üç kapı kapanırsa dururum." Üçüncü dönüşte danışmanla karar.</p></div></li>
+      <li><div><strong>Tohum politikası.</strong><p>En az üç tohum, deneyden önce yazılı. Hesaplama yetmezse koşulu azalt.</p></div></li>
+      <li><div><strong>Gerçek dünyaya bir kez temas et.</strong><p>GDA'da planlanan Dobot deneyini küçük de olsa yap.</p></div></li>
+      <li><div><strong>Olumsuz bulgularını değerlendir.</strong><p>BCSDM ailesinde dört farklı öğrenilmiş bileşeni basit yöntemler yakaladı. "Kararlı hareket sistemlerinde öğrenilmiş bileşenler ne zaman gerekli?" başlıklı bir makale için elindeki sonuçlar yeter.</p></div></li>
+      <li><div><strong>Sınırlılıkları silme.</strong><p>Gerçek bir kısıtı yaz, "hakem sorarsa" diye çıkarma.</p></div></li>
+      <li><div><strong>Yapay zekâ ajanlarını farklı kullan.</strong><p>Yeni proje üretmek için değil, şu üç iş için: 0. adım taraması (<code>/zayif-nokta-raporu</code>), kör denetim, kâhin ve basit rakibi hızla kurmak.</p></div></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="plan">
+    <h2 id="plan">Önümüzdeki dört hafta</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Hafta</th><th>İş</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>GDA Tez 1 makalesi:</strong> rakip GDA'yı özgün protokolle (500 epoch) yeniden eğit, λ'yı kısa bir taramayla ayarla, EDI karşılaştırmasını açıkça yaz. "GDA'yı geçiyoruz" iddiasını buna göre güncelle.</td></tr>
+          <tr><td>2</td><td><strong>Tez omurgası:</strong> "kapsam, hizalamadan önemli" bulgusunu tek bir tez cümlesine indir; danışmanla anlaş.</td></tr>
+          <tr><td>3</td><td><strong>Gerçek robot:</strong> Dobot'la en küçük deneyi tasarla ve önceden kaydet: taban, basit rakip, yöntem, 3 tohum.</td></tr>
+          <tr><td>4</td><td><strong>Arşivle ve bitir:</strong> dcovf, SETONET, SkyJEPA'yı kapat. V2G conformal'a "tek saha" sınırlılığını geri koy. Measure-aware'i ya <code>flat_arc</code> sonucuyla dürüst bir tanı makalesi olarak bitir ya da bırak.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="closing">En değerli özelliğin dürüstlüğün ve kendi hatanı görebilmen; bunlar öğretilmesi en zor şeyler. Eksik olan yalnız sıra ve odak. Ölçmeyi en başa al, aynı anda tek bir soruya odaklan.</p>
+
+  <footer>
+    <span>Diğer notlar: <a href="bosluk-once-olc.html">Boşluğu önce ölç</a> · <a href="problemden-basla.html">Problemden başla</a> · <a href="claude-ile-okumak.html">Claude ile okumak</a></span>
+  </footer>
+</main>
+
+</body></html>

@@ -1,0 +1,238 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Boşluğu Önce Ölç</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: a single reading column like a lab notebook; each lesson is a numbered entry with four labelled notes. */
+  :root {
+    --bg: #f3f6f5;
+    --paper: #ffffff;
+    --fg: #17211f;
+    --muted: #56635f;
+    --accent: #0f6b63;
+    --accent-soft: #e1eeeb;
+    --rule: #d3dcd9;
+    --warn: #8a4b12;
+    --warn-soft: #f6ebdf;
+    --f-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae;
+      --accent-soft: #1b2b29; --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae;
+    --accent-soft: #1b2b29; --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 18px; line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 48px 72px;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; }
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+  .lede { color: var(--muted); font-size: 1.1rem; margin: 0; max-width: 40rem; }
+  h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.6rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--f-display); font-weight: 500; font-size: 1.25rem; margin: 0; }
+  p { margin: 0; }
+  .lesson { display: flex; flex-direction: column; gap: 20px; }
+  .lesson-head { display: flex; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--rule); padding-bottom: 12px; }
+  .num { font-family: var(--f-mono); font-size: 14px; color: var(--accent); flex: none; }
+  .notes { display: flex; flex-direction: column; gap: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; }
+  .note { display: grid; grid-template-columns: 9.5rem 1fr; gap: 20px; padding: 18px 22px; }
+  .note + .note { border-top: 1px solid var(--rule); }
+  .note > div { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+  .label { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-top: 5px; }
+  .note.mistake .label { color: var(--warn); }
+  .note.how { background: var(--accent-soft); border-radius: 0 0 9px 9px; }
+  .note.how .label { color: var(--accent); }
+  ul, ol { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 6px; }
+  blockquote { margin: 0; padding: 10px 16px; border-left: 3px solid var(--accent); font-family: var(--f-mono); font-size: 14px; color: var(--fg); background: var(--accent-soft); border-radius: 0 6px 6px 0; overflow-x: auto; }
+  code { font-family: var(--f-mono); font-size: .85em; }
+  .unwritten { display: flex; flex-direction: column; gap: 24px; }
+  .unwritten .intro { color: var(--muted); }
+  .extra { background: var(--warn-soft); border-radius: 10px; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; }
+  .extra h3 { color: var(--warn); }
+  .side { font-size: 16px; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 10px; }
+  .side strong { color: var(--fg); }
+  .flow { display: flex; flex-direction: column; gap: 16px; }
+  .flow ol { gap: 12px; counter-reset: s; list-style: none; padding: 0; }
+  .flow li { display: grid; grid-template-columns: 2.2rem 1fr; gap: 12px; align-items: baseline; counter-increment: s; }
+  .flow li::before { content: counter(s); font-family: var(--f-mono); font-size: 13px; color: var(--paper); background: var(--accent); width: 1.7rem; height: 1.7rem; border-radius: 50%; display: grid; place-items: center; }
+  .closing { font-family: var(--f-display); font-size: 1.3rem; line-height: 1.4; border-top: 2px solid var(--accent); padding-top: 20px; text-wrap: balance; }
+  footer { font-size: 15px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    body { font-size: 17px; padding-block: 32px 56px; }
+    .note { grid-template-columns: 1fr; gap: 6px; padding: 16px; }
+    .label { padding-top: 0; }
+    .wrap { gap: 44px; }
+  }
+</style>
+
+<main class="wrap">
+  <header>
+    <span class="eyebrow">Araştırma notları · BCSDM ve dünya modeli</span>
+    <h1>Boşluğu önce ölç</h1>
+    <p class="lede">Her dersi dört açıdan anlatıyorum: bizde gerçekte ne oldu (yanlışlarımız dahil), hayattaki karşılığı, akademideki karşılığı ve doğru kullanımı. Sonunda hepsini tek bir çalışma düzenine bağlıyorum.</p>
+  </header>
+
+  <section class="lesson" aria-labelledby="l1">
+    <div class="lesson-head"><span class="num">01</span><h2 id="l1">Model eğitmeden önce boşluğu ölç</h2></div>
+    <div class="notes">
+      <div class="note mistake"><span class="label">Bizde ne oldu</span><div>
+        <p>İşe çözümle başladık: "BCSDM'ye dünya modeli ekleyelim." Ne kadar kazanılabileceğini ise sonradan sorduk. İlk değerlendirme bunu zaten fısıldıyordu: makalenin şemsiye görevinde η = 5 ile 25 denemede 25 başarı vardı. İyileştirilecek bir şey neredeyse yoktu.</p>
+        <p>Gecikme deneyinde de önceden yazdığımız kurala göre ortada bir sorun çıkmadı: 6000 koşuda tek hata yok. Ardından bozucuyu sona yaklaştırarak sorunu biz yarattık. Bu meşru bir soruydu, ama dürüst olalım: çözümümüze bir sorun arıyorduk.</p>
+      </div></div>
+      <div class="note"><span class="label">Hayat notu</span><div>
+        <p>Pahalı bir koşu bandı almadan önce iki hafta yürüyüşe çık. Yürüyüş seni istediğin yerin %90'ına götürüyorsa, bant sana yalnız kalan %10'u satıyordur. Bir şeye yatırım yapmadan önce sor: "Bunun en iyi hâli bile bana ne kazandırabilir?"</p>
+      </div></div>
+      <div class="note"><span class="label">Akademik not</span><div>
+        <p>Bu, literatürde "headroom" (tavan payı) analizidir. Kâhin politikası, modelin hiçbir zaman geçemeyeceği tavandır. Tavan ile basit yöntem arasındaki fark küçükse, en iyi modelin bile yayımlanabilir bir katkısı olmaz. Bu ölçüm bir hafta sürer, model eğitmek aylar.</p>
+      </div></div>
+      <div class="note how"><span class="label">Doğru kullanım</span><div>
+        <p>Projenin <strong>ilk haftasında</strong>, daha model kodunun tek satırı yazılmadan üç sayı ölçülmeli: taban, basit kural, kâhin. Bu üç sayı kâğıda yazılır ve projenin kaderi büyük ölçüde orada belli olur.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="lesson" aria-labelledby="l2">
+    <div class="lesson-head"><span class="num">02</span><h2 id="l2">Rakibi güçlü yap</h2></div>
+    <div class="notes">
+      <div class="note mistake"><span class="label">Bizde ne oldu</span><div>
+        <p>Süre deneyinde ilk moment kuralı kâhinden 1.21 s gerideydi ve sonuç "aday" çıktı, yani modele yer var gibiydi. Kuralı biraz akıllandırdık: yeniden nişan aldırdık, uzaklığı da kestirttik. Fark 0.25 s'ye indi. Kurala karşı modelin "kazancı" dediğimiz şey, büyük ölçüde rakibin tembelliğiydi.</p>
+        <p>Aynı hatayı iki kez daha yaptık:</p>
+        <ul>
+          <li>Algılayıcı deneyinde rakibe sıfırlama eklemeyi düşünmedik. Bağımsız denetçi buldu ve fark 1.68 s'den 0.24 s'ye düştü.</li>
+          <li><code>R_MIN</code> eşiğini iki ayrı deneyde ayarsız bıraktık. Kalan farkın yarısı oradan geldi.</li>
+        </ul>
+      </div></div>
+      <div class="note"><span class="label">Hayat notu</span><div>
+        <p>Bir tartışmada karşı görüşün en zayıf hâlini yenmek kolaydır ve hiçbir şey öğretmez. Ona "çelik adam" (steelman) denir: karşı tarafın en güçlü argümanını, onlardan daha iyi kur, sonra onu yenmeye çalış. Yenemiyorsan, belki haklı olan onlardır.</p>
+      </div></div>
+      <div class="note"><span class="label">Akademik not</span><div>
+        <p>Hakemlerin en sık reddetme gerekçesi "baseline'lar zayıf". Kendi yöntemine üç ay emek verip rakibe üç saat veren bir makale kendini kandırır. Kural: <strong>rakibe, kendi yöntemine verdiğin ayar emeğinin aynısını ver.</strong></p>
+      </div></div>
+      <div class="note how"><span class="label">Doğru kullanım</span><div>
+        <p>Modelin kazandığı görünen her yerde şu soru sorulmalı: "Bu farkı kapatabilecek en basit el kuralı ne?" O kural yazılıp denenmeden kazanç ilan edilmemeli.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="lesson" aria-labelledby="l3">
+    <div class="lesson-head"><span class="num">03</span><h2 id="l3">Kâhini adil kur</h2></div>
+    <div class="notes">
+      <div class="note mistake"><span class="label">Bizde ne oldu</span><div>
+        <p>İlk kâhinimiz deliğin yerini daha dokunmadan biliyordu. Hiçbir dokunma tabanlı model bunu bilemez. Bu yüzden 1.21 s'lik farkın yarısı hiçbir zaman alınamayacak bir farktı. "İlk dokunuştan itibaren bilen kâhin"i kurunca tablo değişti.</p>
+      </div></div>
+      <div class="note"><span class="label">Hayat notu</span><div>
+        <p>Kendini, senden farklı bir başlangıç bilgisiyle yola çıkmış biriyle kıyaslamak hem haksız hem yıpratıcıdır. Sınava soruları önceden görmüş birinin puanı, senin hedefin olamaz. Adil kıyas şudur: "Benim bilebileceğim şeylerle en iyisi ne olurdu?"</p>
+      </div></div>
+      <div class="note"><span class="label">Akademik not</span><div>
+        <p>Üst sınır analizi yapılırken kâhinin hangi bilgiye eriştiği açıkça yazılmalı. Model ancak gözlemleyebildiği bilgiyle çalışabilir. Kâhin buna ek olarak gözlemlenemeyen bir şey biliyorsa, aradaki farkın bir kısmı "erişilemez" diye ayrılmalı. Bunu yapmayan bir çalışma, problemi olduğundan büyük gösterir.</p>
+      </div></div>
+      <div class="note how"><span class="label">Doğru kullanım</span><div>
+        <p>İki kâhin kurulmalı: biri her şeyi bilen (mutlak tavan), biri modelin göreceği bilgiyi kusursuz kullanan (ulaşılabilir tavan). Karar ikincisine göre verilir.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="lesson" aria-labelledby="l4">
+    <div class="lesson-head"><span class="num">04</span><h2 id="l4">Kararı önceden yaz</h2></div>
+    <div class="notes">
+      <div class="note mistake"><span class="label">Bizde ne oldu</span><div>
+        <p>Bunu çoğunlukla doğru yaptık ve çok işimize yaradı. Ama önceden yazmanın sınırını da gördük, çünkü önceden yazılan kural yanlış bir varsayıma dayanabiliyor:</p>
+        <ul>
+          <li><strong>Rakip deneyi:</strong> protokolde "kalibrasyon eğimi pozitif çıkmazsa sabit adım kullan" yazdık. Pilot eğimin negatif olduğunu gösterdi; fizik bizim tahminimizin tersiydi. Kuralı harfiyen uygulasaydık sonuç tersine dönecekti. Sapmayı açıkça yazıp gerekçelendirdik ve kararın buna dayandığını README'nin en başına koyduk.</li>
+          <li><strong>Algılayıcı protokolü:</strong> "sapma bilinemez" diye yazdık. Benzetim ise bilinebilir kılıyordu.</li>
+        </ul>
+      </div></div>
+      <div class="note"><span class="label">Hayat notu</span><div>
+        <p>İş tekliflerini değerlendirmeden önce neyin önemli olduğunu yaz: maaş mı, öğrenme mi, şehir mi? Teklifler geldikten sonra yazarsan, gönlünün çoktan seçtiği teklifi haklı çıkaran kriterler yazarsın. Ama kâğıda yazdığın şey de bir varsayımdır. Yanlış olduğunu öğrenirsen değiştir; yalnız değiştirdiğini açıkça kabul et.</p>
+      </div></div>
+      <div class="note"><span class="label">Akademik not</span><div>
+        <p>Önceden kayıt (pre-registration) psikolojide tekrarlanabilirlik krizine karşı doğdu. Mühendislikte nadir, ama aynı derde deva. Asıl değeri değişikliği yasaklaması değil, <strong>görünür kılması</strong>. "Sapmalar" bölümü utanç değil, güvenilirlik belgesidir.</p>
+      </div></div>
+      <div class="note how"><span class="label">Doğru kullanım</span><div>
+        <p>Protokolde üç şey olmalı:</p>
+        <ol>
+          <li>karar kuralı;</li>
+          <li>kuralın dayandığı varsayımlar, açıkça;</li>
+          <li>"varsayım çökerse ne yaparız" maddesi.</li>
+        </ol>
+        <p>Biz ikinci ve üçüncüyü eksik bıraktığımız için sapma yazmak zorunda kaldık.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="lesson" aria-labelledby="l5">
+    <div class="lesson-head"><span class="num">05</span><h2 id="l5">Bağımsız bir göz ekle</h2></div>
+    <div class="notes">
+      <div class="note mistake"><span class="label">Bizde ne oldu</span><div>
+        <p>Denetimler üç kez işin seyrini değiştirdi:</p>
+        <ul>
+          <li><strong>Süre deneyi:</strong> analiz, başarısız koşuların bir kısmını protokole aykırı biçimde saymıyordu. Düzeltilince bir sonuç "aday"dan "model yok"a döndü.</li>
+          <li><strong>Temas deneyi:</strong> kuvvet süzgecinin 20 yerine 19'a böldüğü bulundu. Karar değişmedi, ama bulunması gerekiyordu.</li>
+          <li><strong>Algılayıcı deneyi:</strong> "Sıfırlasana" diyen de denetçiydi. Biz kendi protokolümüzün içinde kaldığımız için göremiyorduk.</li>
+        </ul>
+        <p>Bir yanlışımız da şuydu: son deneyi (sıfırlama) zaman ve maliyet yüzünden bağımsız denetimden geçirmedik.</p>
+      </div></div>
+      <div class="note"><span class="label">Hayat notu</span><div>
+        <p>Kendi yazını okurken gözün yazdığını değil, yazmak istediğini görür. Tezini bir arkadaşına okut; ama ona "nasıl olmuş?" diye değil, "nerede yanlış?" diye sor. Yanlış aramaya giden göz, onaylamaya giden gözden çok daha fazlasını bulur.</p>
+      </div></div>
+      <div class="note"><span class="label">Akademik not</span><div>
+        <p>Denetçiye sonucu söylememek kritik. Biz denetçiye "D2 şu çıktı, doğrula" demedik; kodu ve veriyi verip baştan hesaplattık. Sonucu bilen denetçi onu doğrulamaya meyleder. Hakem 2'nin acımasız yorumları da aslında bedava verilen bir denetimdir.</p>
+      </div></div>
+      <div class="note how"><span class="label">Doğru kullanım</span><div>
+        <p>Her ana sonuç, sonucu bilmeyen biri tarafından baştan hesaplanmalı: bir meslektaş, bir öğrenci ya da ayrı bir yapay zekâ oturumu. Kural basit: <strong>denetlenmemiş sonuç, taslaktır.</strong></p>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="unwritten" aria-labelledby="u">
+    <div class="lesson-head"><span class="num">+2</span><h2 id="u">Kitapta yazmayan iki ders: asıl yanlışlarımız</h2></div>
+    <div class="extra">
+      <h3>6. Durma kuralı koymadık</h3>
+      <p>Her kapı kapandığında yeni bir kapı açtık:</p>
+      <blockquote>gecikme → hız kapısı → temas → süre → rakip → algılayıcı → sıfırlama</blockquote>
+      <p>Her biri tek başına makuldü. Ama toplamda modele yer bulmak için hedefi sürekli kaydırdık. Doğrusu, en başta şunu yazmaktı: "Üç kapı üst üste kapanırsa durur, olumsuz sonucu yazarız." Biz altı kapı sonra durduk.</p>
+      <p class="side"><strong>Hayat notu:</strong> Batık maliyet tuzağı, "bu kadar emek verdim, bırakamam" demektir. Önceden bir çıkış noktası belirlemek, gelecekteki kendini bugünkü inadından korur.</p>
+    </div>
+    <div class="extra">
+      <h3>7. Benzetimin kusursuzluğunu geç sorguladık</h3>
+      <p>Momenti dört deney boyunca doğrudan ucunda ve kusursuz ölçtük. Gerçek bir robotta algılayıcı 35 cm yukarıdadır. Bunu en başta sorsaydık, algılayıcı deneyi ilk deney olurdu ve belki bütün yolculuk farklı giderdi.</p>
+      <p class="side"><strong>Akademik not:</strong> Benzetimde bulunan her sonuçtan sonra şu sorulmalı: "Bu sonuç benzetimin hangi kusursuzluğuna dayanıyor?"</p>
+    </div>
+  </section>
+
+  <section class="flow" aria-labelledby="f">
+    <h2 id="f">Hepsini birleştiren çalışma düzeni</h2>
+    <p>Bir sonraki projede şu sırayla gitmeyi öneririm:</p>
+    <ol>
+      <li><span><strong>1. hafta:</strong> taban, basit kural ve iki kâhin (mutlak ve ulaşılabilir). Tavan payını ölç.</span></li>
+      <li><span><strong>Durma kuralını yaz:</strong> kaç olumsuz sonuçtan sonra duracağını ve olumsuz sonucu yayımlayacağını.</span></li>
+      <li><span><strong>Rakibi güçlendir:</strong> modele vereceğin emeğin aynısını rakibe ver.</span></li>
+      <li><span><strong>Benzetimin kusursuzluklarını listele</strong> ve sonuca en çok dokunanı en başta boz.</span></li>
+      <li><span><strong>Protokolü yaz:</strong> karar kuralı, varsayımlar ve "varsayım çökerse" maddesi.</span></li>
+      <li><span><strong>Ancak bunlardan sonra model eğit.</strong> Eğittiğin modelin hedefi kâhin değil, güçlendirilmiş rakip olmalı.</span></li>
+      <li><span><strong>Her sonucu, sonucu bilmeyen birine baştan hesaplat.</strong></span></li>
+    </ol>
+    <p class="closing">Bu çalışmanın asıl değeri bir model değil, bu düzenin kendisi. Bize altı deneye mal oldu; bir sonraki projede tek haftaya mal olabilir.</p>
+  </section>
+
+  <footer>
+    <span>Çalışmanın tamamı: <a href="https://burhanbarakli.github.io/before-world-models/tr/">Dünya modeli eklemeden önce</a> · <a href="https://github.com/burhanbarakli/before-world-models">kod ve veriler</a></span>
+  </footer>
+</main>
+
+</body></html>

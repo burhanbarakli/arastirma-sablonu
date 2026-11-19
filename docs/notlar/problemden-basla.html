@@ -1,0 +1,293 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Problemden Başla</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: the same lab-notebook column as "Boşluğu önce ölç"; the six steps are a real sequence, the oracle box answers one question inside step 3. */
+  :root {
+    --bg: #f3f6f5;
+    --paper: #ffffff;
+    --fg: #17211f;
+    --muted: #56635f;
+    --accent: #0f6b63;
+    --accent-soft: #e1eeeb;
+    --rule: #d3dcd9;
+    --warn: #8a4b12;
+    --warn-soft: #f6ebdf;
+    --f-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae;
+      --accent-soft: #1b2b29; --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae;
+    --accent-soft: #1b2b29; --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 18px; line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 48px 72px;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; display: flex; flex-direction: column; gap: 52px; }
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+  h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.6rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--f-display); font-weight: 500; font-size: 1.25rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  section { display: flex; flex-direction: column; gap: 16px; }
+  .lede { font-size: 1.1rem; }
+  .thesis { font-family: var(--f-display); font-weight: 500; font-size: 1.35rem; line-height: 1.35; border-left: 3px solid var(--accent); padding-left: 16px; text-wrap: balance; }
+  .muted { color: var(--muted); }
+  ul, ol { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 6px; }
+  .steps { display: flex; flex-direction: column; gap: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; }
+  .step { display: grid; grid-template-columns: 2.4rem 1fr; gap: 16px; padding: 22px; }
+  .step + .step { border-top: 1px solid var(--rule); }
+  .step > div { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+  .badge { font-family: var(--f-mono); font-size: 13px; color: var(--paper); background: var(--accent); width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; margin-top: 2px; }
+  .output { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; font-size: 16px; }
+  .output strong { color: var(--accent); }
+  .oracle { border: 1.5px solid var(--accent); border-radius: 10px; padding: 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+  .oracle .tag { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+  .ways { display: flex; flex-direction: column; gap: 10px; counter-reset: w; list-style: none; padding: 0; }
+  .ways li { display: grid; grid-template-columns: 1.6rem 1fr; gap: 8px; counter-increment: w; }
+  .ways li::before { content: counter(w) "."; font-family: var(--f-mono); font-size: 14px; color: var(--accent); padding-top: 3px; }
+  .tablewrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th { font-family: var(--f-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .formula { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 20px 22px; font-family: var(--f-display); font-size: 1.15rem; line-height: 1.5; }
+  .slot { font-family: var(--f-mono); font-size: .8em; background: var(--accent-soft); color: var(--accent); padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .verdict { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .verdict > div { background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; font-size: 16px; min-width: 0; }
+  .verdict .no { border-color: var(--warn); }
+  .verdict b { font-family: var(--f-mono); font-size: 12px; letter-spacing: .05em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+  .verdict .no b { color: var(--warn); }
+  .verdict .yes b { color: var(--accent); }
+  .sub { font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); border-top: 1px dashed var(--rule); padding-top: 14px; margin-top: 4px; }
+  .tip { display: flex; flex-direction: column; gap: 6px; }
+  .tip p + p { color: var(--fg); }
+  .step.zero { background: var(--accent-soft); border-radius: 9px 9px 0 0; }
+  .step.zero .badge { background: var(--fg); }
+  .closing { font-family: var(--f-display); font-size: 1.3rem; line-height: 1.4; border-top: 2px solid var(--accent); padding-top: 20px; text-wrap: balance; }
+  footer { font-size: 15px; color: var(--muted); }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    body { font-size: 17px; padding-block: 32px 56px; }
+    .step { grid-template-columns: 1fr; gap: 10px; padding: 18px 16px; }
+    .verdict { grid-template-columns: 1fr; }
+    .wrap { gap: 42px; }
+  }
+</style>
+
+<main class="wrap">
+  <header>
+    <span class="eyebrow">Araştırma notları · Bir makaleyi ilerletmek</span>
+    <h1>Problemden başla</h1>
+  </header>
+
+  <section aria-labelledby="s0">
+    <h2 id="s0">"Açık bul, deney yap" neden ters sırada?</h2>
+    <p class="lede">"Literatürde açık bul, oraya deney yap" yöntemi tamamen yanlış değil, ama sırası ters. Asıl sorun şu:</p>
+    <p class="thesis">Literatürdeki açık, "bunu kimse yapmamış" demektir; "buna ihtiyaç var" demek değildir.</p>
+    <p>Bizim başlangıcımız tam buydu. "Kararlı hareket sistemiyle dünya modelini kimse birleştirmemiş" dedik. Doğruydu; o birleşim gerçekten boştu. Ama makalenin görevinde robot zaten 25 denemede 25 başarıyordu. Açık vardı, ihtiyaç yoktu.</p>
+  </section>
+
+  <section aria-labelledby="s1">
+    <h2 id="s1">Doğru sıra: problemden başla, çözümden değil</h2>
+    <div class="steps">
+      <div class="step zero"><span class="badge">0</span><div>
+        <h3>Yeniden üretmeden önce: okurken ve çevresinden</h3>
+        <p>"Limitations" bölümü tek kaynak değil, hatta en zayıflarından biri. Yazarlar o bölüme genelde zararsız sınırları yazar; yöntemi gerçekten kıran şeyler çoğu zaman makalenin başka yerlerinde gizlidir. Yeniden üretmeden önce yapılabilecekler, ucuzdan pahalıya:</p>
+
+        <p class="sub">Makaleyi okurken · bir gün</p>
+        <div class="tip">
+          <p><strong>Gösterdiklerine değil, göstermediklerine bak.</strong> Deneyler bölümünde şunları sor:</p>
+          <ul>
+            <li>Kaç koşulda, kaç tohumla denemişler? Hata çubukları var mı?</li>
+            <li>Hangi koşulu hiç değiştirmemişler? Gürültü, gecikme, veri miktarı, ölçek...</li>
+            <li>Basit bir yöntemle karşılaştırmışlar mı? Karşılaştırmadılarsa bu bir işarettir.</li>
+          </ul>
+        </div>
+        <div class="tip">
+          <p><strong>Varsayımları tek tek listele.</strong> Yöntem bölümündeki her "varsayıyoruz ki" cümlesi, yöntemin kırılabileceği bir yerdir. Her biri için sor: "Bu varsayım gerçekte ne zaman bozulur?"</p>
+          <p>BCSDM'de bunu yapsaydık şu liste çıkardı: ölçüm kusursuz, gecikme yok, delik geometrisi biliniyor. Algılayıcı sorununu altıncı deneyde değil, ilk gün görürdük.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Elle seçilmiş sabitleri işaretle.</strong> "Bu değeri deneme yanılmayla seçtik" denen her sayı bir fırsattır: duruma göre değişmesi gerekebilir. Bizim çalışma tam buradan, makalede elle sabitlenen η'dan çıktı. Ama yine de önce tavan payına bak.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Başarı oranlarına bak: tavana dayanmış mı?</strong> Makaledeki görevde başarı zaten %100'e yakınsa, o görevde ilerletilecek bir şey yoktur. Bizim şemsiye görevinde 25 denemede 25 başarı vardı; bu, ilk gün durmamız gereken bir işaretti.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Eki (appendix) oku.</strong> Başarısız örnekler, ayar ayrıntıları ve hesaplama maliyeti çoğu zaman oraya saklanır.</p>
+        </div>
+
+        <p class="sub">Makalenin çevresinden · bir hafta</p>
+        <div class="tip">
+          <p><strong>Hakem yorumlarını oku.</strong> ICLR, NeurIPS, CoRL gibi konferanslarda hakem yorumları ve yazarların cevapları OpenReview'da açıktır. Hakemler zayıflıkları senin yerine bedavaya listelemiştir; yazarların cevapları da neyi savunamadıklarını gösterir.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Resmî kodun GitHub "Issues" bölümüne bak.</strong> Çok az kullanılan ama çok değerli bir kaynak. İnsanlar orada şunları yazar: "Sonuçları üretemedim", "Şu durumda çöküyor", "Şu veride çalışmıyor". Bunlar, yöntemin gerçekte nerede kırıldığının ham listesidir.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Makaleye atıf yapanları oku.</strong> Google Scholar'da "Alıntılayanlar" bağlantısına tıkla. Sonraki makaleler bu yöntemi rakip olarak kullandıysa, karşılaştırma tablolarında nerede kaybettiği yazar. Başkası senin yerine zorlama deneyini zaten yapmış olabilir.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Yazarlara e-posta at.</strong> Kısa ve somut bir soru sor: "Yönteminiz en çok hangi koşulda zorlanıyor?" Yazarlar yayımlamadıkları başarısızlıkları çoğu zaman bilir ve çoğu araştırmacı bu soruya memnuniyetle cevap verir. Konferans konuşmalarının soru-cevap bölümleri de aynı işi görür.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Benchmark tablolarına bak.</strong> Papers with Code gibi sitelerde o alandaki sonuçlar yıllara göre listelenir. Sonuçlar yıllardır yerinde sayıyorsa benchmark doymuştur, orada kazanç zordur. Tersine, büyük düşüşler gösteren bir zorluk varsa orası canlı bir alandır.</p>
+        </div>
+
+        <p class="sub">Ucuz denemeler · iki hafta, tam yeniden üretim yapmadan</p>
+        <div class="tip">
+          <p><strong>Kâğıt üzerinde hesap yap.</strong> Bazı sınırlar kod yazmadan görülür. Gecikmenin ηh &gt; π/2 olunca salınım yarattığını bir satırlık analizle bulduk. Yöntemin denklemlerine bakıp "şu büyüklük artarsa ne olur?" diye sormak, haftalarca deneyin yerini tutabilir.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Oyuncak bir sürüm yap.</strong> Yöntemin çekirdeğini iki boyutta, birkaç yüz satırla yeniden yaz. Biz bunu <code>toy_eta</code> deneyinde yaptık. Gerçek robot benzetimi olmadan, fikrin işe yarayıp yaramadığını birkaç günde gördük.</p>
+        </div>
+        <div class="tip">
+          <p><strong>Hazır kodu yalnız zorlama koşullarında çalıştır.</strong> Makalenin bütün sonuçlarını üretmek zorunda değilsin. Resmî kodu ve hazır ağırlıkları (checkpoint) indir, yalnız şüphelendiğin birkaç koşulda dene: biraz gürültü ekle, biraz gecikme koy. Bu, tam yeniden üretimin onda biri kadar emek ister.</p>
+        </div>
+
+        <p class="sub">Yeni bir alana giriyorsan · varsayım tablosu</p>
+        <p>Tek bir makale yerine, alandaki 8–10 önemli makaleyi al ve şöyle bir tablo yap:</p>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Makale</th><th>Ölçüm kusursuz mu?</th><th>Gecikme var mı?</th><th>Gerçek robot mu?</th><th>Basit rakip var mı?</th><th>Kaç tohum?</th></tr></thead>
+            <tbody>
+              <tr><td>A</td><td>Evet</td><td>Yok</td><td>Hayır</td><td>Yok</td><td>3</td></tr>
+              <tr><td>B</td><td>Evet</td><td>Yok</td><td>Evet</td><td>Var</td><td>5</td></tr>
+              <tr><td>...</td><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p><strong>Herkesin aynı şekilde işaretlediği sütun, alanın kör noktasıdır.</strong> On makalenin onu da "ölçüm kusursuz" varsayıyorsa, gerçek bir araştırma sorusu tam orada duruyor demektir. Üstelik hakem "neden önemli?" diye sorduğunda tabloyu gösterirsin.</p>
+
+        <p class="output"><strong>Claude ile:</strong> bu adımın okuma ve tarama kısmını Claude'a nasıl yaptıracağın, kimin neyi doğrulayacağını gösteren akış şeması ve hazır komut için yardımcı sayfaya bak: <a href="claude-ile-okumak.html">Claude ile okumak</a>.</p>
+        <p class="output"><strong>Bu adımın sırası:</strong> (1) varsayımları, elle seçilmiş sabitleri ve tavana dayanmış sonuçları listele; (2) hakem yorumlarını, GitHub Issues bölümünü ve sonraki makaleleri tara; (3) kâğıt üzerinde hesap yap ya da oyuncak bir sürüm kur; (4) hepsi aynı zayıf noktayı gösteriyorsa, ancak o zaman aşağıdaki 1. adıma geç ve yöntemi yeniden üret, yalnız o noktayı zorlayarak.</p>
+      </div></div>
+
+      <div class="step"><span class="badge">1</span><div>
+        <h3>Makaleyi yeniden üret</h3>
+        <p>Makalenin kendi sonuçlarını kendi elinle elde et. Üretemediğin bir şeyi ilerletemezsin. Ayrıca bu adımda yöntemin nasıl çalıştığını gerçekten öğrenirsin: hangi ayar neyi etkiliyor, nerede kırılgan.</p>
+      </div></div>
+
+      <div class="step"><span class="badge">2</span><div>
+        <h3>Makaleyi zorla, nerede bozulduğunu bul</h3>
+        <p>Makaleler genelde yöntemin iyi çalıştığı koşulları gösterir. Sen tersini yap ve koşulları zorla:</p>
+        <ul>
+          <li>gürültü, gecikme, daha az veri, daha uzun görev;</li>
+          <li>dağılım kayması: eğitimde görmediği durumlar;</li>
+          <li>gerçek dünyaya yakınlaştırma: algılayıcı hatası, ölçek, maliyet.</li>
+        </ul>
+        <p>Makalenin "Limitations" bölümünü ve başarısız örneklerini dikkatle oku. Yazarların itiraf ettiği zayıflıklar genellikle en verimli başlangıç noktasıdır.</p>
+        <p class="output"><strong>Bu adımın çıktısı bir sayı olmalı:</strong> "Yöntem şu koşulda başarıyı %95'ten %60'a düşürüyor." Hiçbir koşulda belirgin bir düşüş bulamıyorsan, ilerletilecek bir şey yoktur. Bunu erken öğrenmek büyük kazançtır.</p>
+      </div></div>
+
+      <div class="step"><span class="badge">3</span><div>
+        <h3>Boşluğu ölç: kâhin ve basit çare</h3>
+        <p>Bulduğun her bozulma için iki şey ölç:</p>
+        <ul>
+          <li><strong>Kâhin:</strong> sorunun kaynağı kusursuz bilinseydi ne olurdu? Bu, herhangi bir yeni yöntemin tavanıdır.</li>
+          <li><strong>En basit çare:</strong> ayar değiştirmek, bir eşik eklemek, bir kural yazmak, ya da mevcut bir yöntemi doğrudan uygulamak ne kadarını kapatıyor?</li>
+        </ul>
+        <p>Gerçek araştırma boşluğu, ikisinin <strong>arasında kalan</strong> kısımdır.</p>
+
+        <div class="oracle" aria-labelledby="o">
+          <span class="tag">Soru</span>
+          <h3 id="o">Kâhini kim belirler?</h3>
+          <p><strong>Sen belirlersin, yani araştırmacı.</strong> Kâhin hazır bulunan bir şey değil; senin kurduğun bir deney düzeneği. Tarifi basit:</p>
+          <ol class="ways">
+            <li><span>Yeni yönteminin <strong>neyi tahmin etmeye çalışacağını</strong> bul.</span></li>
+            <li><span>Sistemde o tahminin yerine <strong>gerçek değeri</strong> koy.</span></li>
+            <li><span>Sistemin ne kadar iyi çalıştığına bak. Çıkan sonuç, o yöntemin tavanıdır.</span></li>
+          </ol>
+          <p><strong>Gerçek değeri elde etmenin üç yolu var:</strong></p>
+          <ul>
+            <li><strong>Gerçek zaten elindeyse, doğrudan ver.</strong> Benzetimde her şeyin gerçek değeri bilinir; bizim çalışmada deliğin gerçek yeri buydu. Veri kümelerinde de çoğu zaman gerçek etiketler (ground truth) vardır: gerçek nesne maskesi, gerçek derinlik, doğru belge.</li>
+            <li><strong>Yöntem bir seçim yapacaksa, hepsini dene ve sonradan en iyisini al.</strong> Bizim "her koşul için en iyi η" tablomuz böyle bir kâhindi.</li>
+            <li><strong>Ground truth yoksa, daha iyi bir ölçüm kullan.</strong> Bu bir insan etiketi, daha pahalı bir sensör ya da çok daha büyük bir model olabilir.</li>
+          </ul>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>Yeni yöntem ne yapacak?</th><th>Kâhin onun yerine neyi verir?</th></tr></thead>
+              <tbody>
+                <tr><td>Görüntüden nesnenin konumunu tahmin edecek</td><td>Nesnenin gerçek konumu</td></tr>
+                <tr><td>Soruya uygun belgeyi bulacak (RAG)</td><td>Doğru belgelerin kendisi</td></tr>
+                <tr><td>Her örnek için en iyi ayarı seçecek</td><td>Her örnek için sonradan bakılmış en iyi ayar</td></tr>
+                <tr><td>Geleceği tahmin edecek (dünya modeli)</td><td>Benzetimin gerçek geleceği</td></tr>
+                <tr><td>Deliğin yerini kuvvetlerden kestirecek (bizim çalışma)</td><td>Deliğin gerçek yeri</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><strong>Kâhin neyi, ne zamandan itibaren bilsin?</strong> Bunu da sen belirlersin, ama bir kurala göre. Önce yeni yönteminin hangi bilgiyi, ne zamandan itibaren göreceğini yaz. Adil kâhin aynı anda başlar ve aynı şeyleri görür; tek farkı, tahmin edilecek şeyi kusursuz bilmesidir. Bizim çalışmada model deliği dokunduktan sonra kestirecekti, o yüzden adil kâhin deliği ancak ilk dokunuştan itibaren bildi.</p>
+          <p>Bu kararı sonuçları görmeden, protokolde yazmak önemli. Yoksa kâhini farkında olmadan kendi yöntemini iyi gösterecek şekilde kurabilirsin.</p>
+        </div>
+      </div></div>
+
+      <div class="step"><span class="badge">4</span><div>
+        <h3>Nedeni teşhis et</h3>
+        <p>Bozulmanın hangi bileşenden geldiğini bul. Ablasyon yap, bileşenleri tek tek kusursuz hâliyle değiştir. Bizim algılayıcı deneyinde "kaybın nedeni kural mı, algılayıcı mı?" diye ayırınca sorunun algılayıcı sapması olduğu ortaya çıktı.</p>
+      </div></div>
+
+      <div class="step"><span class="badge">5</span><div>
+        <h3>Literatürü şimdi tara</h3>
+        <p>Artık aradığın şey çok özel: "Şu yöntem, şu koşulda, şu nedenle bozuluyor; bunu çözen var mı?" Bu, "kimse X ile Y'yi birleştirmemiş" aramasından çok daha verimli. Bulursan onu rakip olarak kullanırsın. Bulamazsan gerçek bir açık bulmuşsundur.</p>
+      </div></div>
+
+      <div class="step"><span class="badge">6</span><div>
+        <h3>Ancak şimdi yöntemi tasarla</h3>
+        <p>Yöntemin hedefi kâhin değil, <strong>en güçlü basit çare</strong> olmalı. Deneyden önce şunları yaz:</p>
+        <ul>
+          <li>karar kuralı;</li>
+          <li>eşik;</li>
+          <li>durma kuralı.</li>
+        </ul>
+      </div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s2">
+    <h2 id="s2">Kâğıda yazılacak tek cümle</h2>
+    <p>Bir makaleyi ilerletmeye başlamadan önce şu cümleyi rakamlarla doldurabilmelisin:</p>
+    <p class="formula">"<span class="slot">Yöntem</span>, <span class="slot">koşul</span> altında <span class="slot">ölçüt</span>'te <span class="slot">X</span> kadar düşüyor. Sorunun kaynağını bilen bir kâhin <span class="slot">Y</span> kazandırıyor. En iyi basit çare bunun <span class="slot">Z</span> kadarını kapatıyor. Geriye kalan <span class="slot">Y − Z</span>, bizim hedefimiz."</p>
+    <div class="verdict">
+      <div class="no"><b>Dolduramıyorsan</b>Henüz bir araştırma sorun yok, yalnız bir fikrin var.</div>
+      <div class="yes"><b>Doldurabiliyorsan ve Y − Z büyükse</b>Makalenin girişi zaten yazılmış demektir. Hakemin "neden buna ihtiyaç var?" sorusuna cevabın hazırdır.</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="s3">
+    <h2 id="s3">Bizim çalışmada nasıl olmalıydı?</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Hafta</th><th>Yapılması gereken</th><th>Bizde ne oldu</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>BCSDM'yi benzetimde üret</td><td>Yaptık</td></tr>
+          <tr><td>2</td><td>Zorla: gecikme, konum hatası, algılayıcı hatası, öğrenilmiş alan hatası</td><td>Bunları altı ayrı deneyde, sırayla yaptık</td></tr>
+          <tr><td>3</td><td>Her bozulma için kâhin ve basit çareyi ölç</td><td>Her deneyde ayrı ayrı yaptık</td></tr>
+          <tr><td>4</td><td>Kalan tek boşluğu seç (kötü algılayıcı) ve yöntemi ona göre tasarla</td><td>Buraya ancak en sonda vardık</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Adımlar aslında doğruydu; sıra yanlıştı. Önce çözümü (dünya modeli) seçtik, sonra ona problem aradık. Önce problemleri ölçseydik, bütün bozulmaları üç haftada tarar ve tek gerçek boşluğa (kötü algılayıcı) doğrudan giderdik.</p>
+    <p class="closing">"Nerede açık var?" diye sormak yerine şunu sor: bu yöntem nerede bozuluyor, ve basit çareler orayı neden kapatamıyor?</p>
+  </section>
+
+  <footer>
+    Yardımcı sayfa: <a href="claude-ile-okumak.html">Claude ile okumak</a> · Önceki not: <a href="bosluk-once-olc.html">Boşluğu önce ölç</a> · Çalışmanın tamamı: <a href="https://burhanbarakli.github.io/before-world-models/tr/">Dünya modeli eklemeden önce</a>
+  </footer>
+</main>
+
+</body></html>

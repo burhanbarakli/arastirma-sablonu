@@ -1,0 +1,290 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Claude ile Okumak</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: companion to "Problemden başla"; same notebook column, opened by a flow chart where every box says who does it (Claude or you). */
+  :root {
+    --bg: #f3f6f5;
+    --paper: #ffffff;
+    --fg: #17211f;
+    --muted: #56635f;
+    --accent: #0f6b63;
+    --accent-soft: #e1eeeb;
+    --rule: #d3dcd9;
+    --you: #7a4a9e;
+    --you-soft: #f0e8f6;
+    --warn: #8a4b12;
+    --warn-soft: #f6ebdf;
+    --f-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae; --accent-soft: #1b2b29;
+      --rule: #2a3633; --you: #c39ae6; --you-soft: #261e2e; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae; --accent-soft: #1b2b29;
+    --rule: #2a3633; --you: #c39ae6; --you-soft: #261e2e; --warn: #e2a368; --warn-soft: #2a2119; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 18px; line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 48px 72px;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; display: flex; flex-direction: column; gap: 52px; }
+  header { display: flex; flex-direction: column; gap: 14px; }
+  .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.05; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+  h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.6rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--f-display); font-weight: 500; font-size: 1.2rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  section { display: flex; flex-direction: column; gap: 16px; }
+  .lede { font-size: 1.1rem; }
+  ul, ol { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 8px; }
+  code { font-family: var(--f-mono); font-size: .85em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+
+  /* flow chart */
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 15px; color: var(--muted); }
+  .chip { font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .chip.c { background: var(--accent-soft); color: var(--accent); }
+  .chip.y { background: var(--you-soft); color: var(--you); }
+  .chip.b { background: var(--warn-soft); color: var(--warn); }
+  .flow { display: flex; flex-direction: column; align-items: stretch; }
+  .node { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+  .node.y { border-color: var(--you); background: var(--you-soft); }
+  .node .top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .node .name { font-family: var(--f-display); font-weight: 500; font-size: 1.05rem; }
+  .node p { font-size: 15.5px; color: var(--muted); }
+  .arrow { height: 28px; display: flex; justify-content: center; position: relative; }
+  .arrow::before { content: ""; width: 2px; background: var(--rule); height: 100%; }
+  .arrow::after { content: ""; position: absolute; bottom: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 8px solid var(--muted); }
+  .arrow span { position: absolute; left: calc(50% + 12px); top: 3px; font-family: var(--f-mono); font-size: 11px; color: var(--muted); }
+  .decision { border: 2px dashed var(--fg); border-radius: 10px; padding: 14px 16px; text-align: center; font-family: var(--f-display); font-weight: 500; }
+  .branches { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .branch { display: flex; flex-direction: column; }
+  .branch .lbl { font-family: var(--f-mono); font-size: 12px; text-align: center; color: var(--muted); padding: 4px 0; }
+  .node.go { border-color: var(--accent); border-width: 2px; }
+  .node.stop { border-color: var(--warn); border-width: 2px; }
+  .side { margin-top: 16px; border-left: 3px solid var(--you); padding: 10px 14px; font-size: 16px; background: var(--paper); border-radius: 0 8px 8px 0; }
+
+  /* rules, tables, prompt */
+  .rules { list-style: none; padding: 0; counter-reset: r; gap: 14px; }
+  .rules li { display: grid; grid-template-columns: 2rem 1fr; gap: 10px; counter-increment: r; }
+  .rules li::before { content: counter(r); font-family: var(--f-mono); font-size: 13px; color: var(--paper); background: var(--accent); width: 1.7rem; height: 1.7rem; border-radius: 50%; display: grid; place-items: center; margin-top: 2px; }
+  .tablewrap { overflow-x: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15.5px; min-width: 40rem; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td:first-child { font-weight: 600; }
+  td.y { color: var(--you); }
+  .prompt { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .prompt .bar { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--rule); font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+  .prompt pre { margin: 0; padding: 14px 16px; white-space: pre-wrap; font-family: var(--f-mono); font-size: 14px; line-height: 1.55; color: var(--fg); }
+  button { font-family: var(--f-mono); font-size: 12px; border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
+  button:hover { background: var(--accent-soft); }
+  button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .note { background: var(--accent-soft); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .note.warn { background: var(--warn-soft); }
+  .note.warn h3 { color: var(--warn); }
+  .skill { background: var(--paper); border: 2px solid var(--accent); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .skill .cmd { font-family: var(--f-mono); font-size: 15px; background: var(--accent-soft); padding: 10px 12px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+  footer { font-size: 15px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  @media (max-width: 640px) {
+    body { font-size: 17px; padding-block: 32px 56px; }
+    .branches { grid-template-columns: 1fr; }
+    .wrap { gap: 42px; }
+  }
+</style>
+
+<main class="wrap">
+  <header>
+    <span class="eyebrow">Araştırma notları · "Problemden başla" sayfasının yardımcısı</span>
+    <h1>Claude ile okumak</h1>
+    <p class="lede">Claude, bu sürecin en çok okuma ve tarama kısmını hızlandırır; 0. adımda haftalar süren işi günlere indirebilir. Ama doğru kullanılmazsa seni kendinden emin bir şekilde yanlış yere de götürebilir. Aşağıdaki akış, her adımı kimin yaptığını gösteriyor: Claude tarar, sen doğrularsın.</p>
+  </header>
+
+  <section aria-labelledby="flow-h">
+    <h2 id="flow-h">Akış: bir makaleden boşluk cümlesine</h2>
+    <div class="legend">
+      <span><span class="chip c">Claude</span> tarar, çıkarır, tabloya döker</span>
+      <span><span class="chip y">Sen</span> doğrularsın, karar verirsin</span>
+      <span><span class="chip b">Birlikte</span></span>
+    </div>
+    <div class="flow" role="list">
+      <div class="node" role="listitem">
+        <div class="top"><span class="chip y">Sen</span><span class="name">Kaynakları topla</span></div>
+        <p>Makalenin PDF'i, eki, resmî kodu, OpenReview sayfası, GitHub Issues bağlantısı. Claude'un hafızasına değil, kaynağın kendisine dayan.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="node" role="listitem">
+        <div class="top"><span class="chip c">Claude</span><span class="name">İçeride tara</span></div>
+        <p>Göstermedikleri, varsayımlar, elle seçilmiş sabitler, tavana dayanmış sonuçlar, ek. Her madde bölüm adı ve kısa alıntıyla.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="node y" role="listitem">
+        <div class="top"><span class="chip y">Sen</span><span class="name">Alıntıları doğrula</span></div>
+        <p>Her alıntının makalede gerçekten olduğunu aç ve bak. Bulamadığını sil ya da "doğrulanamadı" diye işaretle.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="node" role="listitem">
+        <div class="top"><span class="chip c">Claude</span><span class="name">Çevresinde tara</span></div>
+        <p>Hakem yorumları, GitHub Issues, makaleye atıf yapan çalışmalar, benchmark tabloları. Her bulgu bağlantısıyla.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="node y" role="listitem">
+        <div class="top"><span class="chip y">Sen</span><span class="name">Kaynakların gerçek olduğunu kontrol et</span></div>
+        <p>Önerilen her makaleyi Google Scholar'da ya da DOI'den aç. Uydurma bir kaynak bütün raporu çürütür.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"><span>birden çok makale varsa</span></div>
+      <div class="node" role="listitem">
+        <div class="top"><span class="chip c">Claude</span><span class="name">Varsayım tablosu</span></div>
+        <p>8–10 makale, aynı sütunlar. Herkesin aynı işaretlediği sütun alanın kör noktasıdır. Sen rastgele iki satırı kendin doldurup karşılaştır.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="node" role="listitem">
+        <div class="top"><span class="chip b">Birlikte</span><span class="name">Ucuz denemeler</span></div>
+        <p>Kâğıt üzerinde hesap, oyuncak sürüm ya da hazır kodu yalnız zorlama koşullarında çalıştırmak. Claude yazar ve çalıştırır; türetmeyi ve kodu sen okursun. Taban, basit kural ve adil kâhin birlikte ölçülür.</p>
+      </div>
+      <div class="arrow" aria-hidden="true"></div>
+      <div class="decision" role="listitem">Boşluk cümlesi rakamlarla doldu mu, ve Y − Z büyük mü?</div>
+      <div class="branches">
+        <div class="branch">
+          <span class="lbl">evet</span>
+          <div class="node go">
+            <div class="top"><span class="chip y">Sen</span><span class="name">1. adıma geç</span></div>
+            <p>Yöntemi yeniden üret, ama yalnız bulunan zayıf noktayı zorla.</p>
+          </div>
+        </div>
+        <div class="branch">
+          <span class="lbl">hayır</span>
+          <div class="node stop">
+            <div class="top"><span class="chip y">Sen</span><span class="name">Dur ya da başka makaleye geç</span></div>
+            <p>Burada ilerletilecek bir şey yok. Bunu haftalar sonra değil, şimdi öğrenmek kazançtır.</p>
+          </div>
+        </div>
+      </div>
+      <p class="side"><strong>Her sonuçtan sonra:</strong> yeni bir oturumda kör denetim. Denetçiye kodu, veriyi ve protokolü ver, sonucu söyleme.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="rules-h">
+    <h2 id="rules-h">Önce beş kural</h2>
+    <ol class="rules">
+      <li><span><strong>Ona sonucu değil, kaynağı ver.</strong> Makalenin PDF'ini, kodunu, hakem yorumlarını doğrudan ver. Claude'un hafızasındaki makale özeti eksik ya da yanlış olabilir.</span></li>
+      <li><span><strong>Her iddia için yer iste.</strong> "Bunu makalenin hangi bölümünde, hangi cümlede söylüyorlar? Kısa bir alıntıyla göster" de. Sonra o yere kendin bak. Bu tek alışkanlık, hataların çoğunu yakalar.</span></li>
+      <li><span><strong>Hipotezini söyleme.</strong> "Bence bu yöntem gecikmede bozulur, doğru mu?" diye sorarsan büyük olasılıkla "evet" der. Bunun yerine sor: "Bu yöntem nerede bozulur?" Bizim deneylerdeki bağımsız denetçinin işe yaramasının nedeni buydu: ona sonucu söylemedik.</span></li>
+      <li><span><strong>Kaynak listelerine güvenme, doğrula.</strong> Claude var olmayan bir makale ya da yanlış bir yıl uydurabilir. Önerdiği her makaleyi Google Scholar'da ya da DOI'den kontrol et.</span></li>
+      <li><span><strong>Fikri değil, ölçümü hızlandır.</strong> Claude'un en büyük değeri, senin yerine karar vermesinde değil, kararı verdirecek sayıları çok daha hızlı elde etmende.</span></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="table-h">
+    <h2 id="table-h">0. adımda Claude'u nasıl kullanırsın?</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Adım</th><th>Claude'a ne yaptırırsın?</th><th>Sen neyi kontrol edersin?</th></tr></thead>
+        <tbody>
+          <tr><td>Göstermediklerine bak</td><td>"Deneylerde hangi koşullar sabit tutulmuş, hangileri hiç denenmemiş? Tohum sayısı, hata çubukları, basit rakip var mı? Tablo yap."</td><td class="y">Tablodaki her satırı makalede bul</td></tr>
+          <tr><td>Varsayımları listele</td><td>"Yöntemin açık ve örtük bütün varsayımlarını listele. Her biri için: hangi bölümde, ve gerçekte ne zaman bozulur?"</td><td class="y">Örtük varsayımları kendin de düşün; Claude bazılarını kaçırır</td></tr>
+          <tr><td>Elle seçilmiş sabitler</td><td>"Makalede elle ya da deneme yanılmayla seçilmiş bütün sabitleri ve nasıl seçildiklerini çıkar."</td><td class="y">Ekte (appendix) de ara</td></tr>
+          <tr><td>Tavana dayanmış mı?</td><td>"Her deneyde başarı oranı ne? Hangileri %95'in üstünde?"</td><td class="y">Sayıları tablolardan doğrula</td></tr>
+          <tr><td>Hakem yorumları</td><td>OpenReview sayfasını ver: "Hakemlerin dile getirdiği zayıflıkları ve yazarların cevaplayamadıklarını ayır."</td><td class="y">Yazarların cevabını kendin oku</td></tr>
+          <tr><td>GitHub Issues</td><td>Issues sayfasını ver: "Kullanıcıların bildirdiği başarısızlıkları türlerine göre grupla."</td><td class="y">En sık tekrar eden üç sorunu kendin aç ve oku</td></tr>
+          <tr><td>Atıf yapan makaleler</td><td>"Bu makaleyi rakip olarak kullanan sonraki çalışmaları bul ve nerede kaybettiğini çıkar."</td><td class="y"><strong>Her makalenin gerçekten var olduğunu doğrula</strong></td></tr>
+          <tr><td>Varsayım tablosu</td><td>8–10 PDF'i birlikte ver: "Her makale için şu sütunları doldur: ölçüm kusursuz mu, gecikme, gerçek robot, basit rakip, tohum sayısı."</td><td class="y">Rastgele iki makaleyi seçip kendin doldur, Claude'unkiyle karşılaştır</td></tr>
+          <tr><td>Kâğıt üzerinde hesap</td><td>"Denklemlerde şu büyüklük artarsa ne olur? Kararsızlık sınırı var mı? Adım adım türet."</td><td class="y">Türetmeyi satır satır kontrol et ya da küçük bir sayısal denemeyle sına</td></tr>
+          <tr><td>Oyuncak sürüm</td><td>Claude Code'da: "Yöntemin çekirdeğini 2 boyutta, 200 satırla yaz ve şu koşulda dene."</td><td class="y">Kodu oku; kâhin ve basit kuralı da eklet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="prompt-h">
+    <h2 id="prompt-h">Örnek bir başlangıç istemi</h2>
+    <p>Bir makaleyi ilk kez açtığında şöyle bir istem iyi bir başlangıçtır:</p>
+    <div class="prompt">
+      <div class="bar"><span>istem</span><button type="button" id="copy-prompt">Kopyala</button></div>
+      <pre id="prompt-text">Ekteki makaleyi oku. Yazarların ne iddia ettiğini değil, yöntemin nerede bozulabileceğini arıyorum. Şunları çıkar: (1) açık ve örtük varsayımlar, (2) elle seçilmiş sabitler, (3) hiç değiştirilmemiş deney koşulları, (4) başarı oranı %95'in üstünde olan deneyler, (5) basit bir rakiple karşılaştırma yapılıp yapılmadığı. Her madde için makaleden bölüm adı ve kısa bir alıntı ver. Emin olmadığın yerde 'emin değilim' yaz.</pre>
+    </div>
+    <p>Son cümle önemli. Claude'a belirsizliği söyleme izni vermek, uydurma riskini azaltır.</p>
+  </section>
+
+  <section aria-labelledby="skill-h">
+    <h2 id="skill-h">Hepsini tek komutta: zayıf nokta raporu</h2>
+    <div class="skill">
+      <p>Yukarıdaki akışın Claude tarafı, Claude Code'da hazır bir komut (skill) olarak kurulu. Bir makale verdiğinde akışı baştan sona yürütür ve bir rapor dosyası yazar.</p>
+      <div class="cmd">/zayif-nokta-raporu makale.pdf</div>
+      <p>Komut yazmadan da çalışır: "Bu makalenin zayıf noktalarını çıkar", "makaleyi zorla" ya da "şu beş makale için varsayım tablosu yap" demen yeterli. Raporda sırasıyla şunlar olur:</p>
+      <ul>
+        <li>en umut verici üç-beş zayıf nokta, ucuzdan pahalıya sıralı;</li>
+        <li>içeride bulunanlar: her satırda bölüm adı ve alıntı;</li>
+        <li>çevresinde bulunanlar: hakem yorumları, GitHub Issues, atıf yapan makaleler, bağlantılarıyla;</li>
+        <li>ucuz deneme önerileri (sen onay vermeden çalıştırılmaz);</li>
+        <li>birden çok makale verildiyse varsayım tablosu ve kör nokta;</li>
+        <li>yarısı doldurulmuş boşluk cümlesi; ölçülmesi gereken yerlerde <code>?</code>;</li>
+        <li>doğrulanamayan her iddia ve açılamayan her kaynak.</li>
+      </ul>
+      <p>Komut, kurallara göre davranır: hafızadan değil kaynaktan çalışır, her iddiaya yer gösterir, senin hipotezini soru olarak almaz, önerdiği her makalenin varlığını kontrol eder ve yayımlanmamış fikirlerini dışarıdaki hizmetlere göndermez. Bu komut yalnız bu bilgisayardaki Claude Code'da kurulu; claude.ai'de değil.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="audit-h">
+    <h2 id="audit-h">Kör denetçi olarak kullanmak</h2>
+    <p>Bu çalışmada en çok işe yarayan şey buydu. Bir sonuca vardığında <strong>yeni bir oturum aç</strong>, ona yalnız kodu, veriyi ve protokolü ver, sonucu söyleme. "Bu protokole göre sonucu baştan hesapla ve hataları bul" de. Sonucu bilmeyen bir oturum, senin gözünden kaçanı bulur. Bizde süre deneyindeki analiz hatasını da, algılayıcı deneyindeki sıfırlama fikrini de böyle bir denetçi buldu.</p>
+  </section>
+
+  <section aria-labelledby="tools-h">
+    <h2 id="tools-h">Diğer yapay zekâ araçları</h2>
+    <p>Literatür haritası için Claude'un yanında şunlar da işe yarar:</p>
+    <ul>
+      <li><strong>Semantic Scholar</strong> ve <strong>Connected Papers:</strong> bir makalenin atıf ağını görsel olarak gösterir.</li>
+      <li><strong>Elicit:</strong> birçok makaleden aynı bilgiyi tablo hâlinde çıkarmaya yardım eder.</li>
+    </ul>
+    <p>Bunlar Claude'un uydurabileceği kaynakları gerçek veritabanından getirdiği için birbirini iyi tamamlarlar.</p>
+  </section>
+
+  <section aria-labelledby="careful-h">
+    <div class="note warn">
+      <h3 id="careful-h">Nerede dikkatli olmalı?</h3>
+      <ul>
+        <li><strong>Şekiller ve grafikler:</strong> Claude bir grafikten sayı okurken yanılabilir. Önemli bir sayıyı her zaman tablodan ya da metinden doğrula.</li>
+        <li><strong>Ek materyal:</strong> PDF'te olmayan ek dosyaları göremez; ayrıca vermen gerekir.</li>
+        <li><strong>Henüz yayımlanmamış fikirler:</strong> kendi yayımlanmamış fikirlerini paylaşırken kullandığın hizmetin veri politikasını bil.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <span>Ana sayfa: <a href="problemden-basla.html">Problemden başla</a> · Önceki not: <a href="bosluk-once-olc.html">Boşluğu önce ölç</a></span>
+    <span>Çalışmanın tamamı: <a href="https://burhanbarakli.github.io/before-world-models/tr/">Dünya modeli eklemeden önce</a></span>
+  </footer>
+</main>
+
+<script>
+  (function () {
+    var btn = document.getElementById("copy-prompt");
+    var pre = document.getElementById("prompt-text");
+    if (!btn || !pre) return;
+    function selectText() {
+      var r = document.createRange(); r.selectNodeContents(pre);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    }
+    btn.addEventListener("click", function () {
+      var done = function () { btn.textContent = "Kopyalandı"; setTimeout(function () { btn.textContent = "Kopyala"; }, 1800); };
+      try {
+        navigator.clipboard.writeText(pre.textContent).then(done, function () { selectText(); btn.textContent = "Seçildi, kopyala"; });
+      } catch (e) { selectText(); btn.textContent = "Seçildi, kopyala"; }
+    });
+  })();
+</script>
+
+</body></html>

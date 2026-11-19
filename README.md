@@ -94,6 +94,14 @@ Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. 
 Her aşamada: kapı kararından sonra `durum.html` güncellenir. İkinci görüş için `llm-council` / `claude-council`;
 `claude-council` soruyu dış servislere gönderir, yayımlanmamış fikir girmez.
 
+## Belgeler
+
+- [`docs/NEDEN.md`](docs/NEDEN.md): her kuralın hangi hatadan ya da dersten doğduğu ve tarihli kararlar günlüğü.
+- [`docs/skill-haritasi.html`](docs/skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
+- `docs/notlar/`: araştırma notları (Boşluğu önce ölç, Problemden başla, Claude ile okumak, Dört ayın karnesi).
+
+HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tıkla (GitHub HTML'yi kod olarak gösterir).
+
 ## Dosyalar
 
 - `CLAUDE.md`: Claude'a bu yapıyı her oturumda kullanmasını söyler.
