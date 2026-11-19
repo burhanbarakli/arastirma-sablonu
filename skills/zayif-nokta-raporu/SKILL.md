@@ -105,6 +105,22 @@ Save the report as a Markdown file next to the paper, or in the current director
 
 1. **Özet:** three to five most promising weak points, each one line, ranked by how likely they are to break the
    method and how cheap they are to test.
+1b. **Değerlendirilecek iddialar:** each Özet item again as a claim block the user will judge against the paper. The
+   user reads the report openly (it is not hidden), and judging each claim is part of their training:
+
+   ```markdown
+   ### İddia N: <one sentence>
+   Dayanak: <location and short quote>
+   Kaynak türü: makalede yazıyor | dış kaynak (link) | ajanın kendi çıkarımı
+   Ajanın güveni: yüksek | orta | düşük, with one reason
+
+   Senin değerlendirmen: [ ] doğru  [ ] yanlış  [ ] abartılı  [ ] emin değilim
+   Makalede kontrol ettiğin yer:
+   Önemli mi, test etmeye değer mi:
+   ```
+
+   Mark "ajanın kendi çıkarımı" honestly for anything derived rather than read (bounds from equations, guesses about
+   behaviour); those are the claims most worth checking by hand.
 2. **İçeride (A1–A5):** tables with location and quote for every row.
 3. **Çevresinde (B1–B4):** grouped findings with links.
 4. **Ucuz denemeler (C1–C3):** proposals, marked "önerildi" or "yapıldı".
@@ -119,6 +135,19 @@ Save the report as a Markdown file next to the paper, or in the current director
 
 End the reply with the single most promising weak point and the cheapest experiment that would measure it (baseline,
 simple rule and fair oracle). Do not start that experiment without the user's go-ahead.
+
+**Independent reader.** When a subagent tool is available, let a separate agent do the reading and drafting (steps
+A–C and the report). Give it only the paper, the official code and review links, and this skill's rules, not the
+conversation and not the user's hypothesis, so it does not confirm anyone's hunch. Then check its quotes yourself
+(ground rule 2) before showing the report.
+
+**After the user judges the claims.** When the user brings the filled claim blocks back:
+- for every "doğru" without a checked location, ask where they checked it;
+- where the user marks a claim "yanlış" or "abartılı", re-open the source and say plainly who is right; a claim the
+  agent got wrong is a good catch, say so;
+- append a block to `okuma-gunlugu.md` (project root or current directory): date, paper, each claim with the agent's
+  source type and confidence, the user's verdict, and whether the verdict held up. Over several papers this shows how
+  often agent claims of each source type fail and how well the user catches them.
 
 ## Rehberli okuma modu
 
