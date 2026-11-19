@@ -41,6 +41,12 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 |---|---|---|---|
 | | | | |
 
+## Aktarım (başka alandan yöntem)
+
+| Tarih | Bozulan parça (ölçüm) | Gereken özellik (alandan bağımsız) | Kaynak alan | O alanın basit aracı (sonuç) | Kaynak varsayımı burada geçerli mi | Parçanın kâhin tavanı |
+|---|---|---|---|---|---|---|
+| | | | | | | |
+
 ## Dönüş sayacı
 
 | # | Tarih | Neden | Kim onayladı |

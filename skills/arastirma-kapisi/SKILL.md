@@ -1,6 +1,6 @@
 ---
 name: arastirma-kapisi
-description: Research gatekeeper that stops the user's known research mistakes before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım"); pivots or changes the research question; adds a new condition after a negative result; changes a threshold, decision rule, seed count or rival setting; or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the eight recorded mistakes, reads and updates the project's KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
+description: Research gatekeeper that stops the user's known research mistakes before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım"); wants to bring a method or component from another field into a paper's method ("başka alandan bir yöntem koyalım", "X alanındaki şeyi buraya uygulayalım", "bu parçayı Y ile değiştirelim"); pivots or changes the research question; adds a new condition after a negative result; changes a threshold, decision rule, seed count or rival setting; or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the eight recorded mistakes, reads and updates the project's KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
 ---
 
 # Araştırma kapısı
@@ -87,6 +87,32 @@ differences are within seed spread: **KOŞULLU DEVAM** with a harder condition o
 **Kapı 7: Yazım (mistake 8).** Before writing or submitting: every real limitation stays in the text; claims match
 the measured gap; a blind audit was run (separate session, given code + data + protocol, not the result). Missing:
 **KOŞULLU DEVAM** with the list.
+
+## Transfer check: a method from another field
+
+Run this whenever the user wants to replace a component of the base method with something from another field, or to
+add such a component. It sits between Kapı 1 and Kapı 4 and uses their verdicts. "Bunu bu alana kimse uygulamamış"
+is not a motivation: it is mistake 1, so **DUR**. Start from the missing property, not from the borrowed method.
+
+1. **Which component causes the drop, measured?** Switch components off or replace them with their ideal one at a
+   time (as in the BCSDM sensor study, where switching off bias, noise and geometry showed bias was the culprit).
+   Not measured: **DUR**. Next step: the component switch-off run.
+2. **The needed property in field-free words.** One sentence naming the job, not a method ("estimate a slowly
+   drifting unknown offset online", not "add a world model"). Search the literature with this sentence
+   (`paper-search`, reference-lookup tools), so the fields that already solve it show up. Missing: **DUR**.
+3. **That field's simplest tool first, as a rival.** The classical, cheap tool of the source field enters the
+   three-numbers table as a simple remedy before any elaborate transfer (BCSDM: re-taring the force sensor, standard
+   practice in force sensing, closed most of the S1 gap; the borrowed world model did not help). Not tried: **DUR**.
+4. **Why it works there, and whether that holds here.** Run `zayif-nokta-raporu` on the source method's paper too
+   and put the two assumption tables side by side (noise type, measurement rate, delay, data size, known geometry…).
+   A source assumption that fails here: **KOŞULLU DEVAM**, with the test that would show whether it matters.
+5. **Ceiling of that component.** Fair oracle for that component alone (perfect version of the component, same
+   information). If the oracle gains less than the pre-written threshold, what goes in that slot does not matter:
+   **DUR**, write it as a finding.
+6. **One change at a time, fair.** Only that component changes; budget, tuning and information stay equal (Kapı 4).
+
+Record the answers in KARAR.md under "Aktarım" (and in `karar.json` under `sapmalar` or the stage `not` if the
+project has one), with the source field, the property sentence and the simple tool tried.
 
 ## Ongoing checks (every time the skill runs on an existing project)
 
