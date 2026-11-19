@@ -62,7 +62,7 @@ Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. 
 | Aşama | Ana skill | Yardımcı | Dikkat |
 |---|---|---|---|
 | 0. Başlangıç | `proje-baslat` | | Bir ana proje, bir küçük yan iş |
-| 1. Okuma | önce kendi tablon, sonra `zayif-nokta-raporu` | `research-litnote`, `paper-search` | Yöntem fikrini yaz, peşine düşme |
+| 1. Okuma | önce kendi tablon, sonra `zayif-nokta-raporu` (takılırsan "rehberli oku") | `research-litnote`, `paper-search` | Yöntem fikrini yaz, peşine düşme |
 | Kapı 1: Soru | `arastirma-kapisi` | `hypothesis-generation` (sadece ölçümden sonra) | "Kimse yapmamış" = DUR |
 | Kapı 2: Yeniden üretim | `arastirma-kapisi` | | Henüz yeni yöntem kodu yok |
 | Kapı 3: Üç sayı | `arastirma-kapisi` (+ aktarım kontrolü) | `paper-compare`, `decision-matrix` | Basit çare yöntemden önce |
