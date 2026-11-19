@@ -60,6 +60,7 @@ ya da "yeni bir araştırma projesi başlat" demen yeterli. `proje-baslat` skill
    ve kodu, şüphelendiğin koşul). `durum.html` paneli açılır.
 2. **Makalen yoksa alanı tara.** "alan taraması: konu". Önce amaç (temel makale / alanı tanımak / kim çözmüş) ve
    yöntem adı geçmeyen bir arama cümlesi; sonra kartopu, eleme tablosu, doğrulama, durma kuralı.
+   Ayrıntı: aşağıdaki "Makale arama (alan taraması)" bölümü.
 3. **Makaleyi ver.** "zayıf nokta raporu: makale.pdf". Ayrı bir ajan okur, denetçi ajan kontrol eder;
    açık rapor ve "Değerlendirilecek iddialar" gelir. Yeni alandaysan ya da takılıyorsan "rehberli oku".
 4. **Kendin oku, iddiaları yargıla.** Kendi tablonu tut (Ne / Yeri / Şüphem). Her iddiayı doğru / yanlış / abartılı /
@@ -73,6 +74,54 @@ ya da "yeni bir araştırma projesi başlat" demen yeterli. `proje-baslat` skill
 8. **Kapıları sırayla geç.** Yeniden üretim, üç sayı, rakip adaleti, protokol, ana koşu, gerçeklik. Her karardan sonra
    panel güncellenir.
 9. **Sonuçtan sonra.** Kör denetim, sonra yazım (`paper-critique`, `citation-check`, Kapı 7).
+
+## Makale arama (alan taraması)
+
+Claude Code'da: **"alan taraması: <konu>"** (ya da "literatür tara", "bu konuda ne var", "temel makale bul"). Bu,
+`zayif-nokta-raporu`'nun alan taraması modunu çalıştırır ve aşağıdaki yolu izler.
+
+Önce bir soruyu netleştir: **makaleyi ne için arıyorsun?** "Konuya bak, boşluk bul, yöntem öner" sırası eski
+hatalarımızdan biri; arama tam bu hataya kapı açabilir. Amaca göre üç yol var:
+
+| Amaç | Ne ararsın | Çıktı |
+|---|---|---|
+| **A. Zorlanacak bir temel makale bulmak** | Görevin bugünkü en iyi ya da en yaygın yöntemi | 1–2 makale, sonra `zayif-nokta-raporu` |
+| **B. Bir alanı tanımak** | O görev üzerine 5–10 temel makale | Varsayım tablosu ve alanın **kör noktası** |
+| **C. Bir özelliği kim çözmüş** (yöntem aramanın 5. adımı) | Alan adı geçmeyen bir özellik cümlesi | Başka alanlardan adaylar |
+
+### Yol (özellikle A ve B için)
+
+1. **Arama cümlesini yaz, yöntem adını değil.**
+   - Kötü: "diffusion policy makaleleri".
+   - İyi: "Gürültülü kuvvet algısıyla temaslı yerleştirme görevini öğrenen politikalar."
+
+   Cümlede görev ve koşul olmalı. Yöntem adı girerse aramanın sonuçları o yönteme kilitlenir.
+2. **Tohum makaleler bul.** Bildiğin 2–3 makale ya da bir derleme (survey) yeter. Hiç yoksa Claude cümlenle arar ve
+   aday sunar.
+3. **Kartopu.** Tohumların **kaynakçasına** (geriye doğru) ve onlara **atıf yapanlara** (ileriye doğru) bakılır. En
+   verimli yöntem budur, çünkü alanın gerçekten konuştuğu makaleleri getirir. Araçlar:
+   - `citation_neighbours` (OpenAlex): bir makalenin kaynakçasını ve ona atıf yapanları getirir;
+   - `paper-search`: anahtar sözcükle arar;
+   - `deep-research`: geniş bir tarama gerekirse.
+4. **Hızlı eleme.** Başlık ve özetten küçük bir tablo doldurulur. Bu, varsayım tablosunun hafif bir hâli:
+
+   | Makale | Görev | Neyi değiştirmiş | Basit rakip var mı | Gerçek robot mu | Tohum | Kod |
+   |---|---|---|---|---|---|---|
+   | | | | | | | |
+
+5. **Çekirdeği seç ve derinleş.** 5–10 makale seçilir. `zayif-nokta-raporu`'nun varsayım tablosu moduyla PDF'lerden
+   doldurulur. Sonunda neredeyse bütün makalelerin aynı şekilde işaretlediği sütun alanın **kör noktası** olarak çıkar.
+   Mesela "hepsi kusursuz algı varsayıyor".
+6. **Her makale gerçek mi, kontrol et.** Yapay zekâ var olmayan makale uydurabilir. Her makale OpenAlex'te, arXiv'de
+   ya da DOI'siyle doğrulanır. Hafızadan gelen hiçbir makale doğrulanmadan kullanılmaz.
+7. **Durma kuralı.** Aramaya bir süre koy, mesela 1–2 gün. Yeni makaleler tabloya yeni bir sütun ya da yeni bir bulgu
+   eklemiyorsa arama doymuştur, dur.
+
+Sonuç `alan-taramasi-<konu>.md` dosyasına yazılır.
+
+> **Dikkat:** Aramanın sonu "**bunu kimse yapmamış**" cümlesine çıkıyorsa, kapı orada DUR der. Kör nokta bir problem
+> adayıdır, henüz problem değildir. Doğru sonraki adım: kör noktanın bozduğunu düşündüğün yöntemi seçip o koşulda
+> bozulmayı ölçmek (Kapı 1).
 
 ## Skill haritası
 
