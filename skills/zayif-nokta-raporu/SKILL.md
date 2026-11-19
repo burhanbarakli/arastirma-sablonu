@@ -1,6 +1,6 @@
 ---
 name: zayif-nokta-raporu
-description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Not for summarising a paper or writing a review of the user's own manuscript.
+description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has a guided reading mode that coaches the user to find weak points themselves instead of handing over a report: use it for "rehberli oku", "rehberli okuma", "birlikte okuyalım", "okurken bana soru sor", "ipucu ver", "zayıf nokta bulmayı öğrenmek istiyorum". Not for summarising a paper or writing a review of the user's own manuscript.
 ---
 
 # Zayıf nokta raporu (0. adım)
@@ -24,6 +24,14 @@ user's language (Turkish unless they write in another language).
    arXiv page before listing it, and give the link. Never list a paper you have not opened.
 6. **Privacy.** Send only public identifiers (paper title, arXiv id, DOI, repo name) to outside services. Never send
    the user's own unpublished ideas, drafts or data.
+
+## Two modes
+
+- **Rapor modu** (default): the steps below, ending in a written report.
+- **Rehberli okuma modu**: when the user asks to read together, to be asked questions, for hints, or to learn to find
+  weak points. The user finds the weak points; you coach. See "Rehberli okuma modu" near the end. If the user has not
+  read the paper yet and only asks for "zayıf nokta raporu", mention once that guided mode exists, then do what they
+  asked.
 
 ## Inputs to collect
 
@@ -111,6 +119,39 @@ Save the report as a Markdown file next to the paper, or in the current director
 
 End the reply with the single most promising weak point and the cheapest experiment that would measure it (baseline,
 simple rule and fair oracle). Do not start that experiment without the user's go-ahead.
+
+## Rehberli okuma modu
+
+Goal: the user learns to see weak points. Do not hand over findings; every weak point the user finds alone is worth
+more than one you list.
+
+1. **Prepare silently.** Read the paper yourself first (step A, and B if cheap) so you know what there is to find,
+   with locations. Do not show this list.
+2. **Start.** Suggest 30–45 minutes of reading alone first, keeping the table *Ne / Makaledeki yeri / Şüphem*. If the
+   user already has a table, take it and go to step 5. If they found nothing alone, that is normal: start step 3.
+3. **Section by section.** The user reads one section (abstract and experiments first, then method, appendix,
+   limitations last). After each, ask one to three short questions built on the A1–A5 lenses, without the answer:
+   - A1 *gösterilmeyen*: "Bu deneyde hiç değişmeyen ne var?" "Kaç tohum, hangi rakip?"
+   - A2 *varsayım*: "Yazarlar neyi basitlik için dışarıda bırakıyor?"
+   - A3 *elle seçilen*: "Değeri verilmeyen sabit var mı? Hangisi sonucu en çok etkiler?"
+   - A4 *tavan*: "Bu sayı iyileştirmeye ne kadar yer bırakıyor?"
+   - A5 *ek*: "Ekte ana metni daraltan bir şey var mı?"
+   Answer feedback is short and specific: "doğru", "yarısı doğru: şuraya bir daha bak", or "bunu ben görmemiştim"
+   (say this honestly when the user finds something outside your list, and verify it in the source).
+4. **Hint ladder.** When the user is stuck, give one level at a time, only on request or after a wrong attempt:
+   (1) *yer*: the section, page or figure; (2) *tür*: the kind of weakness (a rate limit, a missing rival, an untested
+   condition…); (3) *cevap*: the weak point, with location and a short quote. Note the level at which each one was
+   found.
+5. **Compare.** Put the user's list next to yours. For each missed item, say which lens would have caught it and why
+   it was easy to miss. Credit what the user found that you did not.
+6. **Reading log.** Append one block to `okuma-gunlugu.md` in the project root (or the current directory): date,
+   paper, and for each weak point: found alone / found at hint level 1–3 / missed, with its lens (A1–A5). After a few
+   papers, point out the lens the user misses most and suggest looking there first next time.
+7. **Then the report**, if the user wants it: run steps B and C and write the normal report, marking which items the
+   user found.
+
+All ground rules still apply: quotes are checked in the source, and anything you derive yourself (like a bound from
+the equations) is labelled as yours and left for the user to check by hand.
 
 ## Blind audit (optional, on request)
 
