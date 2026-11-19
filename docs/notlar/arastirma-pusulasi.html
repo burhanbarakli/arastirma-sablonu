@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Araştırma Pusulası</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+  /* Layout: the "Araştırma notları" notebook column, widened a little; a short contents strip, then sections in the order that matters most to the reader: mistakes at a glance, the road, how to read, the oracle, search, new methods, AI, examples, commands. */
+  :root {
+    --bg: #f3f6f5; --paper: #ffffff; --fg: #17211f; --muted: #56635f;
+    --accent: #0f6b63; --accent-soft: #e1eeeb; --rule: #d3dcd9;
+    --warn: #8a4b12; --warn-soft: #f6ebdf; --stop: #9b2c2c; --stop-soft: #f8e6e6;
+    --f-display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --f-body: "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae; --accent-soft: #1b2b29;
+      --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; --stop: #ec9090; --stop-soft: #2e1b1b; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #101615; --paper: #161e1d; --fg: #e4ebe9; --muted: #9aa8a4; --accent: #5cbcae; --accent-soft: #1b2b29;
+    --rule: #2a3633; --warn: #e2a368; --warn-soft: #2a2119; --stop: #ec9090; --stop-soft: #2e1b1b; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 18px; line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 48px 72px;
+  }
+  .wrap { max-width: 50rem; margin: 0 auto; display: flex; flex-direction: column; gap: 60px; }
+  header { display: flex; flex-direction: column; gap: 16px; }
+  .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.3rem, 6vw, 3.6rem); line-height: 1.04; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+  h2 { font-family: var(--f-display); font-weight: 700; font-size: 1.65rem; line-height: 1.2; margin: 0; text-wrap: balance; }
+  h3 { font-family: var(--f-display); font-weight: 500; font-size: 1.2rem; margin: 0; text-wrap: balance; }
+  p { margin: 0; }
+  section { display: flex; flex-direction: column; gap: 16px; scroll-margin-top: 16px; }
+  .lede { font-size: 1.12rem; color: var(--muted); max-width: 42rem; }
+  .thesis { font-family: var(--f-display); font-weight: 500; font-size: 1.4rem; line-height: 1.35; border-left: 3px solid var(--accent); padding-left: 16px; text-wrap: balance; }
+  ul, ol { margin: 0; padding-left: 1.3rem; display: flex; flex-direction: column; gap: 6px; }
+  code { font-family: var(--f-mono); font-size: .82em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+  .muted { color: var(--muted); }
+  .num-h { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
+  .num-h .n { font-family: var(--f-mono); font-size: 13px; color: var(--accent); flex: none; }
+
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; }
+  .toc a { font-family: var(--f-mono); font-size: 12.5px; text-decoration: none; color: var(--accent); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: 4px 11px; }
+  .toc a:hover { border-color: var(--accent); }
+
+  .rules3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .rules3 div { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; font-size: 16px; }
+  .rules3 b { font-family: var(--f-display); font-weight: 500; font-size: 1.05rem; display: block; margin-bottom: 4px; }
+
+  .tablewrap { overflow-x: auto; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 15.5px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  th { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  .wide table { min-width: 44rem; }
+  td.say { font-style: italic; color: var(--warn); }
+  td.gate { font-family: var(--f-mono); font-size: 13px; white-space: nowrap; }
+  .pill { font-family: var(--f-mono); font-size: 11px; letter-spacing: .04em; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .pill.dur { background: var(--stop-soft); color: var(--stop); }
+  .pill.kd { background: var(--warn-soft); color: var(--warn); }
+
+  .good { list-style: none; padding: 0; gap: 10px; }
+  .good li { background: var(--paper); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 14px; font-size: 16.5px; }
+
+  .road { list-style: none; padding: 0; counter-reset: s; gap: 10px; }
+  .road li { counter-increment: s; display: grid; grid-template-columns: 2.2rem 1fr; gap: 12px; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; font-size: 16.5px; }
+  .road li::before { content: counter(s); font-family: var(--f-mono); font-size: 13px; color: var(--paper); background: var(--accent); width: 1.8rem; height: 1.8rem; border-radius: 50%; display: grid; place-items: center; }
+  .road li > div { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .road b { font-family: var(--f-display); font-weight: 500; font-size: 1.05rem; }
+  .say-box { font-family: var(--f-mono); font-size: 13.5px; background: var(--accent-soft); border-radius: 6px; padding: 6px 10px; overflow-x: auto; white-space: nowrap; }
+
+  .passes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .pass { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 16px; min-width: 0; }
+  .pass .t { font-family: var(--f-mono); font-size: 12px; color: var(--accent); letter-spacing: .05em; text-transform: uppercase; }
+  .pass.main { border: 2px solid var(--accent); }
+  .order { list-style: none; padding: 0; counter-reset: o; gap: 6px; }
+  .order li { counter-increment: o; display: grid; grid-template-columns: 1.4rem 1fr; gap: 6px; }
+  .order li::before { content: counter(o) "."; font-family: var(--f-mono); font-size: 13px; color: var(--accent); padding-top: 2px; }
+
+  .box { border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .box.accent { background: var(--accent-soft); }
+  .box.warn { background: var(--warn-soft); }
+  .box.warn h3 { color: var(--warn); }
+  .box.stop { background: var(--stop-soft); }
+  .box.stop h3 { color: var(--stop); }
+  .formula { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 18px 20px; font-family: var(--f-display); font-size: 1.15rem; line-height: 1.5; }
+  .slot { font-family: var(--f-mono); font-size: .8em; background: var(--accent-soft); color: var(--accent); padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .two > div { background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; font-size: 16px; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .two .bad { border-color: var(--warn); }
+  .two .ok { border-color: var(--accent); }
+  .two b.l { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; }
+  .two .bad b.l { color: var(--warn); }
+  .two .ok b.l { color: var(--accent); }
+
+  .ex { background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .ex .tag { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+  .ex .lesson { border-top: 1px dashed var(--rule); padding-top: 10px; font-family: var(--f-display); font-weight: 500; }
+
+  .closing { font-family: var(--f-display); font-size: 1.35rem; line-height: 1.4; border-top: 2px solid var(--accent); padding-top: 20px; text-wrap: balance; }
+  footer { font-size: 15px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  @media (max-width: 720px) {
+    body { font-size: 17px; padding-block: 32px 56px; }
+    .rules3, .passes, .two { grid-template-columns: 1fr; }
+    .wrap { gap: 48px; }
+  }
+</style>
+
+<main class="wrap">
+  <header>
+    <span class="eyebrow">Araştırma notları · kişisel kılavuz · Kasım 2026</span>
+    <h1>Araştırma pusulası</h1>
+    <p class="lede">Bir hafta boyunca sorduğun sorulardan çıkan her şey, senin için önem sırasıyla: hatalarını bir bakışta, doğru yolu adım adım, bir makaleyi nasıl okuyacağını ve bunların her birinde hangi skill'in sana eşlik ettiğini.</p>
+    <p class="thesis">Yanlış yöntemle değil, yanlış sırayla çalıştın. Aletlerin doğru; ölçmeyi en başa al.</p>
+    <div class="rules3">
+      <div><b>Önce ölç</b>Fikirden değil, ölçülmüş bir bozulmadan başla.</div>
+      <div><b>Önce basit rakip</b>Yöntemden önce en güçlü basit çareyi kur.</div>
+      <div><b>Kuralı önce yaz</b>Karar kuralı, tohum, durma kuralı; sonuçtan önce.</div>
+    </div>
+    <nav class="toc" aria-label="İçindekiler">
+      <a href="#hatalar">Hatalarım</a><a href="#yol">Yol</a><a href="#okuma">Makale okuma</a><a href="#kahin">Kâhin</a><a href="#bosluk">Boşluk cümlesi</a><a href="#kapilar">Yedi kapı</a><a href="#arama">Makale arama</a><a href="#yontem">Yeni yöntem</a><a href="#ai">Yapay zekâ</a><a href="#ornekler">Örnekler</a><a href="#simdi">Şimdi</a><a href="#komutlar">Komutlar</a><a href="#hayat">Hayattan</a><a href="#guclu">Güçlü yanlarım</a>
+    </nav>
+  </header>
+
+  <section id="hatalar" aria-labelledby="h-hatalar">
+    <div class="num-h"><span class="n">01</span><h2 id="h-hatalar">Hatalarım, bir bakışta</h2></div>
+    <p>Dört ayda dokuz araştırma hattında aynı sekiz hata tekrar etti. Kök neden tek cümle: <strong>ölçme aletlerini yöntemi seçmek için değil, seçtiğin yöntemi savunmak için kullandın.</strong> İkinci sütun, hatanın başladığı anda kafandan geçen cümle; onu duyduğunda dur.</p>
+    <div class="tablewrap wide">
+      <table style="min-width: 54rem">
+        <thead><tr><th>Hata</th><th>Kendine bunu söylüyorsan</th><th>Sen böyle yaptın</th><th>Böyle yapsaydın</th><th>Kapı</th></tr></thead>
+        <tbody>
+          <tr><td>1. Önce yöntem, sonra ihtiyaç</td><td class="say">"Bunu kimse yapmamış." "SCI makalesi çıkaracak bir yöntem bulayım."</td><td>SETONET'in hedefi tam bu cümleydi; V2G'de taslak sonuçtan önce yazıldı; BCSDM'de "dünya modeli ekleyelim" dedik ve çözümümüze sorun aradık.</td><td>İlk hafta taban, basit kural ve kâhini ölçmek; taslak ancak bu üç sayıdan sonra.</td><td class="gate"><span class="pill dur">DUR</span> Kapı 1</td></tr>
+          <tr><td>2. Basit rakip geç geliyor</td><td class="say">"Önce yöntemi kurayım, rakibi sonra eklerim."</td><td>dcovf (GPI), measure-aware (<code>flat_arc</code>), SkyJEPA, V2G fiyat kuralı, BCSDM el kuralları: hepsi haftalar sonra eklendi, berabere kaldı ya da kazandı.</td><td>"Bir mühendis bunu öğleden önce nasıl çözerdi?" Cevabı ilk gün kurmak.</td><td class="gate"><span class="pill dur">DUR</span> Kapı 3</td></tr>
+          <tr><td>3. Rakibe eşit emek yok</td><td class="say">"Rakibi varsayılan ayarla koşsam yeter."</td><td>GDA rakibi 100 epoch (özgünü 500), λ ayarsız; yönteme ayrıcalıklı konum bilgisi, aynı bilgiyi alan EDI berabere.</td><td>Aynı bütçe, aynı ayar taraması; ek bilgi varsa onu alan bir rakip.</td><td class="gate"><span class="pill kd">KOŞULLU</span> Kapı 4</td></tr>
+          <tr><td>4. Sonuçtan sonra seçim</td><td class="say">"Eşiği şöyle koyarsak daha iyi görünür."</td><td>GDA hattının Eylül–Ekim'inde tez cümlesi ve karar kuralı sonuçtan sonra değişti; measure-aware'de s &lt; 0,9 veriye bakılarak seçildi.</td><td>Bir sayfalık protokol koşudan önce; değişirse Sapma ve iki kuralla raporlama. Tez 1'in son ölçütü K-19 böyle yazıldı.</td><td class="gate"><span class="pill dur">DUR</span> Kapı 5 + commit kilidi</td></tr>
+          <tr><td>5. Az tohum</td><td class="say">"Vakit yok, iki tohum yeter."</td><td>SETONET tek tohum; V2G 5 planlandı 2 koşuldu; BCSDM'nin son deneyi de 2 tohumla koşuldu.</td><td>12 koşul × 1 tohum yerine 4 koşul × 3 tohum.</td><td class="gate">Koşulu azalt, tohumu değil</td></tr>
+          <tr><td>6. Durma kuralı yok</td><td class="say">"Belki şu koşulda fark çıkar."</td><td>GDA'da 10 haftada ~8 dönüş; 22 Ekim'de "gerçek robota geçiyoruz", ertesi gün yeni benzetim tezi. BCSDM'de 6 kapı.</td><td>İlk sayfaya "üç kapı kapanırsa dururum"; üçüncü dönüşte danışman.</td><td class="gate">Dönüş sayacı</td></tr>
+          <tr><td>7. Hep benzetim</td><td class="say">"Gerçek robotu sonra yaparız."</td><td>Dobot hiç yapılmadı; "gerçek" hedef yeniden boyanmış masa; sonuçlar tavanda (%99–100).</td><td>Projenin ortasında en küçük gerçek deney: 3 koşul × 20 deneme.</td><td class="gate"><span class="pill kd">KOŞULLU</span> Kapı 6</td></tr>
+          <tr><td>8. Sınırlılığı silmek</td><td class="say">"Hakem sorarsa ekleriz."</td><td>V2G conformal'da "tek saha" cümlesi çıkarıldı.</td><td>Cümleyi öne almak; hakemin bulduğu sınırlılık güven kaybettirir, senin yazdığın kazandırır.</td><td class="gate"><span class="pill kd">KOŞULLU</span> Kapı 7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box warn">
+      <h3>İki genel uyarı</h3>
+      <ul>
+        <li><strong>Çok proje aynı anda.</strong> Kural: bir ana proje, bir küçük yan iş. "İkisinin de eksiği var, yeni bir arama açayım" demek de yeni bir hat açmaktır.</li>
+        <li><strong>Aynı göreve dönüş.</strong> BCSDM ailesine dört kez dönüldü, dördünde basit yöntem yetti. Beşinci kez açmadan önce "bu kez neden farklı?" sorusunun ölçülmüş cevabı gerekir.</li>
+      </ul>
+    </div>
+    <h3>Tavsiyeler</h3>
+    <ol class="road">
+      <li><div><b>Bir doktora, bir soru</b><span>Yeni hat açma. Tezin omurgası Tez 1'in bulgusu: kazanç hizalamadan değil, benzetim verisinin kapsamından.</span></div></li>
+      <li><div><b>Her yeni soruda ilk hafta üç sayı</b><span>Taban, en güçlü basit çare, adil kâhin. Boşluk cümlesini dolduramıyorsan yöntem kurma.</span></div></li>
+      <li><div><b>Rakibi sen kur, ilk sen kur, eşit emekle kur</b><span>Aynı epoch, aynı ayar taraması; yöntemine ek bilgi veriyorsan aynı bilgiyi alan bir rakip.</span></div></li>
+      <li><div><b>Durma kuralı ve dönüş bütçesi; en az üç tohum</b><span>"Üç kapı kapanırsa dururum." Hesap yetmezse koşulu azalt.</span></div></li>
+      <li><div><b>Gerçek dünyaya bir kez dokun</b><span>Küçük de olsa: Dobot ya da Tez 3'teki kestiricinin gerçek kamerada denenmesi.</span></div></li>
+      <li><div><b>Olumsuz bulgularını değerlendir, sınırlılıkları silme</b><span>BCSDM ailesindeki olumsuz sonuçlar tek başına bir makale olabilir. Gerçek kısıt metinde kalır.</span></div></li>
+      <li><div><b>Ajanları yeni proje üretmek için değil, şu üç iş için kullan</b><span>0. adım taraması, kör denetim, kâhin ve basit rakibi hızla kurmak.</span></div></li>
+    </ol>
+  </section>
+
+  <section id="yol" aria-labelledby="h-yol">
+    <div class="num-h"><span class="n">02</span><h2 id="h-yol">Yol: nasıl başlarım, nasıl devam ederim</h2></div>
+    <p>Her adımın yanında Claude Code'a ne yazacağın var. Kapılar, sen çağırmasan da yöntem önerdiğinde, yön değiştirdiğinde ya da bir kuralı değiştirdiğinde devreye girer.</p>
+    <ol class="road">
+      <li><div><b>Projeyi kur</b><span>Yeni klasör, şablon, karar defteri, panel ve commit kilidi. Odak kontrolü: başka ana proje var mı?</span><div class="say-box">/proje-baslat</div></div></li>
+      <li><div><b>Makalen yoksa alanı tara</b><span>Önce amaç, sonra yöntem adı geçmeyen bir arama cümlesi. Ayrıntı: "Makale arama".</span><div class="say-box">alan taraması: &lt;konu&gt;</div></div></li>
+      <li><div><b>Makaleyi oku, sonra raporu al</b><span>Ayrı bir ajan okur, denetçi ajan kontrol eder; açık rapor ve senin yargılayacağın iddialar gelir. Takılırsan rehberli oku. Ayrıntı: "Makale okuma".</span><div class="say-box">zayıf nokta raporu: makale.pdf</div></div></li>
+      <li><div><b>İddiaları yargıla</b><span>Her iddia: doğru / yanlış / abartılı / emin değilim, ve makalede kontrol ettiğin yer. Okuma günlüğüne işlenir.</span></div></li>
+      <li><div><b>En umut veren zayıf noktayı seç</b><span>Okuma, boşluk cümlesi yarı dolunca biter. Rapor en ucuz deneyi önerir: taban, basit çare, adil kâhin.</span></div></li>
+      <li><div><b>Kapıya sor</b><span>Kapı 1 ölçülmüş bozulma ister: oyuncak sürüm ya da resmî kodla hedefli koşu.</span><div class="say-box">kapı · doğru yolda mıyım?</div></div></li>
+      <li><div><b>Boşluk kalırsa yöntem ara</b><span>Yalnız Kapı 3 geçildiyse. Ayrıntı: "Yeni yöntem".</span><div class="say-box">yeni yöntem bul</div></div></li>
+      <li><div><b>Kapıları sırayla geç</b><span>Yeniden üretim → üç sayı → rakip adaleti → protokol, sonra ana koşu → gerçeklik ve tavan. Her karardan sonra panel güncellenir.</span></div></li>
+      <li><div><b>Sonuçtan sonra</b><span>Kör denetim (sonucu bilmeyen ayrı ajan), sonra yazım: <code>paper-critique</code>, <code>citation-check</code>, Kapı 7.</span></div></li>
+    </ol>
+    <p class="muted">Haftada bir: paneli aç; hangi aşamadayım, açık uyarı var mı, dönüş sayacı nerede?</p>
+
+    <h3>Bir makaleyi ilerletmenin sırası</h3>
+    <p>"Literatürde açık bul, oraya deney yap" sırası ters. Açık "kimse yapmamış" demektir, "ihtiyaç var" demek değildir.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Adım</th><th>Ne yaparsın</th><th>Çıktı</th></tr></thead>
+        <tbody>
+          <tr><td>0. Yeniden üretmeden önce</td><td><strong>Okurken (bir gün):</strong> göstermedikleri, varsayımlar, elle seçilmiş sabitler, tavan, ek. <strong>Çevresinden (bir hafta):</strong> hakem yorumları, GitHub sorunları, atıf yapanlar, benchmark tabloları, yazarlara kısa bir e-posta. <strong>Ucuz denemeler (iki hafta):</strong> kâğıt-kalem hesap, oyuncak sürüm, hazır kodu ve checkpoint'i yalnız zorlama koşullarında koşmak.</td><td>Zayıf nokta listesi (zayıf nokta raporu)</td></tr>
+          <tr><td>1. Yeniden üret</td><td>Makalenin sayılarını kendi elinle elde et; üretemediğini ilerletemezsin</td><td>Makalenin sayısı ile seninki yan yana</td></tr>
+          <tr><td>2. Zorla</td><td>Gürültü, gecikme, az veri, dağılım kayması, gerçek dünyaya yaklaşma</td><td>Bir sayı: "%95'ten %60'a düşüyor"</td></tr>
+          <tr><td>3. Boşluğu ölç</td><td>Kâhin ve en basit çare</td><td>Boşluk cümlesi</td></tr>
+          <tr><td>4. Nedeni teşhis et</td><td>Ablasyon: bileşenleri tek tek kusursuz hâliyle değiştir</td><td>Suçlu parça (BCSDM'de algılayıcı sapması)</td></tr>
+          <tr><td>5. Literatürü ancak şimdi tara</td><td>"Şu yöntem, şu koşulda, şu nedenle bozuluyor; çözen var mı?"</td><td>Rakip ya da gerçek bir açık</td></tr>
+          <tr><td>6. Ancak şimdi yöntem</td><td>Hedef kâhin değil, en güçlü basit çare; karar kuralı, eşik, durma kuralı önceden</td><td>Kapı 4–5</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="thesis">"Nerede açık var?" yerine sor: bu yöntem nerede bozuluyor, ve basit çareler orayı neden kapatamıyor?</p>
+  </section>
+
+  <section id="okuma" aria-labelledby="h-okuma">
+    <div class="num-h"><span class="n">03</span><h2 id="h-okuma">Bir makale nasıl okunur</h2></div>
+    <p class="thesis">Önce kanıta bak, sonra iddiaya. Varsayımları say. Fikirleri bir kenara yaz. Cümleyi kurunca dur.</p>
+    <div class="passes">
+      <div class="pass"><span class="t">1. geçiş · 10 dk</span><h3>Bu makale benim için mi?</h3><p>Başlık, özet, Şekil 1, ana sonuç tablosu, sonucun son paragrafı.</p><p class="muted">Çıktı: "Bu makale, şu koşulda, şu yöntemle, şu kadar iyileşme iddia ediyor."</p></div>
+      <div class="pass main"><span class="t">2. geçiş · 1 saat</span><h3>İddia ne kadar sağlam?</h3>
+        <ol class="order">
+          <li><span><strong>Önce deneyler:</strong> neyi ölçmüşler, neyle kıyaslamışlar?</span></li>
+          <li><span><strong>Sonra yöntem:</strong> "varsayıyoruz ki" ve elle seçilmiş sabitler.</span></li>
+          <li><span><strong>Sonra ek:</strong> ayarlar ve başarısız örnekler.</span></li>
+          <li><span><strong>En son "Limitations":</strong> genelde en zararsızları.</span></li>
+        </ol>
+      </div>
+      <div class="pass"><span class="t">3. geçiş · gerekirse</span><h3>Yeniden üretecek misin?</h3><p>Denklemleri satır satır kontrol et; ancak zorlayacağın makalede.</p></div>
+    </div>
+
+    <h3>Okurken soracağın sorular</h3>
+    <div class="tablewrap wide">
+      <table>
+        <thead><tr><th>Soru</th><th>Ne ararsın</th><th>GDA makalesindeki örneği</th></tr></thead>
+        <tbody>
+          <tr><td>Ne gösterilmemiş?</td><td>Hiç değişmeyen koşul, tohum sayısı, hata çubuğu</td><td>Başta istatistik yoktu</td></tr>
+          <tr><td>Ne varsayılmış?</td><td>Kusursuz algı, gecikme yok, aynı dinamik</td><td>Dinamik açığı yok sayılmış</td></tr>
+          <tr><td>Ne elle seçilmiş?</td><td>"Deneme yanılmayla seçtik" denen sayılar</td><td>ε, τ, pencere uzunluğu</td></tr>
+          <tr><td>Sonuç tavanda mı?</td><td>%95'in üstündeki başarılar</td><td>—</td></tr>
+          <tr><td>Basit rakip var mı?</td><td>Kural, ayar, klasik yöntem</td><td>Hakem: rakip sayısı az</td></tr>
+          <tr><td>Kâhin var mı?</td><td>Tavan ölçülmüş mü?</td><td>Gerçek robotta yok</td></tr>
+          <tr><td>"Gerçek" ne demek?</td><td>Gerçek robot mu, yeniden boyanmış benzetim mi?</td><td>GDA gerçek robotta denemiş; Tez 1 yeniden boyanmış masa</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="two">
+      <div class="ok"><b class="l">Tut</b><p>Üç sütunlu tablo: <em>Ne / Makaledeki yeri / Şüphem</em>.</p><p class="muted">Örnek: "Dinamik açığı yok · Bölüm 6 · Gerçek kolda sarkma olursa?"</p></div>
+      <div class="bad"><b class="l">Peşine düşme</b><p>"Fikirler" köşesi aç. Okurken gelen yöntem fikrini oraya yaz ve devam et.</p><p class="muted">Eski hata: fikir doğuyor, makale yarım kalıyor, haftalarca o fikir kuruluyor.</p></div>
+    </div>
+
+    <div class="box accent">
+      <h3>Ne zaman bitti?</h3>
+      <p>Şu cümle yarıya kadar dolunca: <em>"[Yöntem], [koşul] altında [ölçüt]'te [?] kadar düşüyor muhtemelen."</em> Sayıları deney doldurur; okumanın işi cümleyi kurmak.</p>
+    </div>
+
+    <h3>Claude bu sırada nerede?</h3>
+    <ol class="road">
+      <li><div><b>Önce 30–45 dakika tek başına oku</b><span>1. ve 2. geçiş, tablonu doldur. Hiçbir şey bulamazsan normal; zayıf nokta bulmak pratikle gelişen bir beceri.</span></div></li>
+      <li><div><b>Takılırsan rehberli oku</b><span>Bölüm bölüm soru sorar, cevabı vermez. İpucu merdiveni: önce yer, sonra tür, en son cevap. Hangi basamakta bulduğun okuma günlüğüne yazılır.</span><div class="say-box">rehberli oku</div></div></li>
+      <li><div><b>Sonra zayıf nokta raporu</b><span>Ayrı okuyucu ajan sohbeti ve hipotezini görmeden okur; tek denetçi ajan alıntıları, akıl yürütmeyi kontrol eder ve en fazla üç kaçırılan nokta ekler. Her iddiada kaynak türü (makalede / dış kaynak / ajanın kendi çıkarımı), güven ve denetçinin satırı (doğrulandı / alıntı hatalı / akıl yürütme zayıf / abartılı). Rapor açık; görmek de geliştirir.</span><div class="say-box">zayıf nokta raporu: makale.pdf</div></div></li>
+      <li><div><b>İki listeyi karşılaştır</b><span>Senin bulup ajanın kaçırdığı şey en değerli bulgudur. Kaçırdıkların için Claude hangi merceğin yakalayacağını ve neden kaçtığını söyler; birkaç makale sonra hangi merceği hep kaçırdığın görünür.</span></div></li>
+    </ol>
+    <p class="muted">"Ajanın kendi çıkarımı" etiketli iddiaları elle kontrol et. Anlamadığın bir kavramı her an sor ("Optimal Transport'u lise düzeyinde anlat"); bu hazır cevap almak değil, okumanın önündeki engeli kaldırmak. Hakem yorumları her yerde yok: OpenReview ve NeurIPS yayımlar, IEEE dergileri çoğu zaman yayımlamaz.</p>
+  </section>
+
+  <section id="kahin" aria-labelledby="h-kahin">
+    <div class="num-h"><span class="n">04</span><h2 id="h-kahin">Kâhin: tavanı kim belirler?</h2></div>
+    <p><strong>Kâhin</strong>, yeni yöntemin tahmin etmeye çalışacağı şeyi kusursuz bilen, "hile yapan" hayalî politikadır. Gerçekte çalışmaz; bir ölçü çubuğudur. Ne kazandırdığı, herhangi bir yeni yöntemin tavanıdır. Kâhini <strong>sen</strong> kurarsın, sonuçları görmeden, protokolde:</p>
+    <ol class="order">
+      <li><span>Yöntemin neyi tahmin edeceğini bul.</span></li>
+      <li><span>O tahminin yerine gerçek değeri koy.</span></li>
+      <li><span>Sistem ne kadar iyi çalışıyor, bak. O sayı tavandır.</span></li>
+    </ol>
+    <div class="box accent">
+      <h3>Basit bir örnek: şemsiye</h3>
+      <p>100 gün, 30'unda yağmur yağıyor. Ölçüt: kaç gün ıslandın?</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Politika</th><th>Islanılan gün</th></tr></thead>
+          <tbody>
+            <tr><td>Taban: hiç şemsiye alma</td><td>30</td></tr>
+            <tr><td>Basit kural: bulutluysa al</td><td>4</td></tr>
+            <tr><td>Güçlü rakip: bulutluysa ya da hava durumu yağmur diyorsa al</td><td>3</td></tr>
+            <tr><td>Adil kâhin: sabahı kusursuz yorumlayan</td><td>2</td></tr>
+            <tr><td>Mutlak kâhin: yağmuru önceden bilen</td><td>0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Yeni bir "yağmur tahmin modeli" en fazla 4 − 2 = 2 gün kazandırabilir; güçlü rakibe karşı kalan pay 1 gün. Mutlak kâhine göre karar verseydin payı 4 gün sanırdın.</p>
+    </div>
+    <div class="two">
+      <div><b class="l">Gerçek değer nereden?</b><ul><li>Benzetimde ya da etiketlerde zaten var (deliğin gerçek yeri).</li><li>Seçim problemiyse: sonradan bakılmış en iyi seçim (her koşul için en iyi η).</li><li>Yoksa daha iyi bir ölçüm (insan etiketi, pahalı sensör).</li></ul></div>
+      <div><b class="l">Adil kâhin</b><p>Yalnız yöntemin göreceği bilgiyi, gördüğü andan itibaren bilir. BCSDM süre deneyinde ilk kâhin deliği dokunmadan biliyordu (mutlak); boşluğu iki kat büyük gösterdi.</p><p class="muted">İkisini de ölç; karar adil olana göre verilir.</p></div>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Yeni yöntem ne yapacak?</th><th>Kâhin onun yerine neyi verir?</th></tr></thead>
+        <tbody>
+          <tr><td>Görüntüden nesne konumunu tahmin edecek</td><td>Nesnenin gerçek konumu (Tez 1'de W2P: konum sayı olarak verilince duvarlıda 44 ve 40/50, kameralı politika 18 ve 22)</td></tr>
+          <tr><td>Deliğin yerini kuvvetlerden kestirecek</td><td>Deliğin gerçek yeri, ilk dokunuştan itibaren</td></tr>
+          <tr><td>Her örnek için en iyi ayarı seçecek</td><td>Sonradan bakılmış en iyi ayar</td></tr>
+          <tr><td>Geleceği tahmin edecek (dünya modeli)</td><td>Benzetimin gerçek geleceği</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Bu sohbette kâhini dünya modeli çalışması üzerinden konuştuk, ama sen bunu daha önce de kullanıyordun (GDA'da W2P ve kâhin çevirmen, SETONET'te "≥2 kat boşluk" kapısı). Literatürde "oracle" ya da "headroom" analizi.</p>
+  </section>
+
+  <section id="bosluk" aria-labelledby="h-bosluk">
+    <div class="num-h"><span class="n">05</span><h2 id="h-bosluk">Kâğıda yazılacak tek cümle</h2></div>
+    <p class="formula">"<span class="slot">Yöntem</span>, <span class="slot">koşul</span> altında <span class="slot">ölçüt</span>'te <span class="slot">X</span> kadar düşüyor. Sorunun kaynağını bilen bir kâhin <span class="slot">Y</span> kazandırıyor. En iyi basit çare bunun <span class="slot">Z</span> kadarını kapatıyor. Geriye kalan <span class="slot">Y − Z</span> hedefimiz."</p>
+    <div class="two">
+      <div class="bad"><b class="l">Dolduramıyorsan</b><p>Henüz bir araştırma sorun yok, bir fikrin var.</p></div>
+      <div class="ok"><b class="l">Doldurabiliyorsan ve Y − Z büyükse</b><p>Makalenin girişi yazılmış demektir. Küçükse: "burada yöntem için yer yok" bir bulgudur, başarısızlık değil.</p></div>
+    </div>
+  </section>
+
+  <section id="kapilar" aria-labelledby="h-kapilar">
+    <div class="num-h"><span class="n">06</span><h2 id="h-kapilar">Yedi kapı ve ne istedikleri</h2></div>
+    <p><code>arastirma-kapisi</code> bunları sırayla sorar; ilk geçilemeyen kapıda durur ve tek bir sonraki adım verir. Kararı değiştirebilirsin; değiştirirsen bir Sapma yazılır.</p>
+    <div class="tablewrap wide">
+      <table>
+        <thead><tr><th>Kapı</th><th>Ne ister</th><th>Yoksa</th></tr></thead>
+        <tbody>
+          <tr><td>1. Soru</td><td>"M yöntemi, C koşulunda, Q'yu A'dan B'ye düşürüyor" diye ölçülmüş bir bozulma</td><td><span class="pill dur">DUR</span> "Bu bir çözüm, henüz bir problem değil."</td></tr>
+          <tr><td>2. Yeniden üretim</td><td>Makalenin sayısı ile seninki yan yana</td><td><span class="pill kd">KOŞULLU</span> yalnız okuma ve zorlama planı</td></tr>
+          <tr><td>3. Üç sayı</td><td>Taban, en güçlü basit çare, adil kâhin; en az üç tohum; boşluk cümlesi</td><td><span class="pill dur">DUR</span> ölçülene kadar; pay küçükse bulgu olarak yaz</td></tr>
+          <tr><td>4. Rakip adaleti</td><td>Aynı bütçe, karşılaştırılabilir ayar taraması, aynı bilgi</td><td><span class="pill kd">KOŞULLU</span> neyin eşitleneceği listesi</td></tr>
+          <tr><td>5. Protokol</td><td>Karar kuralı ve eşik; kuralın dayandığı varsayımlar ve "varsayım çökerse ne yaparız"; tohum; kilitli test koşulu; durma kuralı; dönüş sayısı</td><td><span class="pill dur">DUR</span> ana koşu için (pilot serbest)</td></tr>
+          <tr><td>6. Gerçeklik ve tavan</td><td>"Bu sonuç benzetimin hangi kusursuzluğuna dayanıyor?"; tavana yakın sonuçta daha zor koşul ya da küçük gerçek test</td><td><span class="pill kd">KOŞULLU</span></td></tr>
+          <tr><td>Kör denetim</td><td>Sonucu bilmeyen ayrı ajan kod, veri ve protokolle baştan hesaplar. Denetlenmemiş sonuç taslaktır.</td><td>—</td></tr>
+          <tr><td>7. Yazım</td><td>Her gerçek sınırlılık metinde; iddia ölçülen boşlukla aynı boyda</td><td><span class="pill kd">KOŞULLU</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Çıktısı hep aynı biçimde: <code>KARAR: DUR | KOŞULLU DEVAM | DEVAM</code>, iki üç cümle neden, boşluk cümlesi, bugün başlanabilecek tek bir adım.</p>
+  </section>
+
+  <section id="arama" aria-labelledby="h-arama">
+    <div class="num-h"><span class="n">07</span><h2 id="h-arama">Makale arama</h2></div>
+    <p>Önce sor: <strong>makaleyi ne için arıyorum?</strong> "Konuya bak, boşluk bul, yöntem öner" sırası eski hatanın kapısıdır.</p>
+    <div class="tablewrap wide">
+      <table>
+        <thead><tr><th>Amaç</th><th>Ne ararsın</th><th>Çıktı</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A.</strong> Zorlanacak temel makale</td><td>Görevin bugünkü en iyi ya da en yaygın yöntemi</td><td>1–2 makale, sonra zayıf nokta raporu</td></tr>
+          <tr><td><strong>B.</strong> Alanı tanımak</td><td>O görev üzerine 5–10 temel makale</td><td>Varsayım tablosu ve alanın kör noktası</td></tr>
+          <tr><td><strong>C.</strong> Bir özelliği kim çözmüş</td><td>Alan adı geçmeyen bir özellik cümlesi (yalnız ölçülmüş bulgudan sonra)</td><td>Başka alanlardan adaylar</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="two">
+      <div class="bad"><b class="l">Kötü arama cümlesi</b><p>"GDA makaleleri" · "domain adaptation robot manipulation" · "kapsamın önemli olduğunu gösteren makaleler"</p><p class="muted">Yönteme kilitler, çok geniştir ya da bulgunu doğrulamaya çalışır.</p></div>
+      <div class="ok"><b class="l">İyi arama cümlesi</b><p>"Görüntüden nesne konumu çıkaran bir algı modülünü yalnız benzetimde eğitilmiş bir politikayla birleştiren sistemler; az hedef verisiyle yeni görünümlere aktarım."</p><p class="muted">Görev + koşul; yöntem adı yok.</p></div>
+    </div>
+    <ol class="road">
+      <li><div><b>Tohum</b><span>Bildiğin 2–3 makale ya da bir derleme.</span></div></li>
+      <li><div><b>Kartopu</b><span>Kaynakçaya (geriye) ve atıf yapanlara (ileriye) bak. En verimli yol.</span></div></li>
+      <li><div><b>Hızlı eleme tablosu</b><span>Makale · Görev · Neyi değiştirmiş · Basit rakip var mı · Gerçek robot mu · Tohum · Kod.</span></div></li>
+      <li><div><b>Çekirdek ve kör nokta</b><span>5–10 makale; neredeyse herkesin aynı işaretlediği sütun kör noktadır ("hepsi kusursuz algı varsayıyor").</span></div></li>
+      <li><div><b>Doğrula ve dur</b><span>Her makale gerçek mi, kontrol et. Süre koy (1–2 gün); yeni makaleler tabloya bir şey eklemiyorsa dur.</span></div></li>
+    </ol>
+    <div class="box stop">
+      <h3>"Bunu kimse yapmamış" çıkarsa</h3>
+      <p>Kapı DUR der. Kör nokta bir problem adayıdır, henüz problem değil. Kör noktanın bozduğunu düşündüğün yöntemi seç ve o koşulda bozulmayı ölç.</p>
+    </div>
+  </section>
+
+  <section id="yontem" aria-labelledby="h-yontem">
+    <div class="num-h"><span class="n">08</span><h2 id="h-yontem">Yeni yöntem ve başka alandan yöntem</h2></div>
+    <p class="thesis">Yeni yöntem, kâhinin bildiği şeyi gözlemden tahmin etmenin bir yoludur.</p>
+    <div class="box warn">
+      <h3>Önce şeytanın avukatı</h3>
+      <p>Kod yazmadan önce, adayın en iyi basit çareyle neden berabere kalacağına dair üç neden yaz ve her birini gösterecek ölçümü. Senin kaydın: basit rakip haftalar sonra berabere kaldı ya da kazandı. Bu soru en başta sorulursa haftalar kazanırsın.</p>
+    </div>
+    <div class="two">
+      <div><b class="l">Yöntem arama (yalnız Kapı 3'ten sonra)</b>
+        <ol class="order">
+          <li><span>Kâhin neyi, ne zamandan beri biliyor?</span></li>
+          <li><span>Basit çareler, en ucuzdan pahalıya.</span></li>
+          <li><span>Boşluk neden kalıyor? Rakip açıklamalar (<code>hypothesis-generation</code>).</span></li>
+          <li><span>Gereken özellik, alan adı geçmeden.</span></li>
+          <li><span>Kim çözmüş? Literatür; yayımlanmışsa iş karşılaştırmadır.</span></li>
+          <li><span>Şeytanın avukatı.</span></li>
+          <li><span>En küçük test, bir öğleden sonra.</span></li>
+        </ol>
+      </div>
+      <div><b class="l">Başka alandan aktarım</b>
+        <ol class="order">
+          <li><span>Hangi parça düşüşe sebep oluyor, ölçüldü mü?</span></li>
+          <li><span>Gereken özellik tek cümleyle.</span></li>
+          <li><span>O alanın en basit aracı önce rakip olur.</span></li>
+          <li><span>Orada çalışma sebebi burada da geçerli mi?</span></li>
+          <li><span>O parçanın kâhin tavanı yeterince büyük mü?</span></li>
+          <li><span>Tek değişiklik, eşit koşul.</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="box accent">
+      <h3>Aynı projede iki yön</h3>
+      <p>"Makine öğrenmesinden dünya modeli getirelim" yöntemden başladı; basit kurallar kazandı. "Sensör sapması var, sensör alanı bunu nasıl çözüyor?" problemden başladı; sensörü yeniden sıfırlamak (TARE) iyi algılayıcıda farkın çoğunu kapattı.</p>
+    </div>
+  </section>
+
+  <section id="ai" aria-labelledby="h-ai">
+    <div class="num-h"><span class="n">09</span><h2 id="h-ai">Yapay zekâyı nasıl kullanırım</h2></div>
+    <p>Claude kütüphaneye gidip dosyaları getiren bir asistan; senin yerine düşünmez. Hatalarının çoğu bilgi eksikliğinden değil, karar anlarından çıktı. O anlar sende kalır.</p>
+    <div class="tablewrap wide">
+      <table>
+        <thead><tr><th>İş</th><th>Kim</th></tr></thead>
+        <tbody>
+          <tr><td>Hangi makale, hangi amaçla</td><td><strong>Sen</strong></td></tr>
+          <tr><td>İlk okuma ve kendi tablon</td><td><strong>Sen</strong></td></tr>
+          <tr><td>Hakem yorumları, GitHub sorunları, atıflar</td><td>Skill (okuyucu + denetçi ajan)</td></tr>
+          <tr><td>Alıntıları ve türetmeleri kontrol</td><td><strong>Sen</strong></td></tr>
+          <tr><td>Hangi zayıf noktanın peşine düşülecek</td><td><strong>Sen</strong></td></tr>
+          <tr><td>Deney kurmak, yorumlamak</td><td><strong>Sen</strong>, Claude ile</td></tr>
+          <tr><td>DUR mu, devam mı</td><td>Kapı önerir, <strong>sen</strong> karar verirsin (değiştirirsen Sapma yazılır)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul>
+      <li><strong>Hipotezini soru olarak verme.</strong> "Gecikmede bozulur mu?" değil, "nerede bozulur?" diye sor.</li>
+      <li><strong>Kaynak ver, yer iste.</strong> Her iddiaya sayfa ve kısa alıntı; açıp bak.</li>
+      <li><strong>Makalenin varlığını doğrula.</strong> Yapay zekâ makale uydurabilir.</li>
+      <li><strong>İki ajanın anlaşması kanıt değil.</strong> Son denetçiler sen ve deneysin.</li>
+      <li><strong>Yayımlanmamış fikrini dış servise gönderme.</strong> <code>claude-council</code> soruyu dışarı yollar.</li>
+      <li><strong>Fikri değil, ölçümü hızlandır.</strong> Claude'un değeri, kararı verdirecek sayıları hızlı elde etmende.</li>
+    </ul>
+  </section>
+
+  <section id="ornekler" aria-labelledby="h-ornekler">
+    <div class="num-h"><span class="n">10</span><h2 id="h-ornekler">Bu hafta öğrendiğimiz örnekler</h2></div>
+    <div class="ex">
+      <span class="tag">BCSDM + dünya modeli</span>
+      <p>Dünya modeli hiç eğitilmedi, çünkü önce "bir model en fazla ne kazanabilir?" ölçüldü ve her kapıda el kuralı (veri ve öğrenme içermeyen birkaç satırlık talimat) kâhine çok yaklaştı: görevde başarı zaten 25'te 25; gecikmede 6000 koşuda sıfır hata; süre farkı kural akıllandırılınca 1,21 s'den 0,25 s'ye.</p>
+      <p>Algılayıcı deneyinde denetçinin önerdiği sıfırlama (TARE) iyi algılayıcıda farkı 1,68 s'den 0,24 s'ye indirdi; kötü algılayıcılarda boşluk duruyor. Bu son deney 2 tohumla koşuldu ve bağımsız denetimden geçmedi; kesin bir sonuç değil.</p>
+      <p class="lesson">Önce boşluğu ölç; tavan küçükse model kurma.</p>
+    </div>
+    <div class="ex">
+      <span class="tag">Manek ve Kolter 2019, öğretici okuma</span>
+      <p>Okuma tablosu; dört NeurIPS hakemi de deneyleri zayıf bulmuş; cevapsız bir GitHub sorunu "basit rakip hafifçe daha iyi" diyor. Kâğıt-kalemle çıkan sınır: model hiçbir yörüngenin e<sup>−αt/2</sup>'den yavaş sönmesine izin vermiyor, yani sarkaçta sönüm b &lt; α ise yetişemez; α'nın değeri makalede yok. <em>Bu türetme ajanın kendi çıkarımıydı; makalede yazmıyor ve deneyle doğrulanmadı.</em></p>
+      <p>Bu örnekte senin yerin neredeyse yoktu; gerçek kullanımda tabloyu önce sen doldurursun.</p>
+      <p class="lesson">En olası basit çare tek satır: "α'yı veriden tahmin et." Bunu bir öğleden sonrada öğrenmek haftalar kazandırır.</p>
+    </div>
+    <div class="ex">
+      <span class="tag">Uydurma örnek: zeminde kayan depo robotu</span>
+      <p>Aynı fikir, aynı 8 hafta, iki yol. Önce yöntem: transformer dünya modeli kurulur, hafta 6'da eklenen basit kural %90'la berabere kalır, makale yeniden çerçevelenir. Önce bozulma: hafta 1'de halıda ve ıslak zeminde üç sayı ölçülür; halıda kapı kapanır (kural yetiyor), ıslak zeminde açılır (16 puan pay) ve model yalnız oraya kurulur.</p>
+      <p class="lesson">Aletler iki yolda da aynı; tek fark sıra.</p>
+    </div>
+    <div class="ex">
+      <span class="tag">GDA'nın sorusu, Tez 1'in sorusu</span>
+      <p>GDA: "Alanları nasıl hizalarsak politika genelleşir?" (yöntem). Tez 1: "Belirleyici olan hizalama mı, benzetim verisinin kapsamı mı?" (kontrollü karşılaştırma). Cevap: kazanç benzetimdeki konum denetiminden; sınır, benzetimin kapsamadığı kamera ötelemesi (yöntem 0/50, GDA 25/50).</p>
+      <p class="lesson">"Nasıl kapatırız?" yerine "kapatan şey aslında ne?" diye sor.</p>
+    </div>
+    <div class="ex">
+      <span class="tag">"İkisinin de eksiği var, arama açayım mı?"</span>
+      <p>Kapı DUR dedi: eksik listesi bir problem değil. Ölçülmüş olanlar (dinamik açığı, kamera, gerçek kol) zaten Tez 3'te çalışılıyor. Cevabı arama değil, gerçek kamerada bir ölçüm verir.</p>
+      <p class="lesson">Yeni hat açmadan önce: bu soru başka bir yerde zaten soruluyor mu?</p>
+    </div>
+  </section>
+
+  <section id="simdi" aria-labelledby="h-simdi">
+    <div class="num-h"><span class="n">11</span><h2 id="h-simdi">Şimdi sıradaki iş</h2></div>
+    <ol class="road">
+      <li><div><b>Tez 1 makalesi: en yakın rakipler (amaç A)</b><span>tez projesinin klasöründe, önce <code>git pull</code>. Şu an meşru olan tek arama bu; amaç C (kamera) Tez 3'e ait.</span><div class="say-box">alan taraması: amaç A. Arama cümlesi: "Görüntüden nesne konumu çıkaran bir algı modülünü, yalnız benzetimde eğitilmiş bir politikayla birleştiren manipülasyon sistemleri; az hedef verisiyle yeni görünümlere aktarım." Bağlam: tez1/RAPOR.md. Süre: iki oturum.</div></div></li>
+      <li><div><b>Göndermeden önce Kapı 4 ve 7</b><span>Rakip GDA 100 epoch'la koşuldu (özgün protokol 500, λ ayarsız). Ya eşitle ya da açıkça sınırlılık olarak yaz; dinamik açığı ve yeniden boyanmış hedef de metinde kalsın.</span></div></li>
+      <li><div><b>Tez 3: gerçek kamera</b><span>Kestiriciyi gerçek kamerada dene: 10 gösterimle kamera pozunu kestir, bağımsız bir ölçümle karşılaştır, hatayı cm/° yaz. Benzetimdeki sınır: 1 cm / 2° geçti, 3 cm / 6° geçmedi.</span></div></li>
+    </ol>
+    <p class="muted">Not: GitHub'daki <code>docs/ornekler/arama-cumlesi-gda.md</code> eski bir aşamaya dayanıyor ("52'ye 48"); Tez 1'in son hâli <code>tez1/RAPOR.md</code>'de.</p>
+  </section>
+
+  <section id="komutlar" aria-labelledby="h-komutlar">
+    <div class="num-h"><span class="n">12</span><h2 id="h-komutlar">Komutlar, tek bakışta</h2></div>
+    <div class="tablewrap wide">
+      <table>
+        <thead><tr><th>Ne zaman</th><th>Ne yazarsın</th><th>Skill</th></tr></thead>
+        <tbody>
+          <tr><td>Yeni proje</td><td><code>/proje-baslat</code></td><td>proje-baslat</td></tr>
+          <tr><td>Var olan projeye yapı</td><td><code>bu projeye kapı yapısını ekle</code></td><td>proje-baslat</td></tr>
+          <tr><td>Makale yok, alan tanınacak</td><td><code>alan taraması: &lt;konu&gt;</code></td><td>zayif-nokta-raporu</td></tr>
+          <tr><td>Makale var</td><td><code>zayıf nokta raporu: makale.pdf</code></td><td>zayif-nokta-raporu</td></tr>
+          <tr><td>Okumayı öğrenmek, takılmak</td><td><code>rehberli oku</code></td><td>zayif-nokta-raporu</td></tr>
+          <tr><td>Sonuç çıktı, denetlensin</td><td><code>kör denetim</code></td><td>zayif-nokta-raporu</td></tr>
+          <tr><td>Doğru yolda mıyım?</td><td><code>kapı</code></td><td>arastirma-kapisi</td></tr>
+          <tr><td>Boşluk ölçüldü, yöntem lazım</td><td><code>yeni yöntem bul</code></td><td>arastirma-kapisi</td></tr>
+          <tr><td>Başka alandan bir şey koymak</td><td><code>X alanındaki şeyi buraya uygulayalım</code></td><td>arastirma-kapisi (aktarım)</td></tr>
+          <tr><td>Rakip seçimi</td><td><code>paper-compare</code></td><td>yardımcı (Kapı 3–4)</td></tr>
+          <tr><td>Makale gerçek mi?</td><td><code>paper-search</code>, reference-lookup</td><td>yardımcı</td></tr>
+          <tr><td>Ölçümden sonra rakip açıklamalar</td><td><code>hypothesis-generation</code></td><td>yardımcı</td></tr>
+          <tr><td>Yazım ve gönderim</td><td><code>paper-critique</code> · <code>citation-check</code></td><td>yardımcı + Kapı 7</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box accent">
+      <h3><code>proje-baslat</code> neyi kontrol eder?</h3>
+      <p>Kendisi iki şeye bakar: klasörde zaten <code>karar.json</code> var mı, ve başka aktif ana proje var mı. Asıl işi yapıyı kurmak. Kurduğu commit kilidi; eşik, kâhin tanımı, tohum planı, tez cümlesi ya da dönüş sınırı sessizce değişirse veya bir sınırlılık silinirse commit'i durdurur. Değiştirebilirsin, ama önce bir Sapma yazılır.</p>
+      <p><strong><code>proje-baslat</code> kapıyı takar, <code>arastirma-kapisi</code> kapıda bekler, commit kilidi kilittir.</strong></p>
+    </div>
+    <p class="muted">Dikkatli kullan: <code>research-litnote</code> özet çıkarır, zayıf nokta değil; <code>writing-research-plan</code> bizim <code>karar.json</code>'ımızla çakışır. Kaldırdıklarımız: iki fikir üretme skill'i, <code>superpowers</code>, <code>research-superpowers</code>; fikirden başlatıyorlardı.</p>
+  </section>
+
+  <section id="hayat" aria-labelledby="h-hayat">
+    <div class="num-h"><span class="n">13</span><h2 id="h-hayat">Hayattan beş benzetme</h2></div>
+    <div class="tablewrap wide">
+      <table>
+        <thead><tr><th>Ders</th><th>Hayat notu</th><th>Akademideki karşılığı</th></tr></thead>
+        <tbody>
+          <tr><td>Boşluğu önce ölç</td><td>Pahalı koşu bandı almadan iki hafta yürü. Yürüyüş seni yolun %90'ına götürüyorsa, bant sana yalnız kalan %10'u satıyor.</td><td>Tavan payı (headroom) analizi; bir hafta sürer, model aylar.</td></tr>
+          <tr><td>Rakibi güçlü yap</td><td>Karşı görüşün en güçlü hâlini kur (steelman), sonra yenmeye çalış.</td><td>Hakemlerin en sık ret gerekçesi: "baseline'lar zayıf".</td></tr>
+          <tr><td>Kâhini adil kur</td><td>Sınav sorularını önceden görmüş birinin puanı senin hedefin olamaz.</td><td>Kâhinin hangi bilgiye eriştiği açıkça yazılır; erişilemez fark ayrılır.</td></tr>
+          <tr><td>Kararı önceden yaz</td><td>İş tekliflerinden önce neyin önemli olduğunu yaz; sonra yazarsan gönlünün seçtiğini haklı çıkarırsın.</td><td>Önceden kayıt; değişiklik yasak değil, görünür olur ("Sapmalar").</td></tr>
+          <tr><td>Bağımsız göz</td><td>Tezini arkadaşına "nasıl olmuş?" diye değil, "nerede yanlış?" diye okut.</td><td>Kör denetim: sonucu bilmeyen biri baştan hesaplar.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted">Bir de batık maliyet: "bu kadar emek verdim, bırakamam." Önceden yazılmış bir durma kuralı, gelecekteki seni bugünkü inadından korur.</p>
+  </section>
+
+  <section id="guclu" aria-labelledby="h-guclu">
+    <div class="num-h"><span class="n">14</span><h2 id="h-guclu">Güçlü yanlarım</h2></div>
+    <p>Bunlar öğretilmesi en zor şeyler; sende zaten var.</p>
+    <ul class="good">
+      <li><strong>Dürüstlük.</strong> Tutmayan sonucu "tutmadı" diye yazıyorsun (residual RL, measure-aware, Tez 3 Aşama 2).</li>
+      <li><strong>Kâhin ve tavan düşüncesi.</strong> Tez 1'de konum kusursuzken (W2P), Tez 3'te bozulmayı bilen kâhin (kaybın %78'ini geri getirdi).</li>
+      <li><strong>Yeniden üretim.</strong> GDA'yı beş yöntemle üretip o aşamada kazancın gürültü içinde olduğunu gösterdin.</li>
+      <li><strong>Kuralı önceden yazmak.</strong> Tez 1'in son ölçütü K-19 koşudan önce yazıldı; üç tohum, McNemar, Holm. Aynı hatta önce kurallar sonradan değişmişti; bu bir gelişme.</li>
+      <li><strong>Kendi hatanı görebilmek.</strong> Bu kılavuz da o sorudan doğdu: "Hep aynı hatayı mı yapmışım?"</li>
+    </ul>
+  </section>
+
+  <p class="closing">En değerli özelliğin dürüstlüğün ve kendi hatanı görebilmen. Eksik olan yalnız sıra ve odak: ölçmeyi en başa al, aynı anda tek bir soruya odaklan.</p>
+
+  <footer>
+    <span>Şablon, skill'ler ve kararların nedenleri: github.com/burhanbarakli/arastirma-sablonu (özel depo; <code>docs/NEDEN.md</code>)</span>
+    <span>BCSDM çalışmasının tamamı: <a href="https://burhanbarakli.github.io/before-world-models/tr/">Dünya modeli eklemeden önce</a></span>
+    <span>Diğer notlar: <a href="../skill-haritasi.html">Skill haritası</a> · <a href="dort-ayin-karnesi.html">Dört ayın karnesi</a> · <a href="problemden-basla.html">Problemden başla</a> · <a href="bosluk-once-olc.html">Boşluğu önce ölç</a> · <a href="claude-ile-okumak.html">Claude ile okumak</a></span>
+  </footer>
+</main>
+
+</body></html>

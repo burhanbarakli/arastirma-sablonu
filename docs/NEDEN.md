@@ -9,6 +9,7 @@ Kaynak notlar (bu depoda, `docs/notlar/`):
 - [Problemden başla](notlar/problemden-basla.html): bir makaleyi ilerletmenin sırası, kâhini kim belirler.
 - [Claude ile okumak](notlar/claude-ile-okumak.html): okuma ve taramada yapay zekâyı doğru kullanmak.
 - [Dört ayın karnesi](notlar/dort-ayin-karnesi.html): Temmuz–Kasım 2026 projelerinin değerlendirmesi, sekiz hata.
+- [Araştırma pusulası](notlar/arastirma-pusulasi.html): hepsinin tek sayfalık özeti (20 Kasım 2026).
 - [Skill haritası](skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
 
 Notlar yazıldıkları günün fotoğrafıdır; sonradan eklenen skill modları (açık rapor, denetçi, alan taraması…) yalnız
@@ -21,7 +22,8 @@ deneyde her kapıyı basit kurallar kapattı:
 - makalenin görevinde başarı zaten 25'te 25'ti; iyileştirilecek yer yoktu;
 - gecikme deneyinde önceden yazılan kurala göre 6000 koşuda tek hata yoktu;
 - süre deneyinde kural kâhinden 1,21 s gerideydi; kuralı biraz akıllandırınca fark 0,25 s'ye indi;
-- algılayıcı deneyinde fark 1,68 s'ydi; denetçinin önerdiği sıfırlama (TARE) bunu 0,24 s'ye indirdi.
+- algılayıcı deneyinde iyi algılayıcıda (S1) fark 1,68 s'ydi; denetçinin önerdiği sıfırlama (TARE) bunu 0,24 s'ye
+  indirdi (2 tohum, bağımsız denetim yok). Kötü algılayıcılarda (S2, S3) boşluk duruyor.
 
 Sonuç olumsuz bir bulgu olarak yayımlandı: https://burhanbarakli.github.io/before-world-models/
 
