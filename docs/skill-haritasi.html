@@ -58,6 +58,12 @@ code{font-family:var(--mono);font-size:.88em}
 .note .q{color:var(--muted)}
 pre{font-family:var(--mono);font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;overflow-x:auto;margin:0;line-height:1.55}
 footer{margin-top:48px;color:var(--muted);font-size:13px}
+.steps{list-style:none;counter-reset:s;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px}
+.steps li::before{content:counter(s);font-family:var(--mono);font-size:13px;min-width:28px;height:28px;border-radius:50%;background:var(--main-bg);color:var(--main-fg);display:grid;place-items:center;flex:none}
+.steps li > div{min-width:0}
+.steps b{font-weight:600}
+.aside{color:var(--muted);font-size:14px;margin:12px 0 0;max-width:75ch}
 @media (max-width:760px){
   .row{grid-template-columns:1fr}
   .hdr-row{display:none}
@@ -73,9 +79,21 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 
   <div class="three">
     <div class="core"><b>proje-baslat</b><p>Yeni proje klasörünü kurar: karar.json, KARAR.md, durum.html paneli, commit kilidi. Odak kontrolü yapar.</p></div>
-    <div class="core"><b>zayif-nokta-raporu</b><p>Yeniden üretmeden önce makalenin nerede bozulabileceğini kaynakla gösterir. Kör denetim bölümü de burada.</p></div>
-    <div class="core"><b>arastirma-kapisi</b><p>Yedi kapı ve aktarım kontrolü. DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller.</p></div>
+    <div class="core"><b>zayif-nokta-raporu</b><p>Makaleyi ayrı bir ajan okur; açık rapor ve senin yargılayacağın iddia blokları çıkar. "Rehberli oku" modu ve kör denetim de burada.</p></div>
+    <div class="core"><b>arastirma-kapisi</b><p>Yedi kapı ve başka alandan yöntem aktarımı kontrolü. DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller.</p></div>
   </div>
+
+  <h2>Nasıl başlarım, nasıl devam ederim</h2>
+  <ol class="steps">
+    <li><div><b>Klasörü aç, projeyi kur.</b> Claude Code'da yeni klasörde <code>/proje-baslat</code>. Üç soruyu cevapla: proje adı ve amacı, temel makale ve kodu, şüphelendiğin koşul. Panel (<code>durum.html</code>) açılır.</div></li>
+    <li><div><b>Makaleyi ver.</b> "zayıf nokta raporu: makale.pdf" de. Ayrı bir ajan okur; açık rapor ve "Değerlendirilecek iddialar" gelir. Yeni bir alandaysan ya da takılıyorsan bunun yerine "rehberli oku" de.</div></li>
+    <li><div><b>Kendin oku ve iddiaları yargıla.</b> Kendi tablonu tut (Ne / Yeri / Şüphem). Her iddia için doğru / yanlış / abartılı / emin değilim işaretle, makalede kontrol ettiğin yeri yaz. Dosyayı getir; kontrol ederim, <code>okuma-gunlugu.md</code>'ye işlenir.</div></li>
+    <li><div><b>En umut veren zayıf noktayı seç.</b> Okuma, boşluk cümlesi yarı dolunca biter. Rapor en ucuz deneyi önerir: taban, basit çare, adil kâhin.</div></li>
+    <li><div><b>Kapıya sor.</b> "kapı" ya da "doğru yolda mıyım?" de. Kapı 1 ölçülmüş bir bozulma ister; ilk iş oyuncak versiyon veya resmî kodla hedefli koşu.</div></li>
+    <li><div><b>Kapıları sırayla geç.</b> Yeniden üretim, üç sayı, rakip adaleti, protokol, ana koşu, gerçeklik. Her karardan sonra panel güncellenir; kural değişikliği commit kilidine takılır.</div></li>
+    <li><div><b>Sonuçtan sonra.</b> Kör denetim (sonucu bilmeyen ayrı ajan), sonra yazım: <code>paper-critique</code>, <code>citation-check</code>, Kapı 7.</div></li>
+  </ol>
+  <p class="aside">Haftada bir: paneli aç, hangi aşamadasın, açık uyarı var mı, dönüş sayacı nerede. Olumsuz sonuç ve "burada yöntem için yer yok" kararı da bir bulgudur.</p>
 
   <h2>Aşama aşama</h2>
   <div class="legend">
@@ -96,9 +114,9 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 
     <div class="row">
       <div class="stage"><span class="gate">1</span><div><b>Okuma</b><small>temel makale</small></div></div>
-      <div class="cell m"><span class="lab">Ana skill</span>Önce kendi tablon (Ne / Yeri / Şüphem), sonra <code>zayif-nokta-raporu</code>. İki listeyi karşılaştır. Takılırsan "rehberli oku": bölüm bölüm soru ve ipucu merdiveni.</div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>zayif-nokta-raporu</code>: ayrı ajanın açık raporu ve iddia blokları. Kendi tablonu tut, her iddiayı makalede kontrol edip yargıla. Takılırsan "rehberli oku": bölüm bölüm soru, ipucu merdiveni.</div>
       <div class="cell h"><span class="lab">Yardımcı</span><code>research-litnote</code> okuma notu · <code>paper-search</code> makale var mı doğrula · birkaç makale için varsayım tablosu</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Aklına gelen yöntem fikrini bir kenara yaz, peşine düşme. Okuma, boşluk cümlesi yarı dolunca biter.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>"Ajanın kendi çıkarımı" etiketli iddiaları elle kontrol et. Yöntem fikrini bir kenara yaz, peşine düşme.</div>
     </div>
 
     <div class="row">
