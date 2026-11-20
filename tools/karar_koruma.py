@@ -15,10 +15,15 @@ FROZEN = [("tez_cumlesi", "metin"), ("uc_sayi", "esik"), ("uc_sayi", "kahin_tani
 
 
 def git_show(ref):
-    try:
-        return json.loads(subprocess.run(["git", "show", ref], capture_output=True, text=True, check=True).stdout)
-    except Exception:
+    """karar.json at a git ref, or None if the file is not there (e.g. first commit).
+
+    Read as UTF-8 bytes on purpose: on Windows the default code page (cp1254 for Turkish) cannot decode the file.
+    A file that exists but cannot be read raises, so the guard fails closed instead of passing every commit.
+    """
+    r = subprocess.run(["git", "show", ref], capture_output=True)
+    if r.returncode != 0:
         return None
+    return json.loads(r.stdout.decode("utf-8-sig"))
 
 
 def get(d, path):
@@ -30,10 +35,20 @@ def get(d, path):
 
 
 def main():
-    staged = subprocess.run(["git", "diff", "--cached", "--name-only"], capture_output=True, text=True).stdout.split()
+    try:  # a Windows console or pipe may not take every Turkish character; never crash on printing
+        sys.stdout.reconfigure(errors="replace")
+    except Exception:
+        pass
+    staged = subprocess.run(["git", "diff", "--cached", "--name-only"], capture_output=True, text=True,
+                            encoding="utf-8").stdout.split()
     if "karar.json" not in staged:
         return 0
-    old, new = git_show("HEAD:karar.json"), git_show(":karar.json")
+    try:
+        old, new = git_show("HEAD:karar.json"), git_show(":karar.json")
+    except Exception as e:
+        print(f"\nAraştırma kapısı: karar.json okunamadı ({e}). Koruma çalışmadan commit'e izin verilmiyor.")
+        print("Dosyayı geçerli UTF-8 JSON olarak düzelt; bilerek atlamak için: git commit --no-verify\n")
+        return 1
     if old is None or new is None:
         return 0
     changed = [".".join(p) for p in FROZEN if get(old, p) not in (None, "", []) and get(old, p) != get(new, p)]

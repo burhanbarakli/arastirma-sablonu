@@ -11,7 +11,7 @@ panel are in place before any work starts. Speak Turkish.
 Template: the folder written in `~/.claude/arastirma/sablon_yolu.txt` (set by the template's `kur.sh` / `kur.ps1`);
 if that file is missing, `~/CALISMALAR/_arastirma-sablonu/`. It holds CLAUDE.md, KARAR.md, karar.json, README.md,
 tools/durum.py and tools/karar_koruma.py. Registry: `~/.claude/arastirma/projeler.json`. On Windows use `python`
-where these steps say `python3` if `python3` is not on the path.
+where these steps say `python3` if `python3 -c ""` fails (it does for the Microsoft Store shortcut).
 
 ## Steps
 
@@ -28,8 +28,10 @@ where these steps say `python3` if `python3` is not on the path.
    `kur.ps1` or `.gitignore`; skip `README.md` if the project already has one.
 4. **Git.** If the folder is not a git repository, run `git init`. Install the guard:
    write `.git/hooks/pre-commit` with these lines, then `chmod +x`:
-   `#!/bin/sh`, then `if command -v python3 >/dev/null 2>&1; then exec python3 tools/karar_koruma.py; fi`, then
-   `exec python tools/karar_koruma.py`. If a pre-commit hook already exists, do not replace it; tell the user how to chain it.
+   `#!/bin/sh`, then `if python3 -c "" >/dev/null 2>&1; then exec python3 tools/karar_koruma.py; fi`, then
+   `exec python tools/karar_koruma.py`. (Test that `python3` runs, not that it exists: on Windows `python3` is often
+   the Microsoft Store shortcut, which exists but is not Python.) Then test the guard once: it must pass a commit
+   that does not touch frozen rules. If a pre-commit hook already exists, do not replace it; tell the user how to chain it.
 5. **Intake.** Ask only these, in one message:
    - project name and one-line goal;
    - the base paper/method (title or link) and whether its code is available;
