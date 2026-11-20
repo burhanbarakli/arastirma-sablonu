@@ -105,7 +105,7 @@ def checks(s):
 
 def registry():
     try:
-        with open(REGISTRY, encoding="utf-8") as f:
+        with open(REGISTRY, encoding="utf-8-sig") as f:  # -sig: older kur.ps1 wrote a BOM
             return json.load(f)
     except Exception:
         return None
@@ -220,7 +220,7 @@ tr.ok td.i,tr.ok td.l{{color:var(--accent)}}tr.uyari td.i,tr.uyari td.l{{color:v
 
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "karar.json"
-    with open(path, encoding="utf-8") as f:
+    with open(path, encoding="utf-8-sig") as f:
         s = json.load(f)
     out = os.path.join(os.path.dirname(os.path.abspath(path)), "durum.html")
     with open(out, "w", encoding="utf-8") as f:

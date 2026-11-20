@@ -13,7 +13,10 @@ Get-ChildItem -Directory (Join-Path $here "skills") | ForEach-Object {
     Copy-Item -Recurse $_.FullName $dest
     Write-Output "skill kuruldu: $($_.Name)"
 }
-Set-Content -Encoding UTF8 -Path (Join-Path $ara "sablon_yolu.txt") -Value $here
+# Windows PowerShell 5.1's "Set-Content -Encoding UTF8" adds a BOM, which breaks JSON readers; write plain UTF-8.
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText((Join-Path $ara "sablon_yolu.txt"), $here, $utf8)
 $reg = Join-Path $ara "projeler.json"
-if (-not (Test-Path $reg)) { Set-Content -Encoding UTF8 -Path $reg -Value "[]" }
-Write-Output "şablon yolu: $here"
+if (-not (Test-Path $reg)) { [System.IO.File]::WriteAllText($reg, "[]", $utf8) }
+# Messages stay ASCII: PowerShell 5.1 reads a BOM-less script in the ANSI code page and garbles Turkish letters.
+Write-Output "sablon yolu: $here"

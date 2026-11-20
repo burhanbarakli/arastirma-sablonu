@@ -84,6 +84,7 @@ doğru, sıra yanlış. Ölçme aletleri yöntemi seçmek için değil, seçilmi
 | 2026-11-19 | Yöntem arama bölümü, yalnız Kapı 3'ten sonra | "Yeni yöntem, kâhinin bildiğini gözlemden tahmin etmenin yoludur"; basit çare ve şeytanın avukatı koddan önce. |
 | 2026-11-20 | Alan taraması modu | Literatür aramasını amaçla, kartopuyla, doğrulamayla ve durma kuralıyla sınırlamak; yeni oturumlarda da aynı yolun izlenmesi. |
 | 2026-11-20 | Notlar ve bu belge depoya kondu | Notların tek kopyası claude.ai'deydi; kaynak dosyalar geçici klasörde silinmişti. |
+| 2026-11-20 | Windows düzeltmeleri: commit kilidi UTF-8 okur ve okuyamazsa durdurur; kanca `python3`'ün çalıştığını sınar; `kur.ps1` BOM'suz yazar | İlk Windows projesinde kilit hiç çalışmıyordu: Türkçe kod sayfası (cp1254) `karar.json`'ı okuyamıyor, hata yutuluyor ve her commit geçiyordu. Microsoft Store'un sahte `python3` kısayolu kancayı bozuyor, BOM'lu kayıt dosyası paneldeki Odak kartını gizliyordu. Bir koruma sessizce kapanmamalı. |
 
 ## Temel kavramlar, kısaca
 
