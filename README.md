@@ -127,8 +127,11 @@ Aşamalar ve panelde görünenler:
   Dürüst kayıttır, başarısızlık değil; panel onu uyarı olarak göstermez.
 - **Aşılan karar:** bir kapı kararını aşarsan yardım sürer, `overrides`'a yazılır; ikincisinde danışmanla konuşman
   önerilir.
-- **Kilit:** eşik ve protokol ölçümden sonra ilk kez yazılamaz; ölçüm satırları değiştirilemez; sapmalar, dönüşler ve
-  aşılan kararlar silinemez; `karar.json` silinemez. Her oturum kancanın kurulu olduğuna bakar.
+- **Kilit:** eşik ve protokol ölçümden sonra (ya da ilk ölçümle aynı commit'te) ilk kez yazılamaz; eşiğin birimi de
+  kilitli; ölçüm satırları değiştirilemez; sapmalar, dönüşler ve aşılan kararlar silinemez; `karar.json` silinemez.
+  Sapma yeni, tarihli ve gerçek gerekçeli olmalı; eski bir sapmanın kopyası ya da "doldurulacak" geçmez. `git revert`
+  ve `rebase` commit kancasını çalıştırmaz; uzak depo varsa `pre-push` kancası gönderilen her commit'i denetler.
+  Her oturum kancaların kurulu olduğuna bakar.
 - **Kaynak:** `kaynak.json`'daki "ilk tercih değil" maddelerine uyan çalışmalar dışlanmaz, sıralamada sona gider;
   yine de seçilirse Sapma yazılır.
 
@@ -223,7 +226,8 @@ HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tı
 - `CLAUDE.md`: Claude'a bu yapıyı her oturumda kullanmasını söyler.
 - `karar.json`: projenin durumu (tek doğru kaynak).
 - `KARAR.md`: insan için okunur kayıt.
-- `tools/durum.py`: `durum.html` panelini üretir (`python3 tools/durum.py`).
+- `tools/durum.py`: `durum.html` panelini üretir (`python3 tools/durum.py`; Windows'ta `python3` çalışmıyorsa
+  `python`).
 - `tools/karar_koruma.py`: dondurulmuş bir kural sapma yazılmadan değişirse commit'i durdurur.
 - `kaynak.json`: kaynak tercihleri (şu an 16 GB'tan fazla VRAM isteyen ve Linux isteyen çalışmalar ilk tercih değil).
   Skill'ler buradan okur; projelere kopyalanmaz. Makine değişirse yalnız bu dosyayı düzelt.

@@ -1,6 +1,6 @@
 # KARAR: [proje adı]
 
-Makinece okunan durum `karar.json`'dadır; bu dosya insan için okunur kayıttır. Panel: `python3 tools/durum.py`.
+Makinece okunan durum `karar.json`'dadır; bu dosya insan için okunur kayıttır. Panel: `python3 tools/durum.py` (Windows'ta `python3` çalışmıyorsa `python`).
 
 Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce yazılır. Sonradan yapılan her değişiklik
 "Sapmalar" bölümüne tarih ve gerekçeyle eklenir; eski satırlar silinmez.

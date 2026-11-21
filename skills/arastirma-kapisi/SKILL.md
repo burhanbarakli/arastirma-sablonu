@@ -53,6 +53,8 @@ conformal, measure-aware set operators, BCSDM world model):
    exists, read it fully. If neither exists and the user is starting work, create `KARAR.md` from `KARAR_SABLONU.md`
    (next to this file) and offer `proje-baslat` once. Always date entries (absolute dates).
 2. If `.git/hooks/pre-commit` is missing or does not call `tools/karar_koruma.py`, say so: the commit guard is off.
+   If the repository has a remote and `.git/hooks/pre-push` is missing, say so too: revert and rebase bypass the
+   pre-commit check, and only the push check catches them.
 3. **Focus.** Read `~/.claude/arastirma/projeler.json`. Count active main projects and active side tasks. If the
    registry is empty or missing, ask which projects are active on any machine; never assume "only this one".
 4. **Family check (mistake 10).** Name the condition or task the work stresses. Check memory, the registry (archived
@@ -203,7 +205,10 @@ Compare the request with the record and warn immediately when:
 - the same condition or task family is reopened where a simple method already won (Step 0, family check).
 
 Proportion: a seed, rival or setting change made **before** any result was seen is planning, not a deviation; record
-it and move on. A Sapma is honest record keeping, not a failure; never present it as one.
+it and move on. A Sapma is honest record keeping, not a failure; never present it as one. Write it complete at once:
+date (YYYY-AA-GG), what changed, and the real reason; never a placeholder such as "doldurulacak" (the commit guard
+rejects it). If an earlier entry is incomplete, never edit it: add a new entry with `"duzeltir": "<old entry's date>"`
+that gives the missing part.
 
 ## Overrides
 
@@ -233,6 +238,7 @@ After the block, at most a short paragraph of explanation. Then update the recor
 `son_karar`; `uc_sayi` rows when numbers were measured; `donus.kayit` for a pivot; `sapmalar` for a rule change;
 `overrides` for an override; `sinirliliklar` for every new limitation, idealisation or seed limit), add a row to
 KARAR.md under "Kapı kayıtları", then run `python3 tools/durum.py` to refresh `durum.html` and give the user its path.
+On Windows, if `python3 -c ""` fails (the Microsoft Store shortcut), use `python` instead.
 
 ## Tone
 

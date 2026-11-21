@@ -28,12 +28,18 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
 3. **Copy** the template files into the folder (`cp -n`), keep `tools/` executable. Copy only CLAUDE.md, KARAR.md,
    karar.json, README.md and tools/. Never copy `.git/`, `ornek/` (a filled example panel), `skills/`, `kur.sh`,
    `kur.ps1` or `.gitignore`; skip `README.md` if the project already has one.
-4. **Git.** If the folder is not a git repository, run `git init`. Install the guard:
-   write `.git/hooks/pre-commit` with these lines, then `chmod +x`:
-   `#!/bin/sh`, then `if python3 -c "" >/dev/null 2>&1; then exec python3 tools/karar_koruma.py; fi`, then
-   `exec python tools/karar_koruma.py`. (Test that `python3` runs, not that it exists: on Windows `python3` is often
-   the Microsoft Store shortcut, which exists but is not Python.) If a pre-commit hook already exists, do not replace
-   it; tell the user how to chain it. The guard is tested after the first commit (step 8).
+4. **Git.** If the folder is not a git repository, run `git init`. Install the guard as two hooks,
+   `.git/hooks/pre-commit` and `.git/hooks/pre-push` (in a repository root found with `git rev-parse --git-dir`),
+   each with these lines, then `chmod +x`:
+   `#!/bin/sh`, then `K="tools/karar_koruma.py"`, then
+   `if python3 -c "" >/dev/null 2>&1; then exec python3 "$K" "$@"; fi`, then `exec python "$K" "$@"`;
+   in `pre-push` write `--push "$@"` in place of `"$@"` on both exec lines. Hooks run from the repository root: if the
+   project folder is a subfolder of the repository, prefix `K` with `git rev-parse --show-prefix`. Write the hooks
+   as plain UTF-8 without BOM and with LF line endings (on Windows PowerShell 5.1 use
+   `[IO.File]::WriteAllText(path, text, (New-Object Text.UTF8Encoding($false)))`, never `Set-Content -Encoding UTF8`,
+   which adds a BOM and makes Git refuse to run the hook). Test that `python3` runs, not that it exists: on Windows
+   `python3` is often the Microsoft Store shortcut, which exists but is not Python. If a hook already exists, do not
+   replace it; tell the user how to chain it. The guard is tested after the first commit (step 8).
 5. **Intake.** Ask only these, in one message:
    - project name and one-line goal;
    - the base paper/method (title or link), whether its code is available, and what it needs to run (training or
@@ -49,7 +55,7 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
    Mirror the same in `KARAR.md` (project name, date, base method).
 6. **Register.** Add `{"ad", "yol", "tur", "durum": "aktif", "olusturma"}` to the registry (create the folder and
    file if missing; keep it a JSON list).
-7. **Panel.** Run `python3 tools/durum.py` and tell the user the path of `durum.html`. Open it in the browser pane if
+7. **Panel.** Run `python3 tools/durum.py` (or `python` as above) and tell the user the path of `durum.html`. Open it in the browser pane if
    one is available.
 8. **First commit and guard test.** `git add -A && git commit -m "Proje kuruldu: araştırma şablonu"` only if the user
    agrees to a commit; otherwise leave it staged-free and say the guard is not tested yet. After the first commit,

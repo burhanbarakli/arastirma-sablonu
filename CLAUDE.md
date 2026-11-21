@@ -7,14 +7,16 @@ Bu klasördeki her araştırma işinde aşağıdaki yapı geçerlidir. Kullanıc
 - `karar.json`: projenin makinece okunan durumu (aşamalar, üç sayı, protokol, tohum, dönüşler, sapmalar). Tek doğru
   kaynak budur.
 - `KARAR.md`: aynı kararların insan için okunur kaydı ve tarihli kapı notları.
-- `durum.html`: `python3 tools/durum.py` ile `karar.json`'dan üretilen durum paneli. Elle düzenlenmez.
-- `tools/karar_koruma.py`: git kancası; dondurulmuş bir kural "sapmalar"a yazılmadan değişirse commit'i durdurur.
+- `durum.html`: `python3 tools/durum.py` ile `karar.json`'dan üretilen durum paneli. Elle düzenlenmez. Windows'ta
+  `python3 -c ""` çalışmıyorsa (Microsoft Store kısayolu) bu dosyadaki `python3` yerine `python` kullan.
+- `tools/karar_koruma.py`: git kancası (`pre-commit`, uzak depo varsa `pre-push`); dondurulmuş bir kural
+  "sapmalar"a yazılmadan değişirse commit'i ya da gönderimi durdurur.
 
 ## Her oturumda
 
 1. Önce `karar.json`'ı (tek doğru kaynak), sonra `KARAR.md`'yi oku. Projenin hangi aşamada olduğunu ve son kararı bil.
-   `.git/hooks/pre-commit` dosyasının var olduğunu ve `tools/karar_koruma.py`'yi çağırdığını kontrol et; yoksa
-   (örneğin depo yeni klonlandıysa) kullanıcıya söyle ve kurmayı öner.
+   `.git/hooks/pre-commit` dosyasının var olduğunu ve `tools/karar_koruma.py`'yi çağırdığını kontrol et; uzak depo
+   varsa `.git/hooks/pre-push`'a da bak. Yoksa (örneğin depo yeni klonlandıysa) kullanıcıya söyle ve kurmayı öner.
 2. Kullanıcı yeni bir yöntem, model, modül ya da yön önerirse ("hızlı bir deneme", "makaleye küçük bir ek", "hakem
    istedi" de buna girer); yeni bir koşul eklemek isterse; eşik, karar kuralı, tohum ya da rakip ayarını değiştirmek
    isterse; bir sınırlılığı çıkarmak isterse; ya da yazıma ve gönderime geçerse, **`arastirma-kapisi` skill'ini
@@ -36,6 +38,8 @@ Bu klasördeki her araştırma işinde aşağıdaki yapı geçerlidir. Kullanıc
 - Benzetimde doğrulanmış bir sonuçtan sonraki adım gerçek dünya testidir; yapılmayacaksa iddianın benzetimle sınırlı
   olduğu Sapma olarak yazılır.
 - Sonuç görüldükten sonra bir kural değişirse, bu bir sapmadır: tarih, ne değişti ve gerekçeyle `sapmalar`'a yazılır.
+  Gerekçe yer tutucu olamaz ("doldurulacak"); eksik kalmış eski bir kayıt düzenlenmez, `"duzeltir": "<eski tarih>"`
+  alanlı yeni bir kayıtla tamamlanır.
 - Üçüncü dönüşte durma kuralı devreye girer.
 - Gerçek bir sınırlılık metinden çıkarılmaz; ortaya çıktığı anda `sinirliliklar`'a yazılır.
 - Kullanıcı bir kapı kararını aşarsa yardım sürer, ama `overrides`'a tarih, kapı, karar ve gerekçeyle yazılır.
