@@ -62,7 +62,9 @@ doğru, sıra yanlış. Ölçme aletleri yöntemi seçmek için değil, seçilmi
 | Makaleyi ayrı bir okuyucu ajan okur (sohbeti ve hipotezi görmeden) | Aynı neden; bağımsız göz. |
 | Tek denetçi ajan: alıntı, akıl yürütme, kaçırılanlar | İkinci göz hataları azaltır; ama iki ajanın anlaşması kanıt değildir, son denetçiler kullanıcı ve deneydir. |
 | "Ajanın kendi çıkarımı" etiketi | Makalede yazmayan türetmeler en riskli iddialar; elle kontrol edilmeleri gerekir. |
-| Rapor açık; iddiaları kullanıcı yargılar, okuma günlüğüne yazılır | Yapay zekâyı denetlemek de bir beceri; günlük, ajanın hangi tür iddiada yanıldığını ve kullanıcının ne kadar yakaladığını gösterir. |
+| Rapor açık; iddiaları yargılamak isteğe bağlı, yargılananlar okuma günlüğüne yazılır | Yapay zekâyı denetlemek de bir beceri; günlük, ajanın hangi tür iddiada yanıldığını ve kullanıcının ne kadar yakaladığını gösterir. 2026-11-21'den beri zorunlu değil (anlatımlı okuma). |
+| Anlatımlı okumada da okuma bağımsız ajanın; sıralama kullanıcının şüphesine göre değil, bozma olasılığı × test ucuzluğuna göre; şüpheye karşı çıkan bulgu hep listede | Okumayı hipotezi bilen ajan yaparsa ve bulguları "sıradaki kapı" için sıralarsa, hipotez filtreye döner (hata 1). |
+| Türetilmiş ya da doğrulanamamış bulgu ölçülecek bir hipotezdir, bozulma değildir | Ajanın denklemden çıkardığı bir sınır `karar.json`'a ölçülmüş bozulma gibi girerse Kapı 1 yanlış temelde geçer. |
 | Alan taraması amaçla başlar, yöntem adı geçmeyen cümleyle arar, durma kuralıyla biter | Literatür taraması geçmişte "kimse yapmamış" sonucuna ve yeni yönteme kaydı. |
 | Yayımlanmamış fikir dış servislere gönderilmez | Gizlilik; `claude-council` gibi araçlar soruyu dışarı yollar. |
 
@@ -85,6 +87,7 @@ doğru, sıra yanlış. Ölçme aletleri yöntemi seçmek için değil, seçilmi
 | 2026-11-20 | Alan taraması modu | Literatür aramasını amaçla, kartopuyla, doğrulamayla ve durma kuralıyla sınırlamak; yeni oturumlarda da aynı yolun izlenmesi. |
 | 2026-11-20 | Notlar ve bu belge depoya kondu | Notların tek kopyası claude.ai'deydi; kaynak dosyalar geçici klasörde silinmişti. |
 | 2026-11-20 | Windows düzeltmeleri: commit kilidi UTF-8 okur ve okuyamazsa durdurur; kanca `python3`'ün çalıştığını sınar; `kur.ps1` BOM'suz yazar | İlk Windows projesinde kilit hiç çalışmıyordu: Türkçe kod sayfası (cp1254) `karar.json`'ı okuyamıyor, hata yutuluyor ve her commit geçiyordu. Microsoft Store'un sahte `python3` kısayolu kancayı bozuyor, BOM'lu kayıt dosyası paneldeki Odak kartını gizliyordu. Bir koruma sessizce kapanmamalı. |
+| 2026-11-21 | Rehberli okuma kaldırıldı, yerine anlatımlı okuma: ajan zayıf noktaları bulur, "şurayı oku" diye tek tek anlatır; soru ve ipucu merdiveni yok | Kullanıcı tercihi: rehberli okuma (SIMPLER) çok uzun sürdü. Bedeli: kullanıcı zayıf nokta bulmayı daha az pratik eder, ajanın çerçevesi onu daha çok yönlendirir. Bunu dengelemek için okuma yine bağımsız ajanda, sıralama hipotezden bağımsız, şüpheye karşı bulgu hep listede, kapanışta `?`'li boşluk cümlesi. İlk sürüm yalnız kurulu kopyada yapılmıştı; inceleme (bağımsız ajan dahil) bu açıkları bulunca depoya bu düzeltmelerle girdi. |
 
 ## Temel kavramlar, kısaca
 

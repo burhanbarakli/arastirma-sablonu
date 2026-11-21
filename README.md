@@ -62,10 +62,11 @@ ya da "yeni bir araştırma projesi başlat" demen yeterli. `proje-baslat` skill
    yöntem adı geçmeyen bir arama cümlesi; sonra kartopu, eleme tablosu, doğrulama, durma kuralı.
    Ayrıntı: aşağıdaki "Makale arama (alan taraması)" bölümü.
 3. **Makaleyi ver.** "zayıf nokta raporu: makale.pdf". Ayrı bir ajan okur, denetçi ajan kontrol eder;
-   açık rapor ve "Değerlendirilecek iddialar" gelir. Yeni alandaysan ya da takılıyorsan "rehberli oku".
-4. **Kendin oku, iddiaları yargıla.** Kendi tablonu tut (Ne / Yeri / Şüphem). Her iddiayı doğru / yanlış / abartılı /
-   emin değilim diye işaretle, makalede kontrol ettiğin yeri yaz. Getir; kontrol edilir, `okuma-gunlugu.md`'ye işlenir.
-   "Ajanın kendi çıkarımı" etiketli iddiaları elle kontrol et.
+   açık rapor ve "Değerlendirilecek iddialar" gelir. Bulguları tek tek, okunacak yeriyle dinlemek istersen
+   "anlatımlı okuma" (ya da "şurayı oku de").
+4. **Gösterilen yerleri oku.** İddiaları yargılamak isteğe bağlı: doğru / yanlış / abartılı / emin değilim diye
+   işaretleyip getirirsen kontrol edilir, `okuma-gunlugu.md`'ye işlenir. "Ajanın kendi çıkarımı" etiketli bulgular
+   ölçülecek hipotezdir, bozulma değil.
 5. **En umut veren zayıf noktayı seç.** Okuma, boşluk cümlesi yarı dolunca biter; rapor en ucuz deneyi önerir.
 6. **Kapıya sor.** "kapı" / "doğru yolda mıyım?". Kapı 1 ölçülmüş bozulma ister: oyuncak versiyon ya da resmî kodla
    hedefli koşu.
@@ -134,7 +135,7 @@ Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. 
 | Aşama | Ana skill | Yardımcı | Dikkat |
 |---|---|---|---|
 | 0. Başlangıç | `proje-baslat` | | Bir ana proje, bir küçük yan iş |
-| 1. Okuma | `zayif-nokta-raporu` (ayrı ajan + denetçi, açık rapor, iddiaları sen yargılarsın; makale yoksa "alan taraması", takılırsan "rehberli oku") | `paper-search`, `research-litnote` | Yöntem fikrini yaz, peşine düşme |
+| 1. Okuma | `zayif-nokta-raporu` (ayrı ajan + denetçi, açık rapor, bulgular tek tek "şurayı oku" diye anlatılabilir: "anlatımlı okuma"; makale yoksa "alan taraması") | `paper-search`, `research-litnote` | Yöntem fikrini yaz, peşine düşme |
 | Kapı 1: Soru | `arastirma-kapisi` | `hypothesis-generation` (sadece ölçümden sonra) | "Kimse yapmamış" = DUR |
 | Kapı 2: Yeniden üretim | `arastirma-kapisi` | | Henüz yeni yöntem kodu yok |
 | Kapı 3: Üç sayı | `arastirma-kapisi` (+ yöntem arama, aktarım kontrolü) | `paper-compare`, `decision-matrix` | Basit çare yöntemden önce |
