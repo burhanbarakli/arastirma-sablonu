@@ -30,6 +30,12 @@ user's language (Turkish unless they write in another language).
 8. **The user picks the problem.** End with the top three weak points, each with its cheapest experiment, and let the
    user choose; do not choose for them. A drop seen in a paper, a toy or a derivation is a hypothesis for Kapı 1, not a
    measured failure.
+9. **Resource fit.** Read `kaynak.json` in the template folder (its path is in
+   `~/.claude/arastirma/sablon_yolu.txt`). For every paper that may become a base paper or an experiment, record what
+   running it needs: training or fine-tuning or only a released checkpoint, the GPU memory for that, and the operating
+   system it needs. A paper that matches an item in `ilk_tercih_degil` stays in the map and the tables, but goes last
+   among base-paper and experiment candidates; say so in one line with the reason. Unknown needs are marked "?" and
+   checked in the code's README or issues before the paper is recommended.
 
 ## Three modes
 
@@ -97,7 +103,7 @@ in an afternoon, with three policies: baseline, simple hand rule, and a fair ora
 only what the method could observe, and only from when it could observe it. An unfair oracle inflates the gap.
 
 C3. **Targeted run of the official code.** Name the two or three stress conditions most worth trying with the
-released code and checkpoints, instead of a full reproduction.
+released code and checkpoints, instead of a full reproduction. Prefer runs that fit `kaynak.json` (ground rule 9).
 
 ## Assumption table (several papers, new field)
 
@@ -231,7 +237,7 @@ done X". The user's record: literature search tended to end in a method idea; ke
    (OpenAlex) or the Semantic Scholar API; add keyword searches with the sentence. Use `deep-research` only for a wide
    sweep. Record which papers were expanded.
 5. **Triage table** from title and abstract, one row per candidate: paper (year, venue, link) | task | what is varied |
-   simple baseline? | real robot / real data? | seeds | code. Mark unknown cells "?".
+   simple baseline? | real robot / real data? | seeds | code | resource fit (ground rule 9). Mark unknown cells "?".
 6. **Core and depth.** Pick 5–10 with the user (purpose A: 1–2). For B, fill the assumption table from the PDFs (the
    "Assumption table" section above) and name the blind spot. For A, hand over to the normal report. For C, run the
    transfer check in arastirma-kapisi on each candidate.

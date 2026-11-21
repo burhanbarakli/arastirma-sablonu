@@ -81,7 +81,11 @@ target, or a method the user likes, or if C was chosen after the method: **DUR**
 problem değil." Next step: name the base method and the condition to stress, and measure the drop.
 
 **Kapı 2: Yeniden üretim.** Has the base method been reproduced, with numbers next to the paper's? If not:
-**KOŞULLU DEVAM** only for reading and stress planning; no new method code.
+**KOŞULLU DEVAM** only for reading and stress planning; no new method code. Before planning any run, check it
+against `kaynak.json` in the template folder (path in `~/.claude/arastirma/sablon_yolu.txt`). If the base method or a
+planned run matches an item in `ilk_tercih_degil`, say so before any work starts and name a fitting alternative
+(a smaller released model, evaluation only, another base paper). Going ahead anyway is allowed; write it as a Sapma
+with the reason and the cost (time, cloud, another machine).
 
 **Kapı 3: Üç sayı (mistakes 1, 2, 4).** First, the threshold δ is written in `uc_sayi.esik` before these numbers are
 measured; if it is empty: **DUR**, write it first. Then, measured with at least 3 seeds:
