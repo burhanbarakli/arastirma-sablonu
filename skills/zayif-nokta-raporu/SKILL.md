@@ -1,6 +1,6 @@
 ---
 name: zayif-nokta-raporu
-description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has a guided reading mode that coaches the user to find weak points themselves instead of handing over a report: use it for "rehberli oku", "rehberli okuma", "birlikte okuyalım", "okurken bana soru sor", "ipucu ver", "zayıf nokta bulmayı öğrenmek istiyorum". Also has a field survey mode for literature search on a topic: use it for "alan taraması", "literatür tara", "makale ara", "bu konuda ne var", "alanı tanımak istiyorum", "temel makale bul", "bunu kim çözmüş". Not for summarising a paper or writing a review of the user's own manuscript.
+description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has an explained reading mode (anlatımlı okuma): the agent reads the paper and finds the weak points itself, then walks the user through them one at a time, each with the exact place to read ("şurayı oku"), so the user studies only the spots that matter; no quizzing: use it for "anlatarak oku", "anlatımlı okuma", "şurayı oku de", "birlikte okuyalım", "rehberli oku", "rehberli okuma", "zayıf noktaları anlat". Also has a field survey mode for literature search on a topic: use it for "alan taraması", "literatür tara", "makale ara", "bu konuda ne var", "alanı tanımak istiyorum", "temel makale bul", "bunu kim çözmüş". Not for summarising a paper or writing a review of the user's own manuscript.
 ---
 
 # Zayıf nokta raporu (0. adım)
@@ -30,10 +30,9 @@ user's language (Turkish unless they write in another language).
 - **Rapor modu** (default): the steps below, ending in a written report.
 - **Alan taraması modu**: when the user wants to search the literature on a topic, get to know a field, find a base
   paper to stress, or find who already solved a property. See "Alan taraması modu" near the end.
-- **Rehberli okuma modu**: when the user asks to read together, to be asked questions, for hints, or to learn to find
-  weak points. The user finds the weak points; you coach. See "Rehberli okuma modu" near the end. If the user has not
-  read the paper yet and only asks for "zayıf nokta raporu", mention once that guided mode exists, then do what they
-  asked.
+- **Anlatımlı okuma modu**: when the user wants to go through the paper together, be told where to read, or have the
+  weak points explained ("anlatarak oku", "şurayı oku de", "birlikte okuyalım", "rehberli oku"). You do the reading and
+  find the weak points; the user reads only the places you point to. See "Anlatımlı okuma modu" near the end.
 
 ## Inputs to collect
 
@@ -107,8 +106,8 @@ Save the report as a Markdown file next to the paper, or in the current director
 
 1. **Özet:** three to five most promising weak points, each one line, ranked by how likely they are to break the
    method and how cheap they are to test.
-1b. **Değerlendirilecek iddialar:** each Özet item again as a claim block the user will judge against the paper. The
-   user reads the report openly (it is not hidden), and judging each claim is part of their training:
+1b. **Değerlendirilecek iddialar:** each Özet item again as a claim block with the exact place to read, so the user
+   can check it in the paper. Judging the claims is optional; the "Senin değerlendirmen" lines may stay empty:
 
    ```markdown
    ### İddia N: <one sentence>
@@ -156,7 +155,7 @@ Fix plain quote errors before showing the report and say which ones were fixed. 
 two agents is not proof, since they share blind spots; the last checks are the user and the experiment. Say this once
 in the report header.
 
-**After the user judges the claims.** When the user brings the filled claim blocks back:
+**If the user judges any claims** (optional, in any mode). When the user brings filled claim blocks back:
 - for every "doğru" without a checked location, ask where they checked it;
 - where the user marks a claim "yanlış" or "abartılı", re-open the source and say plainly who is right; a claim the
   agent got wrong is a good catch, say so;
@@ -164,38 +163,40 @@ in the report header.
   source type and confidence, the user's verdict, and whether the verdict held up. Over several papers this shows how
   often agent claims of each source type fail and how well the user catches them.
 
-## Rehberli okuma modu
+## Anlatımlı okuma modu
 
-Goal: the user learns to see weak points. Do not hand over findings; every weak point the user finds alone is worth
-more than one you list.
+Goal: the user understands the paper and its weak points quickly. You do the reading and the finding; the user reads
+only the places that matter and works on them. Do not quiz the user, do not wait for them to discover things, and do not
+use a hint ladder.
 
-1. **Prepare silently.** Read the paper yourself first (step A, and B if cheap) so you know what there is to find,
-   with locations. Do not show this list.
-2. **Start.** Suggest 30–45 minutes of reading alone first, keeping the table *Ne / Makaledeki yeri / Şüphem*. If the
-   user already has a table, take it and go to step 5. If they found nothing alone, that is normal: start step 3.
-3. **Section by section.** The user reads one section (abstract and experiments first, then method, appendix,
-   limitations last). After each, ask one to three short questions built on the A1–A5 lenses, without the answer:
-   - A1 *gösterilmeyen*: "Bu deneyde hiç değişmeyen ne var?" "Kaç tohum, hangi rakip?"
-   - A2 *varsayım*: "Yazarlar neyi basitlik için dışarıda bırakıyor?"
-   - A3 *elle seçilen*: "Değeri verilmeyen sabit var mı? Hangisi sonucu en çok etkiler?"
-   - A4 *tavan*: "Bu sayı iyileştirmeye ne kadar yer bırakıyor?"
-   - A5 *ek*: "Ekte ana metni daraltan bir şey var mı?"
-   Answer feedback is short and specific: "doğru", "yarısı doğru: şuraya bir daha bak", or "bunu ben görmemiştim"
-   (say this honestly when the user finds something outside your list, and verify it in the source).
-4. **Hint ladder.** When the user is stuck, give one level at a time, only on request or after a wrong attempt:
-   (1) *yer*: the section, page or figure; (2) *tür*: the kind of weakness (a rate limit, a missing rival, an untested
-   condition…); (3) *cevap*: the weak point, with location and a short quote. Note the level at which each one was
-   found.
-5. **Compare.** Put the user's list next to yours. For each missed item, say which lens would have caught it and why
-   it was easy to miss. Credit what the user found that you did not.
-6. **Reading log.** Append one block to `okuma-gunlugu.md` in the project root (or the current directory): date,
-   paper, and for each weak point: found alone / found at hint level 1–3 / missed, with its lens (A1–A5). After a few
-   papers, point out the lens the user misses most and suggest looking there first next time.
-7. **Then the report**, if the user wants it: run steps B and C and write the normal report, marking which items the
-   user found.
+1. **Read first, independently.** When a subagent tool is available, the independent reader and the verifier from the
+   "Report" section do the reading (steps A1–A5, B1–B3, B4 if cheap), with the same inputs: the paper, code and review
+   links and this skill's rules, never the conversation or the user's hypothesis. You only order and explain what they
+   return. Without subagents, read it yourself and say once that the reading was not independent. Either way, re-open
+   every place you will cite and check the quote is there (ground rule 2).
+2. **Order.** Rank the findings as in the report's Özet: how likely each is to break the method, and how cheap it is to
+   test. Do not rank by the user's suspected condition or the gate they plan next (ground rule 3). Aim for 5–8
+   findings per paper. Always keep: any finding that goes against the user's suspicion, any simple rival that beat or
+   matched the method (A1, B3), seeds and ceiling problems (A1, A4). Findings left out are listed in one line at the
+   end.
+3. **One at a time.** Present one finding (or two or three short related ones) per message, each as:
+   - **Bulgu:** one sentence.
+   - **Oku:** the exact place (section and paragraph, table or figure, page) and what to look for there, with at most
+     one quoted sentence.
+   - **Neden önemli:** one to three plain sentences. Explain any term the user may not know (for example Pearson,
+     MMRV, checkpoint) in a sentence, with a tiny worked example when it helps; label made-up numbers as made up.
+   - **Kaynak türü:** makalede yazıyor | dış kaynak (link) | ajanın kendi çıkarımı. Mark derived claims clearly.
+   Then stop so the user can read that place. Continue on "devam" or answer their question first. If the user raises
+   a point that is not on your list, check it in the source; if it holds, add it and say so plainly.
+4. **Wrap up.** After the last finding, give one table of all findings (Ne | Yeri | Neden önemli | Kaynak türü |
+   Denetçi), the one-line list of findings left out, and "Doğrulanamayanlar". Then the gap sentence from the report
+   (item 6), with `?` for every number not yet measured; then the single most promising weak point and the cheapest
+   experiment that would measure it (baseline, simple rule and fair oracle). Say that Kapı 1 needs that measured drop.
+   Do not start it without the user's go-ahead. Offer to save the table as `zayif-nokta-<kısa-ad>.md`.
 
 All ground rules still apply: quotes are checked in the source, and anything you derive yourself (like a bound from
-the equations) is labelled as yours and left for the user to check by hand.
+the equations) is labelled as yours. A derived or unverified finding is a hypothesis to measure, never a measured
+failure: it does not go into `karar.json` `bozulma` until the drop is measured.
 
 ## Alan taraması modu
 

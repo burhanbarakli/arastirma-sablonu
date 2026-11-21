@@ -81,7 +81,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 
   <div class="three">
     <div class="core"><b>proje-baslat</b><p>Yeni proje klasörünü kurar: karar.json, KARAR.md, durum.html paneli, commit kilidi. Odak kontrolü yapar.</p></div>
-    <div class="core"><b>zayif-nokta-raporu</b><p>Makaleyi ayrı bir ajan okur, bir denetçi ajan kontrol eder; açık rapor ve senin yargılayacağın iddia blokları çıkar. "Alan taraması", "rehberli oku" modları ve kör denetim de burada.</p></div>
+    <div class="core"><b>zayif-nokta-raporu</b><p>Makaleyi ayrı bir ajan okur, bir denetçi ajan kontrol eder; açık rapor ve iddia blokları çıkar. "Alan taraması", "anlatımlı okuma" modları ve kör denetim de burada.</p></div>
     <div class="core"><b>arastirma-kapisi</b><p>Yedi kapı, Kapı 3'ten sonra yöntem arama ve başka alandan aktarım kontrolü. DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller.</p></div>
   </div>
 
@@ -89,8 +89,8 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
   <ol class="steps">
     <li><div><b>Klasörü aç, projeyi kur.</b> Claude Code'da yeni klasörde <code>/proje-baslat</code>. Üç soruyu cevapla: proje adı ve amacı, temel makale ve kodu, şüphelendiğin koşul. Panel (<code>durum.html</code>) açılır.</div></li>
     <li><div><b>Makalen yoksa alanı tara.</b> "alan taraması: konu" de. Önce amaç (temel makale mi, alanı tanımak mı, kim çözmüş mu) ve yöntem adı geçmeyen bir arama cümlesi; sonra kartopu, eleme tablosu, doğrulama, durma kuralı. Sonunda bir temel makale ya da alanın kör noktası çıkar.</div></li>
-    <li><div><b>Makaleyi ver.</b> "zayıf nokta raporu: makale.pdf" de. Ayrı bir ajan okur, denetçi ajan kontrol eder; açık rapor ve "Değerlendirilecek iddialar" gelir. Yeni bir alandaysan ya da takılıyorsan bunun yerine "rehberli oku" de.</div></li>
-    <li><div><b>Kendin oku ve iddiaları yargıla.</b> Kendi tablonu tut (Ne / Yeri / Şüphem). Her iddia için doğru / yanlış / abartılı / emin değilim işaretle, makalede kontrol ettiğin yeri yaz. Dosyayı getir; kontrol ederim, <code>okuma-gunlugu.md</code>'ye işlenir.</div></li>
+    <li><div><b>Makaleyi ver.</b> "zayıf nokta raporu: makale.pdf" de. Ayrı bir ajan okur, denetçi ajan kontrol eder; açık rapor ve "Değerlendirilecek iddialar" gelir. Bulguları tek tek, okunacak yeriyle dinlemek istersen "anlatımlı okuma" de.</div></li>
+    <li><div><b>Gösterilen yerleri oku.</b> İddiaları yargılamak isteğe bağlı: doğru / yanlış / abartılı / emin değilim işaretleyip getirirsen kontrol ederim, <code>okuma-gunlugu.md</code>'ye işlenir. "Ajanın kendi çıkarımı" ölçülecek hipotezdir, bozulma değil.</div></li>
     <li><div><b>En umut veren zayıf noktayı seç.</b> Okuma, boşluk cümlesi yarı dolunca biter. Rapor en ucuz deneyi önerir: taban, basit çare, adil kâhin.</div></li>
     <li><div><b>Kapıya sor.</b> "kapı" ya da "doğru yolda mıyım?" de. Kapı 1 ölçülmüş bir bozulma ister; ilk iş oyuncak versiyon veya resmî kodla hedefli koşu.</div></li>
     <li><div><b>Boşluk kalırsa yöntem ara.</b> Kapı 3 geçildiyse "yeni yöntem bul" de: kâhin ne biliyor, basit çareler, boşluğun nedeni, gereken özellik, literatür, şeytanın avukatı, en küçük test.</div></li>
@@ -118,7 +118,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 
     <div class="row">
       <div class="stage"><span class="gate">1</span><div><b>Okuma</b><small>temel makale</small></div></div>
-      <div class="cell m"><span class="lab">Ana skill</span><code>zayif-nokta-raporu</code>: ayrı ajanın açık raporu ve iddia blokları. Kendi tablonu tut, her iddiayı makalede kontrol edip yargıla. Takılırsan "rehberli oku": bölüm bölüm soru, ipucu merdiveni.</div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>zayif-nokta-raporu</code>: ayrı ajanın açık raporu ve iddia blokları. İstersen "anlatımlı okuma": bulgular tek tek, okunacak yeriyle anlatılır. İddiaları yargılamak isteğe bağlı.</div>
       <div class="cell h"><span class="lab">Yardımcı</span>"alan taraması" modu · <code>paper-search</code>, OpenAlex atıf komşuları · <code>research-litnote</code> okuma notu</div>
       <div class="cell w"><span class="lab">Dikkat</span>"Ajanın kendi çıkarımı" etiketli iddiaları elle kontrol et. Yöntem fikrini bir kenara yaz, peşine düşme.</div>
     </div>
