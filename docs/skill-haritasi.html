@@ -65,6 +65,9 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
 .steps li::before{content:counter(s);font-family:var(--mono);font-size:13px;min-width:28px;height:28px;border-radius:50%;background:var(--main-bg);color:var(--main-fg);display:grid;place-items:center;flex:none}
 .steps li > div{min-width:0}
 .steps b{font-weight:600}
+.flow{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;margin-top:16px}
+.flow pre.mermaid{background:none;border:0;padding:0;margin:0;text-align:center;font-family:var(--body);color:var(--fg)}
+.flow-note{color:var(--muted);font-size:14px;margin:10px 0 0;max-width:75ch}
 .aside{color:var(--muted);font-size:14px;margin:12px 0 0;max-width:75ch}
 @media (max-width:760px){
   .row{grid-template-columns:1fr}
@@ -84,6 +87,28 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
     <div class="core"><b>zayif-nokta-raporu</b><p>Makaleyi sohbeti görmeyen bir ajan okur, denetçi ajan kontrol eder; ilk üç zayıf nokta çıkar, birini sen seçersin. "Alan taraması" (A, B), "anlatımlı okuma" ve kör denetim de burada.</p></div>
     <div class="core"><b>arastirma-kapisi</b><p>Yedi kapı; Kapı 3'ten sonra yöntem arama, aktarım kontrolü ve "kim çözmüş" taraması (C). DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller, aşılan kararı kaydeder.</p></div>
   </div>
+
+  <h2>Akış</h2>
+  <div class="flow">
+<pre class="mermaid">
+flowchart TD
+  B["Başlangıç: proje-baslat&lt;br/&gt;odak, aile sorusu, kilit testi"] --&gt; Q{"Makalen var mı?"}
+  Q -- evet --&gt; R["zayif-nokta-raporu: rapor&lt;br/&gt;bağımsız okuyucu + denetçi"]
+  Q -- hayır --&gt; T["Alan taraması A / B"]
+  T -- "A: temel makale" --&gt; R
+  T -- "B: alanı tanımak" --&gt; K["Kör nokta adayları"]
+  R --&gt; S["Sen ilk üçten birini seçersin"]
+  K --&gt; S
+  S --&gt; K1["Kapı 1–2: kendi ölçtüğün düşüş,&lt;br/&gt;yeniden üretim"]
+  K1 --&gt; K3["Kapı 3: önce eşik, sonra üç sayı"]
+  K3 -- "boşluk &lt; eşik" --&gt; F["Bulgu yaz, dönüş +1&lt;br/&gt;sınırda durma kuralı"]
+  K3 -- "boşluk ≥ eşik" --&gt; Y["Yöntem arama&lt;br/&gt;alan taraması C burada"]
+  Y --&gt; K45["Kapı 4–5: eşit rakip, kilitli protokol"]
+  K45 --&gt; A["Ana koşu + kör denetim"]
+  A --&gt; K67["Kapı 6–7: gerçek test, sınırlılıklar"]
+</pre>
+  </div>
+  <p class="flow-note">Kilit ve panel her adımda çalışır: sapma, dönüş ve aşılan kararlar kayda geçer. 16 GB'tan fazla VRAM ya da Linux isteyen çalışmalar sıralamada sona gider.</p>
 
   <h2>Nasıl başlarım, nasıl devam ederim</h2>
   <ol class="steps">
@@ -214,4 +239,18 @@ _arastirma-sablonu/kaynak.json       kaynak tercihleri (16 GB üstü VRAM ve Lin
   <footer>Güncelleme: 21 Kasım 2026. Skill'de değişiklik şablon deposunda yapılır, kur betiği çalıştırılır, commit edilir.</footer>
 </div>
 
+<!-- mermaid-yerel: yalnız dosya yerelde açılınca gerekir; claude.ai sayfası mermaid'i kendisi çizer -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+(function(){
+  if(!window.mermaid) return;
+  var cs=getComputedStyle(document.documentElement), v=function(n){return cs.getPropertyValue(n).trim();};
+  var dark=document.documentElement.dataset.theme==="dark"||(document.documentElement.dataset.theme!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);
+  mermaid.initialize({startOnLoad:false,theme:"base",fontFamily:'"IBM Plex Sans",system-ui,sans-serif',
+    themeVariables:{darkMode:dark,fontSize:"14px",primaryColor:v("--main-bg"),primaryTextColor:v("--main-fg"),primaryBorderColor:v("--main"),
+      lineColor:v("--muted"),textColor:v("--fg"),edgeLabelBackground:v("--panel"),secondaryColor:v("--help-bg"),tertiaryColor:v("--panel")}});
+  mermaid.run({querySelector:"pre.mermaid"});
+})();
+</script>
+<!-- /mermaid-yerel -->
 </body></html>
