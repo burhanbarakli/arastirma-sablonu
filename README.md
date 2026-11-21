@@ -189,7 +189,7 @@ Sonuç `alan-taramasi-<konu>.md` dosyasına yazılır.
 ## Skill haritası
 
 Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. Sayfa hâli: `docs/skill-haritasi.html`
-(claude.ai'de: https://claude.ai/artifact/KYYD2wqtncysDKgH51Qz8F).
+(claude.ai'de, akış şemasıyla: https://claude.ai/artifact/KYYD2wqtncysDKgH51Qz8F).
 
 | Aşama | Ana skill | Yardımcı | Dikkat |
 |---|---|---|---|
