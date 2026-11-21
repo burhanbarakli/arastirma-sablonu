@@ -63,11 +63,16 @@ def checks(s):
     full = rows and all(None not in (r.get("taban"), r.get("basit_care"), r.get("kahin")) for r in rows)
     seeds_ok = rows and all((r.get("tohum") or 0) >= 3 for r in rows)
     add("Üç sayı tam", "ok" if full and seeds_ok else "eksik",
-        f"{len(rows)} koşul" + ("" if seeds_ok else "; en az bir satırda 3'ten az tohum") if rows else "Ölçüm yok.", "uc_sayi")
+        f"{len(rows)} koşul" + ("" if seeds_ok else "; en az bir satırda 3'ten az tohum: pilot, kapı geçirmez") if rows else "Ölçüm yok.", "uc_sayi")
     b4 = u.get("basit_care_yontemden_once")
     add("Basit çare yöntemden önce kuruldu", "ok" if b4 is True else ("uyari" if b4 is False else "eksik"),
         u.get("basit_care_tanimi") or "Basit çare tanımlanmamış.", "uc_sayi")
-    add("Adil kâhin tanımlı", "ok" if u.get("kahin_tanimi") else "eksik", u.get("kahin_tanimi") or "Kâhinin neyi, ne zamandan itibaren bildiği yazılmamış.", "uc_sayi")
+    if u.get("kahin_tanimi"):
+        add("Adil kâhin tanımlı", "ok", u.get("kahin_tanimi"), "uc_sayi")
+    elif u.get("kahin_tanimlanamaz"):
+        add("Adil kâhin tanımlı", "uyari", "Tanımlanamaz: " + u.get("kahin_tanimlanamaz"), "uc_sayi")
+    else:
+        add("Adil kâhin tanımlı", "eksik", "Kâhinin neyi, ne zamandan itibaren bildiği yazılmamış.", "uc_sayi")
     add("Eşik önceden yazıldı", "ok" if u.get("esik") is not None else "eksik",
         f"δ = {u.get('esik')} {u.get('birim', '')}" if u.get("esik") is not None else "Eşik yok.", "uc_sayi")
     best, g = gap(u)
@@ -75,11 +80,17 @@ def checks(s):
         add("Boşluk (kâhin − basit çare)", "eksik", "Hesaplanamıyor.", "uc_sayi")
     else:
         esik = u.get("esik")
-        st = "ok" if esik is None or g >= esik else "uyari"
+        st = "eksik" if esik is None else ("ok" if g >= esik else "uyari")
         msg = f"En büyük boşluk {g:g} {u.get('birim', '')} ({best.get('kosul')})"
-        if esik is not None:
+        if esik is None:
+            msg += " → eşik önceden yazılmamış, boşluk yorumlanamaz"
+        else:
             msg += " → yöntem için yer var" if g >= esik else " → eşiğin altında, yöntem için yer yok"
         add("Boşluk (kâhin − basit çare)", st, msg, "uc_sayi")
+    pr = s.get("protokol", {})
+    missing = [k for k in ("karar_kurali", "olcut", "kilitli_test", "durma_kurali") if not pr.get(k)]
+    add("Protokol yazılı", "ok" if not missing else "eksik",
+        "Karar kuralı, ölçüt, kilitli test ve durma kuralı yazılı." if not missing else "Eksik: " + ", ".join(missing), "protokol")
     rk = s.get("rakipler", [])
     unfair = [r.get("ad", "?") for r in rk if not (r.get("butce_esit") and r.get("ayar_esit") and r.get("bilgi_esit"))]
     add("Rakip adaleti", "ok" if rk and not unfair else ("uyari" if unfair else "eksik"),
@@ -99,7 +110,10 @@ def checks(s):
         gd.get("plan") or "Planlanmamış.", "gerceklik")
     add("Sınırlılıklar yazılı", "ok" if s.get("sinirliliklar") else "eksik", "; ".join(s.get("sinirliliklar", [])) or "Liste yok.", "yazim")
     sp = s.get("sapmalar", [])
-    add("Sapmalar", "ok" if not sp else "uyari", f"{len(sp)} sapma kayıtlı" if sp else "Sapma yok.", "soru")
+    add("Sapmalar", "ok", f"{len(sp)} sapma kayıtlı (bilgi: dürüst kayıt, uyarı değil)" if sp else "Sapma yok.", "soru")
+    ov = s.get("overrides", [])
+    add("Aşılan kapı kararları", "ok" if len(ov) < 2 else "uyari",
+        f"{len(ov)} kez" + (" · ikinci kez aşıldı: danışmanla konuş" if len(ov) >= 2 else "") if ov else "Yok.", "soru")
     return out
 
 
@@ -119,6 +133,7 @@ def render(s, karar_path):
     nbad = sum(1 for c in ch if c[1] in ("eksik", "durdu", "uyari"))
     reg = registry()
     active_main = [p for p in (reg or []) if p.get("durum") == "aktif" and p.get("tur") == "ana"]
+    active_side = [p for p in (reg or []) if p.get("durum") == "aktif" and p.get("tur") == "yan"]
     sk = s.get("son_karar", {})
     u = s["uc_sayi"]
     best, g = gap(u)
@@ -158,12 +173,21 @@ def render(s, karar_path):
 
     piv = "".join(f"<li>{esc(p.get('tarih'))}: {esc(p.get('neden'))}</li>" for p in s.get("donus", {}).get("kayit", [])) or "<li>Dönüş yok.</li>"
     sap = "".join(f"<li>{esc(p.get('tarih'))}: {esc(p.get('ne'))} <i>({esc(p.get('gerekce'))})</i></li>" for p in s.get("sapmalar", [])) or "<li>Sapma yok.</li>"
+    ovr = "".join(f"<li>{esc(p.get('tarih'))}: {esc(p.get('kapi'))} {esc(p.get('karar'))} aşıldı <i>({esc(p.get('gerekce'))})</i></li>" for p in s.get("overrides", []))
+    if ovr:
+        sap += ovr
     focus = ""
     if reg is not None:
-        names = ", ".join(esc(p.get("ad")) for p in active_main)
-        warn = len(active_main) > 1
-        focus = (f'<div class="card {"warnc" if warn else ""}"><span class="lbl">Odak</span><p><b>{len(active_main)}</b> aktif ana proje: {names or "yok"}.'
-                 + (" Kural: bir ana, bir küçük yan iş. Hangisi duruyor?" if warn else "") + "</p></div>")
+        if not reg:
+            focus = ('<div class="card warnc"><span class="lbl">Odak</span><p>Bu makinenin proje kaydı boş. Başka makinede ya da kayıt '
+                     'dışında aktif proje olabilir; ajan sormadan "tek proje" saymasın.</p></div>')
+        else:
+            names = ", ".join(esc(p.get("ad")) for p in active_main)
+            side = ", ".join(esc(p.get("ad")) for p in active_side)
+            warn = len(active_main) > 1 or len(active_side) > 1
+            focus = (f'<div class="card {"warnc" if warn else ""}"><span class="lbl">Odak</span><p><b>{len(active_main)}</b> aktif ana proje: {names or "yok"}. '
+                     f'<b>{len(active_side)}</b> yan iş: {side or "yok"}.'
+                     + (" Kural: bir ana, bir küçük yan iş. Hangisi duruyor?" if warn else "") + "</p></div>")
     verdict = sk.get("karar") or "Henüz karar yok"
     vcls = {"DUR": "durdu", "KOŞULLU DEVAM": "kosullu", "DEVAM": "gecti"}.get(verdict, "bekliyor")
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -214,7 +238,7 @@ tr.ok td.i,tr.ok td.l{{color:var(--accent)}}tr.uyari td.i,tr.uyari td.l{{color:v
 <p class="muted">Eşik δ = {fmt(u.get('esik'))} {esc(u.get('birim',''))} · Kâhin: {esc(u.get('kahin_tanimi') or '—')}</p>
 <div class="card"><span class="lbl">Boşluk cümlesi</span><p class="sent">{sentence}</p></div></section>
 <div class="two"><section class="card"><span class="lbl">Dönüşler ({len(s.get('donus',{}).get('kayit',[]))} / {s.get('donus',{}).get('sinir',3)})</span><ul>{piv}</ul></section>
-<section class="card"><span class="lbl">Sapmalar</span><ul>{sap}</ul></section></div>
+<section class="card"><span class="lbl">Sapmalar ve aşılan kararlar</span><ul>{sap}</ul></section></div>
 </main></body></html>"""
 
 
