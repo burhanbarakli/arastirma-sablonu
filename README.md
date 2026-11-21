@@ -209,6 +209,8 @@ Her aşamada: kapı kararından sonra `durum.html` güncellenir. İkinci görü�
 ## Belgeler
 
 - [`docs/NEDEN.md`](docs/NEDEN.md): her kuralın hangi hatadan ya da dersten doğduğu ve tarihli kararlar günlüğü.
+- [`docs/devir-2026-11-21.md`](docs/devir-2026-11-21.md): Mac'ten Windows'a devir: yapılanlar, hatalar, eski projeleri
+  eşitleme ve Windows'taki iki ajanlı inceleme görevi.
 - [`docs/skill-haritasi.html`](docs/skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
 - [`docs/ornekler/arama-cumlesi-gda.md`](docs/ornekler/arama-cumlesi-gda.md): GDA çalışması için arama cümlesi örneği.
 - [`docs/notlar/arastirma-pusulasi.html`](docs/notlar/arastirma-pusulasi.html): **Araştırma pusulası**, hepsinin özeti: hatalarım, yol, makale okuma, kâhin, yedi kapı, arama, komutlar.
