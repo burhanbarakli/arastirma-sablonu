@@ -24,6 +24,12 @@ user's language (Turkish unless they write in another language).
    arXiv page before listing it, and give the link. Never list a paper you have not opened.
 6. **Privacy.** Send only public identifiers (paper title, arXiv id, DOI, repo name) to outside services. Never send
    the user's own unpublished ideas, drafts or data.
+7. **Park method ideas.** If a method idea comes up during reading or a survey (from the user or from you), write it
+   in one line under "Fikirler (park edildi)" and do not develop it. Methods come only after Kapı 3 of
+   `arastirma-kapisi`.
+8. **The user picks the problem.** End with the top three weak points, each with its cheapest experiment, and let the
+   user choose; do not choose for them. A drop seen in a paper, a toy or a derivation is a hypothesis for Kapı 1, not a
+   measured failure.
 
 ## Three modes
 
@@ -87,17 +93,20 @@ step size, horizon, data scarcity)? Is there a stability or validity limit? Deri
 check it numerically.
 
 C2. **Toy version.** Outline (or, if asked, write) a minimal 2-D or small-data version of the core idea that can be run
-in an afternoon, with three policies: baseline, simple hand rule, and an oracle that knows the hidden quantity.
+in an afternoon, with three policies: baseline, simple hand rule, and a fair oracle that knows the hidden quantity but
+only what the method could observe, and only from when it could observe it. An unfair oracle inflates the gap.
 
 C3. **Targeted run of the official code.** Name the two or three stress conditions most worth trying with the
 released code and checkpoints, instead of a full reproduction.
 
 ## Assumption table (several papers, new field)
 
-Make one table: rows are papers, columns are the assumptions and practices found in A1–A2 (for example: perfect
-sensing?, delay modelled?, real robot / real data?, simple baseline?, number of seeds). Mark each cell from the paper,
-with a location. Then state the **blind spot**: the column that (almost) every paper marks the same way. Spot-check by
-re-reading two papers' rows against the PDFs.
+Make one table: rows are papers, columns are the assumptions and practices found in A1–A2. Fix the columns before
+reading, from a general list (for example: perfect sensing?, delay modelled?, known geometry?, real robot / real
+data?, simple baseline?, number of seeds, target data amount), never from the user's suspected condition alone. Mark
+each cell from the paper, with a location. Then list **every** column that (almost) every paper marks the same way,
+ranked by how likely it is to break the methods and how cheap it is to test; each is a candidate blind spot. Spot-check
+by re-reading two papers' rows against the PDFs.
 
 ## Report
 
@@ -105,7 +114,7 @@ Save the report as a Markdown file next to the paper, or in the current director
 `zayif-nokta-<short-paper-name>.md`, and show its path. Structure:
 
 1. **Özet:** three to five most promising weak points, each one line, ranked by how likely they are to break the
-   method and how cheap they are to test.
+   method and how cheap they are to test. Any weak point that goes against the user's suspicion stays in.
 1b. **Değerlendirilecek iddialar:** each Özet item again as a claim block with the exact place to read, so the user
    can check it in the paper. Judging the claims is optional; the "Senin değerlendirmen" lines may stay empty:
 
@@ -134,9 +143,11 @@ Save the report as a Markdown file next to the paper, or in the current director
    > iyi basit çare bunun [Z] kadarını kapatıyor. Geriye kalan [Y − Z], bizim hedefimiz."
 
 7. **Doğrulanamayanlar:** every claim you could not verify, and every source you could not open.
+8. **Fikirler (park edildi):** method ideas that came up, one line each, not developed.
 
-End the reply with the single most promising weak point and the cheapest experiment that would measure it (baseline,
-simple rule and fair oracle). Do not start that experiment without the user's go-ahead.
+End the reply with the top three weak points, each with the cheapest experiment that would measure it (baseline,
+simple rule and fair oracle), and let the user pick one (ground rule 8). Do not start any experiment without the
+user's go-ahead.
 
 **Independent reader.** When a subagent tool is available, let a separate agent do the reading and drafting (steps
 A–C and the report). Give it only the paper, the official code and review links, and this skill's rules, not the
@@ -183,16 +194,18 @@ use a hint ladder.
    - **Bulgu:** one sentence.
    - **Oku:** the exact place (section and paragraph, table or figure, page) and what to look for there, with at most
      one quoted sentence.
-   - **Neden önemli:** one to three plain sentences. Explain any term the user may not know (for example Pearson,
-     MMRV, checkpoint) in a sentence, with a tiny worked example when it helps; label made-up numbers as made up.
+   - **Neden önemli:** one to three plain sentences. Explain any term the user may not know (for example a
+     correlation measure, a benchmark-specific metric, a checkpoint) in a sentence, with a tiny worked example when it
+     helps; label made-up numbers as made up.
    - **Kaynak türü:** makalede yazıyor | dış kaynak (link) | ajanın kendi çıkarımı. Mark derived claims clearly.
    Then stop so the user can read that place. Continue on "devam" or answer their question first. If the user raises
    a point that is not on your list, check it in the source; if it holds, add it and say so plainly.
 4. **Wrap up.** After the last finding, give one table of all findings (Ne | Yeri | Neden önemli | Kaynak türü |
-   Denetçi), the one-line list of findings left out, and "Doğrulanamayanlar". Then the gap sentence from the report
-   (item 6), with `?` for every number not yet measured; then the single most promising weak point and the cheapest
-   experiment that would measure it (baseline, simple rule and fair oracle). Say that Kapı 1 needs that measured drop.
-   Do not start it without the user's go-ahead. Offer to save the table as `zayif-nokta-<kısa-ad>.md`.
+   Denetçi), the one-line list of findings left out, "Doğrulanamayanlar" and "Fikirler (park edildi)". Then the gap
+   sentence from the report (item 6), with `?` for every number not yet measured; then the top three weak points, each
+   with the cheapest experiment that would measure it (baseline, simple rule and fair oracle), and let the user pick.
+   Say that Kapı 1 needs that measured drop. Do not start anything without the user's go-ahead. Offer to save the
+   table as `zayif-nokta-<kısa-ad>.md`.
 
 All ground rules still apply: quotes are checked in the source, and anything you derive yourself (like a bound from
 the equations) is labelled as yours. A derived or unverified finding is a hypothesis to measure, never a measured
@@ -228,7 +241,7 @@ done X". The user's record: literature search tended to end in a method idea; ke
    value or finding to the table (saturation), and write which rounds added nothing.
 
 Save as `alan-taramasi-<short-topic>.md`: purpose, search sentence, seeds, snowball log, triage table, core list,
-assumption table and blind spot (B), stop note, Doğrulanamayanlar. End with one next step: for A the weak-point
+assumption table and candidate blind spots (B), stop note, Doğrulanamayanlar, Fikirler (park edildi). End with one next step: for A the weak-point
 report on the chosen paper; for B "the blind spot is a candidate problem, not a problem yet: pick a method it would
 break and measure the drop" (Kapı 1); for C the transfer check. If the conclusion drifts to "kimse yapmamış", say
 plainly that this is mistake 1 and give the Kapı 1 step instead.

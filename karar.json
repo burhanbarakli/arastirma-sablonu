@@ -4,12 +4,15 @@
   "olusturma": "YYYY-AA-GG",
   "temel_yontem": "",
   "bozulma": "",
+  "aile_kontrolu": {"kosul": "", "onceki_proje": "", "kazanan_basit_kural": "", "bu_kez_neden_farkli": ""},
   "tez_cumlesi": {"metin": "", "tarih": ""},
   "uc_sayi": {
     "birim": "puan",
     "esik": null,
     "kahin_tanimi": "",
+    "kahin_tanimlanamaz": "",
     "basit_care_tanimi": "",
+    "basit_care_adaylari": [],
     "basit_care_yontemden_once": null,
     "satirlar": []
   },
@@ -25,6 +28,14 @@
     "kor_denetim": {"durum": "bekliyor", "tarih": "", "not": ""},
     "yazim":       {"durum": "bekliyor", "tarih": "", "not": ""}
   },
+  "protokol": {
+    "karar_kurali": "",
+    "olcut": "",
+    "kilitli_test": "",
+    "durma_kurali": "3 kapalı kapı ya da 2 tutmayan tasarım denemesinden sonra olumsuz sonucu yaz ve dur",
+    "varsayimlar": [],
+    "pilot_butcesi": ""
+  },
   "tohum": {"plan": 3, "kosulan": 0},
   "donus": {"sinir": 3, "kayit": []},
   "rakipler": [],
@@ -32,5 +43,6 @@
   "gercek_dunya_testi": {"plan": "", "durum": "bekliyor"},
   "sinirliliklar": [],
   "sapmalar": [],
+  "overrides": [],
   "son_karar": {"karar": "", "tarih": "", "neden": "", "siradaki_adim": ""}
 }
