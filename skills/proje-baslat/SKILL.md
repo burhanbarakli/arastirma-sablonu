@@ -10,7 +10,7 @@ panel are in place before any work starts. Speak Turkish.
 
 Template: the folder written in `~/.claude/arastirma/sablon_yolu.txt` (set by the template's `kur.sh` / `kur.ps1`);
 if that file is missing, `~/CALISMALAR/_arastirma-sablonu/`. It holds CLAUDE.md, KARAR.md, karar.json, README.md,
-tools/durum.py and tools/karar_koruma.py. Registry: `~/.claude/arastirma/projeler.json`. On Windows use `python`
+tools/durum.py, tools/karar_koruma.py and `kaynak.json` (resource preferences; read it, do not copy it). Registry: `~/.claude/arastirma/projeler.json`. On Windows use `python`
 where these steps say `python3` if `python3 -c ""` fails (it does for the Microsoft Store shortcut).
 
 ## Steps
@@ -36,7 +36,9 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
    it; tell the user how to chain it. The guard is tested after the first commit (step 8).
 5. **Intake.** Ask only these, in one message:
    - project name and one-line goal;
-   - the base paper/method (title or link) and whether its code is available;
+   - the base paper/method (title or link), whether its code is available, and what it needs to run (training or
+     only a checkpoint, GPU memory, operating system). Compare with `kaynak.json` in the template; if it matches an
+     item in `ilk_tercih_degil`, say so now and ask whether to look for a fitting base paper first;
    - the condition the user suspects breaks it (if any). Record it as a hypothesis in KARAR.md; never pass it to the
      reader agents of `zayif-nokta-raporu`;
    - whether this condition or task was studied in an earlier project, and whether a simple rule or rival won there.

@@ -164,6 +164,8 @@ HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tı
 - `KARAR.md`: insan için okunur kayıt.
 - `tools/durum.py`: `durum.html` panelini üretir (`python3 tools/durum.py`).
 - `tools/karar_koruma.py`: dondurulmuş bir kural sapma yazılmadan değişirse commit'i durdurur.
+- `kaynak.json`: kaynak tercihleri (şu an 16 GB'tan fazla VRAM isteyen ve Linux isteyen çalışmalar ilk tercih değil).
+  Skill'ler buradan okur; projelere kopyalanmaz. Makine değişirse yalnız bu dosyayı düzelt.
 
 ## Haftalık alışkanlık
 

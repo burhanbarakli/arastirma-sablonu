@@ -1,0 +1,9 @@
+{
+  "aciklama": "Çalışma ve temel makale seçerken kaynak tercihleri. Listedekiler dışlanmaz: haritada kalır, temel makale ve deney adayı sıralamasında sona gider. Değerleri buradan değiştir; skill'ler bu dosyayı okur.",
+  "gpu_vram_gb": 16,
+  "ilk_tercih_degil": [
+    "16 GB'tan fazla VRAM isteyen çalışma (eğitim, ince ayar ya da değerlendirme)",
+    "Linux isteyen çalışma"
+  ],
+  "not": "Hesap makinesi: Windows PC, 16 GB VRAM. Mac'te CUDA yok."
+}
