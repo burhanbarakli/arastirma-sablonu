@@ -245,6 +245,7 @@ Her aşamada: kapı kararından sonra `durum.html` güncellenir. İkinci görü�
 
 - [`docs/NEDEN.md`](docs/NEDEN.md): her kuralın hangi hatadan ya da dersten doğduğu ve tarihli kararlar günlüğü.
 - [`docs/skill-haritasi.html`](docs/skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
+- [`docs/skiller.md`](docs/skiller.md): üç skill'in her adımda ne yaptığı, kapı tablosuyla.
 - `docs/notlar/`: genel rehberler (Problemden başla, Claude ile okumak). Örnekleri şablonu yazanın projelerinden.
 - `docs/vakalar/`: örnek vakalar, şablonu yazanın 2026 projeleri: [Araştırma pusulası](docs/vakalar/arastirma-pusulasi.html)
   (özet), Boşluğu önce ölç, Dört ayın karnesi, GDA arama cümlesi. Kuralların nedenini gösterirler; okuyanın geçmişi
