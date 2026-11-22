@@ -3,9 +3,13 @@
 
 Rules may change; they may not change silently. The guard blocks when:
 - a frozen rule changes (thesis sentence and its date, threshold and its unit, oracle and simple-remedy definitions,
-  planned seeds, pivot limit, the protocol fields) without a complete new entry in "sapmalar" in the same commit;
+  planned seeds and what a seed means, pivot limit, the protocol fields, the Kapı 1 question, condition levels and
+  threshold) without a complete new entry in "sapmalar" in the same commit;
 - a frozen rule is written for the first time after measurements exist, or in the same commit as the first
-  measurement (a threshold chosen after seeing results), without such an entry;
+  measurement (a threshold chosen after seeing results), without such an entry; for the Kapı 1 fields (soru.metin,
+  soru.kosul_duzeyleri, soru.esik) the Kapı 1 drop ("bozulma") already counts as a measurement;
+- "bozulma" is written for the first time while soru.metin, soru.kosul_duzeyleri, soru.esik or protokol.olcut was
+  not yet in the previous commit (the question, its levels, its threshold and one metric come before the drop);
 - a measured row in "uc_sayi.satirlar" is changed or removed, or a limitation is removed, without such an entry;
 - an entry is removed from or edited in "sapmalar", "donus.kayit" or "overrides" (these lists only grow; no sapma
   can excuse it);
@@ -14,8 +18,10 @@ Rules may change; they may not change silently. The guard blocks when:
 A complete sapma entry is new (not a copy of an earlier entry), has a date (YYYY-AA-GG), and a real "ne" and
 "gerekce" (not empty, not a placeholder such as "doldurulacak"). An incomplete earlier entry is completed by a new
 entry that names it, e.g. {"tarih", "ne", "gerekce", "duzeltir": "<tarih of the old entry>"}; old entries are never
-edited. Every staged file named karar.json is checked, so a project in a subfolder is covered too, whatever letters
-its path has.
+edited. Adding a frozen field with an empty value (syncing an old project to a newer schema) is not blocked. A
+change to a filled frozen field also needs an entry before any result: the guard cannot know what was seen outside
+git, so the entry says "sonuç görülmeden, planlama". Every staged file named karar.json is checked, so a project in
+a subfolder is covered too, whatever letters its path has.
 
 pre-commit: compares HEAD with the index. Commands that do not run the pre-commit hook (git revert, rebase,
 commit-tree, a changed core.hooksPath) bypass it; `--push`, installed as .git/hooks/pre-push, checks every commit being
@@ -33,9 +39,14 @@ import sys
 FROZEN = [
     ("tez_cumlesi", "metin"), ("tez_cumlesi", "tarih"),
     ("uc_sayi", "esik"), ("uc_sayi", "birim"), ("uc_sayi", "kahin_tanimi"), ("uc_sayi", "basit_care_tanimi"),
-    ("tohum", "plan"), ("donus", "sinir"),
+    ("tohum", "plan"), ("tohum", "tanim"), ("donus", "sinir"),
     ("protokol", "karar_kurali"), ("protokol", "olcut"), ("protokol", "kilitli_test"), ("protokol", "durma_kurali"),
+    ("soru", "metin"), ("soru", "kosul_duzeyleri"), ("soru", "esik"),
 ]
+# Kapı 1 fields: frozen once the Kapı 1 drop ("bozulma") exists, not only once three-number rows exist.
+KAPI1 = [("soru", "metin"), ("soru", "kosul_duzeyleri"), ("soru", "esik")]
+# Must already be committed when "bozulma" is first written (question, levels, threshold, one metric).
+KAPI1_BEFORE_DROP = KAPI1 + [("protokol", "olcut")]
 GROW_ONLY = [("sapmalar",), ("donus", "kayit"), ("overrides",)]
 EMPTY = (None, "", [], {})
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -87,6 +98,7 @@ def problems(old, new):
     """Return (excusable, fatal) lists of problems for one karar.json."""
     excusable, fatal = [], []
     measured = bool(get(old, ("uc_sayi", "satirlar")) or get(new, ("uc_sayi", "satirlar")))
+    dropped = measured or bool(get(old, ("bozulma",)) or get(new, ("bozulma",)))
     for p in FROZEN:
         a, b = get(old, p), get(new, p)
         if a == b:
@@ -94,8 +106,13 @@ def problems(old, new):
         name = ".".join(p)
         if a not in EMPTY:
             excusable.append(f"değişen: {name}  ({a!r} -> {b!r})")
-        elif measured:
+        elif b not in EMPTY and (dropped if p in KAPI1 else measured):
+            # an empty field added to an old project (schema sync) is not a rule being written
             excusable.append(f"ölçümden sonra ya da ölçümle birlikte ilk kez yazılan: {name}  (-> {b!r})")
+    if get(old, ("bozulma",)) in EMPTY and get(new, ("bozulma",)) not in EMPTY:
+        missing = [".".join(p) for p in KAPI1_BEFORE_DROP if get(old, p) in EMPTY]
+        if missing:
+            excusable.append("Kapı 1 bozulması, şunlar önceki bir commit'te yazılmadan girildi: " + ", ".join(missing))
     new_rows = get(new, ("uc_sayi", "satirlar")) or []
     for r in (get(old, ("uc_sayi", "satirlar")) or []):
         if r not in new_rows:

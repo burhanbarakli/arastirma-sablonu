@@ -4,7 +4,8 @@
   "olusturma": "YYYY-AA-GG",
   "temel_yontem": "",
   "bozulma": "",
-  "aile_kontrolu": {"kosul": "", "onceki_proje": "", "kazanan_basit_kural": "", "bu_kez_neden_farkli": ""},
+  "aile_kontrolu": {"kosul": "", "taranan_kaynaklar": [], "onceki_proje": "", "onceki_sonuc": "", "kazanan_basit_kural": "", "bu_kez_neden_farkli": ""},
+  "soru": {"metin": "", "kosul_duzeyleri": [], "esik": null, "tarih": ""},
   "tez_cumlesi": {"metin": "", "tarih": ""},
   "uc_sayi": {
     "birim": "puan",
@@ -36,11 +37,11 @@
     "varsayimlar": [],
     "pilot_butcesi": ""
   },
-  "tohum": {"plan": 3, "kosulan": 0},
+  "tohum": {"plan": 3, "kosulan": 0, "tanim": ""},
   "donus": {"sinir": 3, "kayit": []},
   "rakipler": [],
   "benzetim_kusursuzluklari": [],
-  "gercek_dunya_testi": {"plan": "", "durum": "bekliyor"},
+  "gercek_dunya_testi": {"platform": "", "erisim": "", "eslesme": "", "plan": "", "durum": "bekliyor"},
   "sinirliliklar": [],
   "sapmalar": [],
   "overrides": [],

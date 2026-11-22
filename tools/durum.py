@@ -9,6 +9,7 @@ import datetime
 import html
 import json
 import os
+import re
 import sys
 
 STAGES = [
@@ -35,7 +36,25 @@ def esc(x):
 def reached(state, stage):
     """True when every stage before `stage` has at least started (not 'bekliyor')."""
     i = ORDER.index(stage)
-    return all(state["asamalar"].get(k, {}).get("durum", "bekliyor") != "bekliyor" for k in ORDER[:i])
+    return all(state.get("asamalar", {}).get(k, {}).get("durum", "bekliyor") != "bekliyor" for k in ORDER[:i])
+
+
+PLACEHOLDER = re.compile(r"doldurulacak|sonra yazılacak|todo|tbd|xxx|^[\s.?…\-x]*$", re.IGNORECASE)
+
+
+def incomplete_sapmalar(sp):
+    """Entries with a placeholder or missing part that no later entry completes ("duzeltir": <its date>)."""
+    fixed = {str(x.get("duzeltir")) for x in sp if isinstance(x, dict) and x.get("duzeltir")}
+    out = []
+    for x in sp:
+        if not isinstance(x, dict):
+            out.append(x)
+            continue
+        parts = [str(x.get(k) or "").strip() for k in ("tarih", "ne", "gerekce")]
+        if any(len(p) < 5 or PLACEHOLDER.search(p) for p in parts[1:]) or not parts[0]:
+            if str(x.get("tarih")) not in fixed:
+                out.append(x)
+    return out
 
 
 def gap(u):
@@ -47,7 +66,7 @@ def gap(u):
 
 
 def checks(s):
-    u, a = s["uc_sayi"], s["asamalar"]
+    u, a = s.get("uc_sayi") or {}, s.get("asamalar") or {}
     out = []
 
     def add(name, status, detail, stage):
@@ -55,6 +74,23 @@ def checks(s):
             status = "henuz"
         out.append((name, status, detail))
 
+    ak = s.get("aile_kontrolu") or {}
+    if not (ak.get("onceki_proje") and ak.get("taranan_kaynaklar")):
+        add("Aile kontrolü", "eksik", "Yapılmamış: koşul, taranan kaynaklar ve önceki proje (eşleşme yoksa \"yok\") yazılmalı.", "soru")
+    elif str(ak.get("onceki_proje")).strip().lower() == "yok":
+        add("Aile kontrolü", "ok", f"{ak.get('kosul') or '?'}: eşleşme yok ({len(ak.get('taranan_kaynaklar'))} kaynak tarandı).", "soru")
+    else:
+        why = ak.get("bu_kez_neden_farkli")
+        add("Aile kontrolü", "ok" if why else "eksik",
+            f"{ak.get('kosul') or '?'} daha önce: {ak.get('onceki_proje')} ({ak.get('onceki_sonuc') or 'sonuç yazılmamış'}). "
+            + (f"Bu kez: {why}" if why else "\"Bu kez neden farklı?\" öngörüsü yok: DUR."), "soru")
+    q = s.get("soru") or {}
+    olcut = (s.get("protokol") or {}).get("olcut")
+    qmiss = [n for n, v in (("soru", q.get("metin")), ("koşul düzeyleri", q.get("kosul_duzeyleri")),
+                            ("eşik", q.get("esik")), ("ölçüt", olcut)) if v in (None, "", [], {})]
+    add("Kapı 1 sorusu ölçümden önce yazıldı", "ok" if not qmiss else ("uyari" if s.get("bozulma") else "eksik"),
+        (f"{q.get('metin')} · düzeyler {q.get('kosul_duzeyleri')} · eşik {q.get('esik')} · ölçüt {olcut}") if not qmiss
+        else "Eksik: " + ", ".join(qmiss) + (" (bozulma bunlardan önce yazılmış)" if s.get("bozulma") else ""), "soru")
     add("Bozulma ölçüldü", "ok" if s.get("bozulma") else "eksik", s.get("bozulma") or "Ölçülmüş bir bozulma cümlesi yok.", "soru")
     t = s.get("tez_cumlesi", {})
     add("Tez cümlesi donduruldu", "ok" if t.get("metin") and t.get("tarih") else "eksik",
@@ -98,7 +134,11 @@ def checks(s):
     tp = s.get("tohum", {})
     plan, run = tp.get("plan", 0), tp.get("kosulan", 0)
     st = "eksik" if plan < 3 else ("ok" if run >= plan else ("uyari" if a.get("ana_kosu", {}).get("durum") in ("gecti",) else "henuz_ok"))
-    add("Tohum", "ok" if st == "henuz_ok" else st, f"plan {plan}, koşulan {run}" + (" (plan 3'ün altında)" if plan < 3 else ""), "protokol")
+    tanim = tp.get("tanim") or ""
+    if not tanim and st in ("ok", "henuz_ok"):
+        st = "eksik"
+    add("Tohum", "ok" if st == "henuz_ok" else st, f"plan {plan}, koşulan {run}" + (" (plan 3'ün altında)" if plan < 3 else "")
+        + (f" · tohum: {tanim}" if tanim else " · tohumun ne olduğu yazılmamış (eğitim mi, değerlendirme mi)"), "protokol")
     d = s.get("donus", {})
     n, lim = len(d.get("kayit", [])), d.get("sinir", 3)
     add("Dönüş sayacı", "ok" if n < lim - 1 else ("uyari" if n == lim - 1 else "durdu"),
@@ -106,11 +146,21 @@ def checks(s):
     add("Benzetimin kusursuzlukları listelendi", "ok" if s.get("benzetim_kusursuzluklari") else "eksik",
         "; ".join(s.get("benzetim_kusursuzluklari", [])) or "Liste yok.", "gerceklik")
     gd = s.get("gercek_dunya_testi", {})
-    add("Gerçek dünya testi", "ok" if gd.get("durum") == "yapildi" else ("uyari" if gd.get("plan") else "eksik"),
-        gd.get("plan") or "Planlanmamış.", "gerceklik")
+    plat = f"Platform: {gd.get('platform') or '?'}, erişim {gd.get('erisim') or '?'}, eşleşme: {gd.get('eslesme') or '?'}. "
+    if gd.get("durum") == "yapilmayacak":
+        add("Gerçek dünya testi", "uyari", plat + "Yapılmayacak: iddia benzetimle sınırlı (sınırlılık olarak yazılı olmalı).", "yeniden_uretim")
+    else:
+        add("Gerçek dünya testi", "ok" if gd.get("durum") == "yapildi" else ("uyari" if gd.get("plan") else "eksik"),
+            plat + (gd.get("plan") or "Planlanmamış."), "yeniden_uretim" if not gd.get("erisim") else "gerceklik")
     add("Sınırlılıklar yazılı", "ok" if s.get("sinirliliklar") else "eksik", "; ".join(s.get("sinirliliklar", [])) or "Liste yok.", "yazim")
     sp = s.get("sapmalar", [])
-    add("Sapmalar", "ok", f"{len(sp)} sapma kayıtlı (bilgi: dürüst kayıt, uyarı değil)" if sp else "Sapma yok.", "soru")
+    eksik = incomplete_sapmalar(sp)
+    if eksik:
+        add("Sapmalar", "uyari", f"{len(eksik)} sapma kaydı eksik (yer tutucu ya da boş gerekçe): "
+            + "; ".join(str(x.get("tarih") if isinstance(x, dict) else x) for x in eksik)
+            + ". Eskisini düzenleme; \"duzeltir\": \"<tarih>\" alanlı yeni kayıtla tamamla.", "okuma")
+    else:
+        add("Sapmalar", "ok", f"{len(sp)} sapma kayıtlı (bilgi: dürüst kayıt, uyarı değil)" if sp else "Sapma yok.", "soru")
     ov = s.get("overrides", [])
     add("Aşılan kapı kararları", "ok" if len(ov) < 2 else "uyari",
         f"{len(ov)} kez" + (" · ikinci kez aşıldı: danışmanla konuş" if len(ov) >= 2 else "") if ov else "Yok.", "soru")
@@ -118,24 +168,42 @@ def checks(s):
 
 
 def registry():
+    """The registry list; [] when the file is missing; None when it exists but cannot be read."""
+    if not os.path.exists(REGISTRY):
+        return []
     try:
         with open(REGISTRY, encoding="utf-8-sig") as f:  # -sig: older kur.ps1 wrote a BOM
-            return json.load(f)
+            reg = json.load(f)
+        return reg if isinstance(reg, list) else None
     except Exception:
         return None
 
 
+def lines_of(reg, kind):
+    """Active lines of work of one kind. A project with "hatlar" counts each line, not the folder."""
+    out = []
+    for p in reg:
+        if p.get("durum") != "aktif":
+            continue
+        hat = p.get("hatlar")
+        if hat:
+            out += [f"{p.get('ad')} / {h.get('ad')}" for h in hat if h.get("tur") == kind]
+        elif p.get("tur") == kind:
+            out.append(p.get("ad"))
+    return out
+
+
 def render(s, karar_path):
-    a = s["asamalar"]
+    a = s.get("asamalar") or {}
     current = next((k for k in ORDER if a.get(k, {}).get("durum", "bekliyor") != "gecti"), None)
     cur = next((x for x in STAGES if x[0] == current), None)
     ch = checks(s)
     nbad = sum(1 for c in ch if c[1] in ("eksik", "durdu", "uyari"))
     reg = registry()
-    active_main = [p for p in (reg or []) if p.get("durum") == "aktif" and p.get("tur") == "ana"]
-    active_side = [p for p in (reg or []) if p.get("durum") == "aktif" and p.get("tur") == "yan"]
-    sk = s.get("son_karar", {})
-    u = s["uc_sayi"]
+    active_main = lines_of(reg or [], "ana")
+    active_side = lines_of(reg or [], "yan")
+    sk = s.get("son_karar") or {}
+    u = s.get("uc_sayi") or {}
     best, g = gap(u)
     def fmt(v):
         return "?" if v is None else f"{v:g}"
@@ -176,14 +244,16 @@ def render(s, karar_path):
     ovr = "".join(f"<li>{esc(p.get('tarih'))}: {esc(p.get('kapi'))} {esc(p.get('karar'))} aşıldı <i>({esc(p.get('gerekce'))})</i></li>" for p in s.get("overrides", []))
     if ovr:
         sap += ovr
-    focus = ""
-    if reg is not None:
+    if reg is None:
+        focus = ('<div class="card warnc"><span class="lbl">Odak</span><p>Proje kaydı (~/.claude/arastirma/projeler.json) '
+                 'okunamadı: geçerli bir JSON listesi değil. Odak sayılamıyor; kaydı düzelt.</p></div>')
+    else:
         if not reg:
-            focus = ('<div class="card warnc"><span class="lbl">Odak</span><p>Bu makinenin proje kaydı boş. Başka makinede ya da kayıt '
+            focus = ('<div class="card warnc"><span class="lbl">Odak</span><p>Bu makinenin proje kaydı boş ya da yok. Başka makinede ya da kayıt '
                      'dışında aktif proje olabilir; ajan sormadan "tek proje" saymasın.</p></div>')
         else:
-            names = ", ".join(esc(p.get("ad")) for p in active_main)
-            side = ", ".join(esc(p.get("ad")) for p in active_side)
+            names = ", ".join(esc(p) for p in active_main)
+            side = ", ".join(esc(p) for p in active_side)
             warn = len(active_main) > 1 or len(active_side) > 1
             focus = (f'<div class="card {"warnc" if warn else ""}"><span class="lbl">Odak</span><p><b>{len(active_main)}</b> aktif ana proje: {names or "yok"}. '
                      f'<b>{len(active_side)}</b> yan iş: {side or "yok"}.'
@@ -244,13 +314,18 @@ tr.ok td.i,tr.ok td.l{{color:var(--accent)}}tr.uyari td.i,tr.uyari td.l{{color:v
 
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "karar.json"
+    if not os.path.exists(path):
+        print(f"{path} yok. Bu proje kararlarını başka bir düzende tutuyor olabilir; panel için önce proje-baslat ile "
+              "karar.json ekle (projenin kendi dosyaları değişmez).")
+        return 1
     with open(path, encoding="utf-8-sig") as f:
         s = json.load(f)
     out = os.path.join(os.path.dirname(os.path.abspath(path)), "durum.html")
     with open(out, "w", encoding="utf-8") as f:
         f.write(render(s, os.path.basename(os.path.dirname(os.path.abspath(path))) + "/karar.json"))
     print(out)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

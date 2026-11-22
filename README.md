@@ -120,7 +120,11 @@ Aşamalar ve panelde görünenler:
 - **Pilot:** `protokol.pilot_butcesi` içinde, kodu sınamak ya da protokolü boyutlamak için yapılan koşu. Sayıları
   kapı geçirmez. 3'ten az tohumla alınan her sonuç pilottur.
 - **Tohum sınırı:** Bir sınır koyarsan (örneğin 2 tohum) ona uyulur; sonuç pilot sayılır ve sınırlılık olarak yazılır.
-  Hazır bir checkpoint'in değerlendirme bölümleri tohum sayılmaz.
+  Hazır bir checkpoint'in değerlendirme bölümleri tohum değil denemedir. Eğitim yoksa tohum, farklı başlangıç kümesi
+  demektir (`tohum.tanim`) ve fark eşli bölümler üzerinde sınanır; checkpoint'in tek eğitim koşusu sınırlılıktır.
+- **Aile kontrolü:** her soruda yapılır, eşleşme yoksa "yok" ve taranan kaynaklar yazılır. Eşik altı kalan ya da basit
+  çarenin yettiği koşullar (kapalı kapılar) `kapali_kapilar.json`'a girer; aynı fiziksel koşula dönüş ölçülebilir bir
+  öngörü ister.
 - **Dönüş:** yeni bir koşula, soruya, göreve ya da yönteme her geçiş; sonuç olumlu olsa da sayılır. Aynı koşulda
   açılan yeni proje sayacı devralır. Sınıra gelince durma kuralı devreye girer.
 - **Sapma:** sonuç görüldükten sonra bir kural değişirse `sapmalar`'a tarih, ne değişti ve gerekçeyle yazılır.
@@ -131,7 +135,9 @@ Aşamalar ve panelde görünenler:
   kilitli; ölçüm satırları değiştirilemez; sapmalar, dönüşler ve aşılan kararlar silinemez; `karar.json` silinemez.
   Sapma yeni, tarihli ve gerçek gerekçeli olmalı; eski bir sapmanın kopyası ya da "doldurulacak" geçmez. `git revert`
   ve `rebase` commit kancasını çalıştırmaz; uzak depo varsa `pre-push` kancası gönderilen her commit'i denetler.
-  Her oturum kancaların kurulu olduğuna bakar.
+  Kapı 1'in sorusu, koşul düzeyleri ve eşiği de kilitli: bozulma ilk kez yazılırken bunlar ve tek ölçüt önceki bir
+  commit'te bulunmalı. Ölçümü olan eski projeye boş alan eklemek (şema eşitlemesi) engellenmez. Her oturum kancaların
+  kurulu olduğuna bakar.
 - **Kaynak:** `kaynak.json`'daki "ilk tercih değil" maddelerine uyan çalışmalar dışlanmaz, sıralamada sona gider;
   yine de seçilirse Sapma yazılır.
 
@@ -231,6 +237,8 @@ HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tı
 - `tools/karar_koruma.py`: dondurulmuş bir kural sapma yazılmadan değişirse commit'i durdurur.
 - `kaynak.json`: kaynak tercihleri (şu an 16 GB'tan fazla VRAM isteyen ve Linux isteyen çalışmalar ilk tercih değil).
   Skill'ler buradan okur; projelere kopyalanmaz. Makine değişirse yalnız bu dosyayı düzelt.
+- `kapali_kapilar.json`: bütün projelerin kapalı kapıları (eşik altı kalan ya da basit çarenin yettiği koşullar).
+  Aile kontrolü buradan okur; şablon deposunda durduğu için her makinede aynıdır. Projelere kopyalanmaz.
 
 ## Haftalık alışkanlık
 

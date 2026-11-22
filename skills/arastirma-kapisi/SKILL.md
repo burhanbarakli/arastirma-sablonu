@@ -37,32 +37,64 @@ conformal, measure-aware set operators, BCSDM world model):
 - **Pilot:** a run inside the pilot budget written in `protokol.pilot_butcesi` (runs or hours), meant to test code
   or size a protocol. Pilot numbers never fill the three-numbers table, the thesis sentence or `bozulma`, and never
   pass a gate. Any run with fewer than 3 seeds is a pilot, whatever it is called.
+- **Seed, when nothing is trained:** when the work evaluates fixed, released checkpoints, a seed is an evaluation seed:
+  a different set of initial states and sampling randomness. Write which kind in `tohum.tanim` before the first
+  measurement ("eğitim" or "değerlendirme: ..."). Three evaluation seeds count as ≥ 3 seeds only with a paired test:
+  the same initial states for every method and condition, and the difference given with McNemar or a bootstrap
+  interval over paired episodes. Check first that two evaluation seeds actually differ; a deterministic policy on the
+  same initial states gives zero spread, and "larger than the seed spread" then means nothing. One training run behind
+  each checkpoint is a limitation, written at once in `sinirliliklar` (training variance not measured); when two or
+  more independent checkpoints exist, use them.
 - **Seed limit:** if the user caps seeds (for example "2 seed'den fazla koşma"), respect it and do not run more
   without asking; the result is a pilot. Say once: "Bu sonuç pilot; kapı geçirmez, sınırlılık olarak yazılır." Cheap
   evaluation episodes of a fixed, released checkpoint are trials, not seeds, and are not capped by a seed limit.
 - **Pivot (dönüş):** any switch to a new condition, question, task or method, whether the last result was negative
   or positive. A new project on a condition already studied continues that condition's pivot count.
 - **Closed door (kapalı kapı):** a condition where the measured gap stayed below the threshold or a simple remedy
-  sufficed.
+  sufficed. Both kinds are recorded in `kapali_kapilar.json` in the template folder (path in
+  `~/.claude/arastirma/sablon_yolu.txt`) as soon as they are measured, so every machine sees them.
 - **Ceiling:** headline success above ~95% of the metric's best value. **Inside noise:** the difference is smaller
   than the spread across seeds, or its interval contains zero.
 
 ## Step 0: read the record
 
 1. If the project has `karar.json`, read it first (it is the source of truth), then `KARAR.md`. If only `KARAR.md`
-   exists, read it fully. If neither exists and the user is starting work, create `KARAR.md` from `KARAR_SABLONU.md`
-   (next to this file) and offer `proje-baslat` once. Always date entries (absolute dates).
+   exists, read it fully. If neither exists, look for the project's own decision record before creating anything:
+   the registry's `karar_yeri`, a decision folder, decision notes, results documents, its CLAUDE.md. If there is one,
+   do not create a root KARAR.md: read that record, write gate decisions there in its own format, and offer
+   `proje-baslat` once (it adds `karar.json` beside it without replacing the project's files). Count the pivots from
+   that record by the Definitions (every new condition, question, task or method), show the list with dates and ask
+   the user once to confirm the count; record the confirmed count. A rule the project pre-registered there counts as
+   its decision rule. If a project rule conflicts with a gate (for example "result first, rigor later"), say so once
+   and give the gate's verdict; the user may override. Only if there is no decision record at all and the user is
+   starting work, create `KARAR.md` from `KARAR_SABLONU.md` (next to this file) and offer `proje-baslat` once. Always
+   date entries (absolute dates).
 2. If `.git/hooks/pre-commit` is missing or does not call `tools/karar_koruma.py`, say so: the commit guard is off.
    If the repository has a remote and `.git/hooks/pre-push` is missing, say so too: revert and rebase bypass the
    pre-commit check, and only the push check catches them.
-3. **Focus.** Read `~/.claude/arastirma/projeler.json`. Count active main projects and active side tasks. If the
-   registry is empty or missing, ask which projects are active on any machine; never assume "only this one".
-4. **Family check (mistake 10).** Name the condition or task the work stresses. Check memory, the registry (archived
-   projects included) and earlier KARAR files: was the same condition or task studied before, and did a simple rule
-   or simple rival win there? If yes, fill `aile_kontrolu` in `karar.json`: earlier project, the winning simple rule,
-   and "bu kez neden farklı?" with a measurable answer. Without that answer: **DUR**. With it, the analogue of the
-   winning rule and any published simple remedy for this condition enter the very first measurement, next to the
-   drop (Kapı 1), and the pivot count carries over.
+3. **Focus.** Read `~/.claude/arastirma/projeler.json`. Count active lines of work, not folders: a project entry
+   with `hatlar` counts each line by its `tur`. If the registry is empty or missing, ask which projects are active on
+   any machine; never assume "only this one". If it exists but cannot be read, say so. Once per session, for each
+   active registered project that is a git repository, show the number of commits in the last 14 days and the first
+   words of recent commit subjects, as information, and ask whether it holds more than one line of work (for example
+   a paper being finished and a new study); write the answer to the registry as
+   `"hatlar": [{"ad", "tur": "ana"|"yan"}]`. Do not infer lines from commit subjects yourself.
+4. **Family check (mistake 10).** Name the condition or task the work stresses by the physical quantity or job it
+   changes (for example "the command reaches the robot k steps late"), not by a keyword: the same word can mean
+   different things in two projects, and two words the same thing. Search: `kapali_kapilar.json` in the template
+   folder; memory (this project's folders and those of registered projects); the registry, archived projects
+   included; and the earlier projects' own decision and results files, whatever form they take. Was the same
+   condition or task studied before, and how did it end: a simple rule or rival won, **or the condition's drop
+   stayed below the threshold**? Both are closed doors.
+   Always fill `aile_kontrolu` before Kapı 1: `kosul`, `taranan_kaynaklar` (the paths searched) and `onceki_proje`
+   (`"yok"` when nothing matched). When a question is opened with `aile_kontrolu` empty: **DUR** until the search is
+   done; `"yok"` with the sources listed passes. In a project already past Kapı 1 with the field empty, say once that
+   the family check is missing and do not block later gates.
+   If there is a match, also fill `onceki_sonuc`, `kazanan_basit_kural` (if one won) and `bu_kez_neden_farkli` as a
+   prediction: "önceki düşüş ya da boşluk X, eşik Z; bu kez en az Z bekliyorum, çünkü <ölçülebilir fark>; ilk ölçüm
+   bunu sınar, tutmazsa bu kapı da kapanır". A reason without a number and a measurable difference does not count:
+   **DUR**. With it, the earlier setting or the winning rule's analogue and any published simple remedy enter the very
+   first measurement, next to the drop (Kapı 1), and the pivot count carries over.
 
 ## The gates
 
@@ -75,12 +107,19 @@ under condition C, drops metric Q from A to B", where:
 - the drop was measured in the user's own runs, on M's official or reproduced code;
 - A (no stress) sits next to the paper's number in the same environment (this is the minimum of Kapı 2);
 - C and its range were written down before any new method was named;
-- the drop is larger than the seed spread, with the number of trials and seeds stated.
+- before the drop is measured, these are written and committed: `soru.metin`, `soru.kosul_duzeyleri` (the levels
+  of C, including the no-stress level), `soru.esik` (the drop that counts, in the unit of the metric) and one metric
+  in `protokol.olcut` (one metric, not "this or that"). The commit guard blocks a first `bozulma` without them;
+- the run that measures the drop records the commit of `karar.json` it ran under (runs outside git, such as a
+  notebook in the cloud, write the commit hash into their output). A drop counts only if that commit already held
+  `soru.esik`;
+- the drop is larger than the seed spread and than `soru.esik`, with the number of trials and seeds stated.
 
 A drop reported in someone else's paper, a toy built to make M fail, or a bound the agent derived is a hypothesis:
 **KOŞULLU DEVAM**, only to measure it. If the motivation is a literature gap, a combination nobody tried, a paper
 target, or a method the user likes, or if C was chosen after the method: **DUR**. Say: "Bu bir çözüm, henüz bir
-problem değil." Next step: name the base method and the condition to stress, and measure the drop.
+problem değil." Next step: name the base method and the condition to stress, and measure the drop. A drop that
+stays below `soru.esik` is a closed door: record it in `kapali_kapilar.json` and count the next condition as a pivot.
 
 **Kapı 2: Yeniden üretim.** Has the base method been reproduced, with numbers next to the paper's? If not:
 **KOŞULLU DEVAM** only for reading and stress planning; no new method code. Before planning any run, check it
@@ -88,6 +127,11 @@ against `kaynak.json` in the template folder (path in `~/.claude/arastirma/sablo
 planned run matches an item in `ilk_tercih_degil`, say so before any work starts and name a fitting alternative
 (a smaller released model, evaluation only, another base paper). Going ahead anyway is allowed; write it as a Sapma
 with the reason and the cost (time, cloud, another machine).
+Also ask now, not after the main run, which real platform could test the result: fill
+`gercek_dunya_testi.platform`, `erisim` (`var` / `yok` / `belirsiz`) and `eslesme` (does it match what the simulation
+and the checkpoint assume: the same robot, or the checkpoint runs on it or was trained on its data; otherwise name
+the difference). If no matching platform is available, set `durum` to `yapilmayacak` and write "iddia benzetimle
+sınırlı" in `sinirliliklar` now. This is a limitation, not a Sapma: no result has been seen yet.
 
 **Kapı 3: Üç sayı (mistakes 1, 2, 4).** First, the threshold δ is written in `uc_sayi.esik` before these numbers are
 measured; if it is empty: **DUR**, write it first. Then, measured with at least 3 seeds:
@@ -105,8 +149,8 @@ measured; if it is empty: **DUR**, write it first. Then, measured with at least 
 Fill the gap sentence: "[Yöntem], [koşul] altında [ölçüt]'te [X] kadar düşüyor. Kâhin [Y] kazandırıyor. En iyi basit
 çare [Z] kadarını kapatıyor. Geriye kalan [Y − Z] hedefimiz." If any number is missing: **DUR** until measured. If
 Y − Z is below the threshold: **DUR** and say clearly: "Burada bir model/yöntem için yer yok. Bunu bulgu olarak yaz."
-This is a result, not a failure, and it is a closed door. Moving on to another condition is a pivot: increment the
-count, and if it reaches the limit, the stop rule applies.
+This is a result, not a failure, and it is a closed door: record it in `kapali_kapilar.json`. Moving on to another
+condition is a pivot: increment the count, and if it reaches the limit, the stop rule applies.
 
 **Kapı 4: Rakip adaleti (mistake 3).** For every rival: same training budget, a comparable tuning sweep, and access
 to the same privileged information as the method (or an extra rival that gets it). Any asymmetry: **KOŞULLU DEVAM**,
@@ -124,17 +168,24 @@ Missing items: **DUR** for the main run (pilots within the budget may proceed).
 
 **Kapı 6: Gerçeklik ve tavan (mistake 7).** Always: list the simulation's idealisations (perfect sensing, no delay,
 known geometry, re-textured targets…) in `benzetim_kusursuzluklari` and ask which ones the conclusion rests on. For
-each of those, either a real-world test is planned (platform, conditions × trials × seeds) or the claim is limited to
-simulation, written as a Sapma and as a limitation. After a confirmed simulation result, the next step is that
+each of those, either a real-world test is planned on the platform recorded at Kapı 2 (conditions × trials × seeds)
+or the claim is limited to simulation: already a limitation if `gercek_dunya_testi.durum` was set to `yapilmayacak`
+before any result, otherwise a Sapma and a limitation. After a confirmed simulation result, the next step is that
 real-world test, or a Sapma saying why not; another simulation refinement step instead is a pivot. If headline numbers
 are at the ceiling or differences are inside noise: **KOŞULLU DEVAM** with a harder condition as well.
 
 **Kapı 7: Yazım (mistakes 7, 8).** Before writing or submitting, all of these hold, otherwise **DUR** with the list:
-- `gercek_dunya_testi.durum` is `yapildi`, or a Sapma limits the claim to simulation and the abstract says so;
+- `gercek_dunya_testi.durum` is `yapildi`, or the claim is limited to simulation (a Sapma, or a limitation written
+  before results) and the abstract says so;
 - no earlier gate is still `kosullu`, unless each open item is written as a limitation;
 - the manuscript's limitations section is compared line by line with `sinirliliklar`, the idealisations, seed limits
   and pilot status, and every Sapma; nothing is missing or softened. Check the manuscript itself (including Overleaf),
   not only `karar.json`;
+- this project's memory and decision notes are searched too: every folder under `~/.claude/projects/` whose name
+  matches this project's path (a project can have more than one) and the project's own decision files. Look for
+  limitations, differences from the paper's setup, rival settings and known failures that never reached
+  `sinirliliklar`. Each item goes on a "kontrol et" list: if it still holds, it enters the limitations section or is
+  excluded in KARAR.md with a reason; if it is stale, say so. Read only this project's memory, not other projects';
 - claims match the measured gap;
 - a blind audit was run (separate session, given code + data + protocol, not the result).
 
@@ -202,10 +253,15 @@ Compare the request with the record and warn immediately when:
   result;
 - a limitation is being removed or softened, in `karar.json` or in the manuscript ("hakem sorarsa ekleriz" is
   mistake 8);
-- the same condition or task family is reopened where a simple method already won (Step 0, family check).
+- the same condition or task family is reopened where a simple method already won or the drop stayed below the
+  threshold (Step 0, family check);
+- a side task (`tur: yan`) that has met its own stop rule or duration opens a new question (a gate, a measurement):
+  that is a pivot and a change of kind. Record the pivot and ask once whether it becomes a main project (then the
+  focus rule applies) or stops here.
 
 Proportion: a seed, rival or setting change made **before** any result was seen is planning, not a deviation; record
-it and move on. A Sapma is honest record keeping, not a failure; never present it as one. Write it complete at once:
+it and move on. If the field is frozen, the commit guard still asks for a `sapmalar` entry, because it cannot know what
+was seen outside git: write the reason as "sonuç görülmeden, planlama"; it is record keeping, not a deviation. A Sapma is honest record keeping, not a failure; never present it as one. Write it complete at once:
 date (YYYY-AA-GG), what changed, and the real reason; never a placeholder such as "doldurulacak" (the commit guard
 rejects it). If an earlier entry is incomplete, never edit it: add a new entry with `"duzeltir": "<old entry's date>"`
 that gives the missing part.
@@ -236,7 +292,8 @@ KARAR.md: what was added or changed.
 After the block, at most a short paragraph of explanation. Then update the record. If the project has a
 `karar.json`, update it after every verdict (`asamalar.<stage>.durum` as `gecti` / `kosullu` / `durdu`, `tarih`, `not`;
 `son_karar`; `uc_sayi` rows when numbers were measured; `donus.kayit` for a pivot; `sapmalar` for a rule change;
-`overrides` for an override; `sinirliliklar` for every new limitation, idealisation or seed limit), add a row to
+`overrides` for an override; `sinirliliklar` for every new limitation, idealisation or seed limit; a closed door also
+goes to `kapali_kapilar.json` in the template folder, committed there), add a row to
 KARAR.md under "Kapı kayıtları", then run `python3 tools/durum.py` to refresh `durum.html` and give the user its path.
 On Windows, if `python3 -c ""` fails (the Microsoft Store shortcut), use `python` instead.
 

@@ -33,10 +33,16 @@ Bu klasördeki her araştırma işinde aşağıdaki yapı geçerlidir. Kullanıc
 - Eşik ölçümden önce; karar kuralı, ölçüt, kilitli test kümesi ve durma kuralı ana koşudan önce `karar.json >
   protokol`'e yazılır.
 - Tohum ≥ 3. Daha az tohumla (kullanıcı sınır koyduysa da) alınan sonuç pilottur: kapı geçirmez, üç sayı tablosuna ve
-  tez cümlesine girmez, sınırlılık olarak yazılır.
-- Her yeni koşul, soru ya da yöntem bir dönüştür; sonuç olumlu da olsa sayılır.
-- Benzetimde doğrulanmış bir sonuçtan sonraki adım gerçek dünya testidir; yapılmayacaksa iddianın benzetimle sınırlı
-  olduğu Sapma olarak yazılır.
+  tez cümlesine girmez, sınırlılık olarak yazılır. Eğitim yoksa (hazır checkpoint değerlendirmesi) tohum, farklı
+  başlangıç kümesi demektir ve fark eşli bölümler üzerinde sınanır; checkpoint'in tek eğitim koşusu sınırlılıktır.
+- Kapı 1'in sorusu, koşul düzeyleri, eşiği ve tek ölçütü bozulma ölçülmeden yazılır (`soru`, `protokol.olcut`).
+- Aile kontrolü her soruda yapılır: eşleşme yoksa "yok" ve taranan kaynaklar yazılır. Eşik altı kalan ya da basit
+  çarenin yettiği koşullar (kapalı kapılar) şablondaki `kapali_kapilar.json`'a girer.
+- Her yeni koşul, soru ya da yöntem bir dönüştür; sonuç olumlu da olsa sayılır. Durma kuralını doldurmuş bir yan iş
+  yeni bir soru açarsa bu da dönüştür ve türü yeniden sorulur.
+- Gerçek test platformu Kapı 2'de sorulur; eşleşen platform yoksa "iddia benzetimle sınırlı" o anda sınırlılık
+  olarak yazılır. Benzetimde doğrulanmış bir sonuçtan sonraki adım gerçek dünya testidir; sonuçtan sonra
+  yapılmamasına karar verilirse iddianın benzetimle sınırlı olduğu Sapma olarak yazılır.
 - Sonuç görüldükten sonra bir kural değişirse, bu bir sapmadır: tarih, ne değişti ve gerekçeyle `sapmalar`'a yazılır.
   Gerekçe yer tutucu olamaz ("doldurulacak"); eksik kalmış eski bir kayıt düzenlenmez, `"duzeltir": "<eski tarih>"`
   alanlı yeni bir kayıtla tamamlanır.

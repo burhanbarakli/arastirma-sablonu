@@ -9,6 +9,8 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 
 - **Temel yöntem:** [makale, kod, sürüm]
 - **Ölçülmüş bozulma:** "[yöntem], [koşul] altında [ölçüt]'te [A]'dan [B]'ye düşüyor." (tarih, kaç tohum)
+- **Kapı 1 sorusu (bozulmadan önce yazılır, dondurulmuş):** [soru] · koşul düzeyleri: [stressiz düzey dahil] · eşik:
+  [sayılan düşüş, ölçüt biriminde] · ölçüt: [tek ölçüt] (tarih, commit)
 - **Tez cümlesi (dondurulmuş):** [tek cümle] (tarih)
 - **Bozulma nasıl ölçüldü:** [kendi koşumuz mu; resmî/yeniden üretilmiş kod mu; stres yokken sayı makaledekiyle aynı
   ortamda karşılaştırıldı mı; deneme ve tohum sayısı; düşüş tohum dağılımından büyük mü]. Literatürden, oyuncaktan ya da
@@ -16,10 +18,13 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 
 ## Aile kontrolü
 
-- **Koşul / görev:** [bu çalışma hangi koşulu ya da görevi zorluyor]
-- **Daha önce aynı koşulda çalıştık mı:** [proje, tarih; orada basit bir kural ya da rakip kazandı mı]
+- **Koşul / görev:** [değiştirdiği fiziksel büyüklük ya da iş; anahtar kelime değil]
+- **Taranan kaynaklar:** [şablondaki kapali_kapilar.json, hafıza, kayıt, önceki projelerin karar ve sonuç dosyaları]
+- **Daha önce aynı koşulda çalıştık mı:** [proje, tarih ya da "yok"; orada basit bir kural ya da rakip kazandı mı, düşüş
+  eşiğin altında mı kaldı]
 - **Kazanan basit kuralın buradaki karşılığı:** [ilk ölçüme girer]
-- **Bu kez neden farklı (ölçülebilir):** [cevap yoksa çalışma başlamaz]
+- **Bu kez neden farklı (ölçülebilir öngörü):** ["önceki X, eşik Z; bu kez en az Z bekliyorum, çünkü ...; ilk ölçüm sınar";
+  yoksa çalışma başlamaz]
 
 ## Üç sayı
 
@@ -39,15 +44,16 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 
 - **Karar kuralı:** [örn. yöntem − en güçlü rakip ≥ δ ve aralığın alt ucu > 0]
 - **Eşik δ:** [değer ve gerekçe]
-- **Tohum:** [≥ 3; daha azı pilottur: kapı geçirmez, sınırlılık olarak yazılır]
+- **Tohum:** [≥ 3; daha azı pilottur: kapı geçirmez, sınırlılık olarak yazılır. Eğitim mi, değerlendirme tohumu mu
+  (hazır checkpoint: farklı başlangıç kümeleri, eşli test); tek eğitim koşusu sınırlılıktır]
 - **Pilot bütçesi:** [en fazla kaç koşu / saat; pilot sayıları üç sayı tablosuna ve tez cümlesine girmez]
 - **Varsayımlar ve bozulursa ne olur:** [her varsayım için: bozulursa sonuç nasıl değişir, nasıl anlaşılır]
 - **Koşullar ve ölçüt:** [başarısız koşu nasıl sayılır]
 - **Kilitli test kümesi / ayrılmış koşullar:** [ayar için hiç kullanılmayan]
 - **Rakip adaleti:** [aynı bütçe, aynı tarama, aynı ayrıcalıklı bilgi]
 - **Benzetimin kusursuzlukları:** [liste; sonuç hangisine dayanıyor]
-- **Gerçek dünya testi:** [platform, koşul × deneme × tohum, tarih; yapılmayacaksa iddianın benzetimle sınırlı olduğu
-  bir Sapma olarak yazılır]
+- **Gerçek dünya testi:** [platform, erişim, benzetimle eşleşme (Kapı 2'de sorulur); koşul × deneme × tohum, tarih.
+  Eşleşen platform yoksa sonuçtan önce sınırlılık; sonuçtan sonra vazgeçilirse Sapma]
 - **Durma kuralı:** "3 kapı kapanırsa / 2 tasarım denemesi tutmazsa olumsuz sonucu yazar, dururum." (Kapalı kapı:
   ölçülmüş boşluğun eşiğin altında kaldığı ya da basit çarenin yettiği bir koşul. Dönüş: yeni bir koşula, soruya ya da
   yönteme geçiş; sonuç olumlu ya da olumsuz olsun, sayılır.)
