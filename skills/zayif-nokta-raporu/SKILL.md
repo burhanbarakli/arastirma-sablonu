@@ -31,11 +31,14 @@ user's language (Turkish unless they write in another language).
    user choose; do not choose for them. A drop seen in a paper, a toy or a derivation is a hypothesis for Kapı 1, not a
    measured failure.
 9. **Resource fit.** Read `kaynak.json` in the personal folder (its path is in
-   `~/.claude/arastirma/kisisel_yolu.txt`; a missing file or an empty list means no preference). For every paper that may become a base paper or an experiment, record what
-   running it needs: training or fine-tuning or only a released checkpoint, the GPU memory for that, and the operating
-   system it needs. A paper that matches an item in `ilk_tercih_degil` stays in the map and the tables, but goes last
-   among base-paper and experiment candidates; say so in one line with the reason. Unknown needs are marked "?" and
-   checked in the code's README or issues before the paper is recommended.
+   `~/.claude/arastirma/kisisel_yolu.txt`; a missing file or empty lists mean no limit). For every paper that may
+   become a base paper or an experiment, record what running it needs: training or fine-tuning or only a released
+   checkpoint, the GPU memory for that, the operating system, and graphics or driver needs (for example a renderer
+   that needs Vulkan or OpenGL on the GPU). A paper that matches an item in `izin_yok` stays in the map and the
+   tables, marked with the reason, but is never offered as a base paper or experiment candidate. A paper that matches
+   `ilk_tercih_degil` goes last among those candidates; say so in one line with the reason. Items in `izin_verilen`
+   (for example a Linux subsystem the machine has) count as fitting. Unknown needs are marked "?" and checked in the
+   code's README or issues before the paper is recommended.
 
 ## Three modes
 

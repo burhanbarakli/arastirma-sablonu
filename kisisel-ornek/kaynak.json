@@ -1,10 +1,14 @@
 {
-  "aciklama": "Kaynak tercihleri. zayif-nokta-raporu ve arastirma-kapisi okur. Listedekiler dışlanmaz: haritada kalır, temel makale ve deney adayı sıralamasında sona gider. Liste boşsa tercih yok sayılır.",
+  "aciklama": "Kaynak sınırları. zayif-nokta-raporu, proje-baslat ve arastirma-kapisi okur. 'izin_yok': temel makale ya da deney adayı olamaz (haritada kalır, nedeni yazılır; Kapı 2'de böyle bir koşu planlanırsa DUR). 'ilk_tercih_degil': dışlanmaz, sıralamada sona gider. İki liste de boşsa tercih yok sayılır.",
   "gpu_vram_gb": null,
+  "izin_yok": [],
   "ilk_tercih_degil": [],
+  "izin_verilen": [],
   "ornek_maddeler": [
-    "16 GB'tan fazla VRAM isteyen çalışma (eğitim, ince ayar ya da değerlendirme)",
-    "Linux isteyen çalışma"
+    "izin_yok: 16 GB VRAM'e sığmayan eğitim, ince ayar ya da değerlendirme (hazır checkpoint dahil)",
+    "izin_yok: Vulkan isteyen çalışma (makinede bu sürücü yoksa)",
+    "ilk_tercih_degil: Linux isteyen çalışma",
+    "izin_verilen: WSL2 Ubuntu'da CUDA ile çalışan çalışmalar"
   ],
-  "not": "Hesap yapacağın makineyi bir cümleyle yaz (işletim sistemi, GPU, bellek)."
+  "not": "Hesap yapacağın makineyi bir cümleyle yaz (işletim sistemi, GPU, bellek, hangi sürücüler var)."
 }

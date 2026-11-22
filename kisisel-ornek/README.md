@@ -2,7 +2,7 @@
 
 Bu klasör şablonun değil, senindir. İçindekiler:
 
-- `kaynak.json`: kaynak tercihlerin (makinen, GPU belleği, "ilk tercih değil" listesi).
+- `kaynak.json`: kaynak sınırların (makinen, GPU belleği; "izin yok", "ilk tercih değil" ve "izin verilen" listeleri).
 - `kapali_kapilar.json`: kapalı kapıların; aile kontrolü buradan okur.
 - `gecmis.md`: kendi hataların ve örnekleri; kapı kararlarında örnek buradan gelir.
 

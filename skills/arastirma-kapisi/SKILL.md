@@ -133,10 +133,13 @@ stays below `soru.esik` is a closed door: record it in `kapali_kapilar.json` and
 
 **Kapı 2: Yeniden üretim.** Has the base method been reproduced, with numbers next to the paper's? If not:
 **KOŞULLU DEVAM** only for reading and stress planning; no new method code. Before planning any run, check it
-against `kaynak.json` in the personal folder (missing, or an empty list: no preference). If the base method or a
-planned run matches an item in `ilk_tercih_degil`, say so before any work starts and name a fitting alternative
-(a smaller released model, evaluation only, another base paper). Going ahead anyway is allowed; write it as a Sapma
-with the reason and the cost (time, cloud, another machine).
+against `kaynak.json` in the personal folder (missing, or empty lists: no limit). If the base method or a planned
+run matches an item in `izin_yok` (for example it does not fit the GPU memory, or needs a driver the machine lacks):
+**DUR** for that run, and name a fitting alternative (a smaller released model, evaluation only, another base
+paper); the user may override, recorded in `overrides`. If it matches `ilk_tercih_degil`, say so before any work
+starts and name a fitting alternative; going ahead is allowed, written as a Sapma with the reason and the cost (time,
+cloud, another machine). Items in `izin_verilen` count as fitting. When fit is unknown, the first step is the
+smallest run that settles it (one episode, one batch), not the plan.
 Also ask now, not after the main run, which real platform could test the result: fill
 `gercek_dunya_testi.platform`, `erisim` (`var` / `yok` / `belirsiz`) and `eslesme` (does it match what the simulation
 and the checkpoint assume: the same robot, or the checkpoint runs on it or was trained on its data; otherwise name

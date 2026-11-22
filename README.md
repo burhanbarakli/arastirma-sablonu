@@ -28,8 +28,10 @@ powershell -ExecutionPolicy Bypass -File $HOME\CALISMALAR\_arastirma-sablonu\kur
 `_arastirma-kisisel` klasörüdür. `kur` betiği yoksa onu oluşturur, eksik dosyaları `kisisel-ornek/`'ten kopyalar
 (var olana dokunmaz) ve yolunu `~/.claude/arastirma/kisisel_yolu.txt`'ye yazar. İçinde üç dosya var:
 
-- `kaynak.json`: makinen ve kaynak tercihlerin. "İlk tercih değil" listesine uyan çalışmalar dışlanmaz, okuma ve
-  deney seçiminde sona gider. Liste boşsa tercih yoktur. İlk iş bunu doldur.
+- `kaynak.json`: makinen ve kaynak sınırların. "İzin yok" listesine uyan çalışma haritada kalır ama temel makale ya
+  da deney adayı olamaz; Kapı 2'de böyle bir koşu DUR alır. "İlk tercih değil" listesine uyanlar dışlanmaz, okuma ve
+  deney seçiminde sona gider. "İzin verilen" (örneğin WSL2'de CUDA) uygun sayılır. Listeler boşsa sınır yoktur. İlk
+  iş bunu doldur.
 - `kapali_kapilar.json`: kapalı kapıların, yani eşik altında kalan ya da basit çarenin yettiği koşullar. Aile kontrolü
   buradan okur.
 - `gecmis.md`: kendi hataların ve örnekleri. Kapı bir kararda "senin şu projendeki gibi" derken örneği buradan alır.
@@ -125,7 +127,7 @@ Aşamalar ve panelde görünenler:
 4. **Gösterilen yerleri oku.** İddiaları yargılamak isteğe bağlı; getirirsen kontrol edilir, `okuma-gunlugu.md`'ye
    işlenir. Literatürden, oyuncaktan ya da ajanın çıkarımından gelen düşüş ölçülecek bir hipotezdir, bozulma değil.
 5. **Zayıf noktayı sen seç.** Rapor ilk üç zayıf noktayı en ucuz deneyleriyle verir; birini sen seçersin.
-   Kişisel `kaynak.json`'daki "ilk tercih değil" maddelerine uyanlar bu sıralamada sona gider.
+   Kişisel `kaynak.json`'daki "izin yok" maddelerine uyanlar aday olamaz, "ilk tercih değil" olanlar sona gider.
 6. **Kapıya sor.** "kapı" / "doğru yolda mıyım?". Kapı 1 düşüşü senin ölçmeni ister: resmî ya da yeniden üretilmiş
    kodda, stres yokken sayı makaledekiyle yan yana, koşul yöntemden önce yazılmış, düşüş tohum dağılımından büyük.
 7. **Kapı 3: önce eşik, sonra üç sayı.** Taban, en güçlü basit çare (en az üç aday, yöntemi bilmeyen bir ajandan;
@@ -161,8 +163,9 @@ Aşamalar ve panelde görünenler:
   Kapı 1'in sorusu, koşul düzeyleri ve eşiği de kilitli: bozulma ilk kez yazılırken bunlar ve tek ölçüt önceki bir
   commit'te bulunmalı. Ölçümü olan eski projeye boş alan eklemek (şema eşitlemesi) engellenmez. Her oturum kancaların
   kurulu olduğuna bakar.
-- **Kaynak:** kişisel `kaynak.json`'daki "ilk tercih değil" maddelerine uyan çalışmalar dışlanmaz, sıralamada sona gider;
-  yine de seçilirse Sapma yazılır.
+- **Kaynak:** kişisel `kaynak.json`'daki "izin yok" maddelerine uyan çalışma temel makale ya da deney olamaz (Kapı 2:
+  DUR; aşılırsa `overrides`'a yazılır). "İlk tercih değil" maddelerine uyanlar dışlanmaz, sıralamada sona gider; yine
+  de seçilirse Sapma yazılır.
 
 ## Makale arama (alan taraması)
 

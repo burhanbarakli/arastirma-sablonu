@@ -120,7 +120,7 @@ flowchart TD
     <li><div><b>Klasörü aç, projeyi kur.</b> Claude Code'da yeni klasörde <code>/proje-baslat</code> (yan iş de böyle açılır). Soruları cevapla: proje adı ve amacı; temel makale, kodu ve koşmak için ne istediği; şüphelendiğin koşul; bu koşul daha önce çalışıldı mı. Cevabın yetmez: aile kontrolü <code>kapali_kapilar.json</code>'u, hafızayı ve eski projeleri tarar. Panel (<code>durum.html</code>) açılır.</div></li>
     <li><div><b>Makalen yoksa alanı tara.</b> "alan taraması: konu" de. Amaç A (temel makale) ya da B (alanı tanımak); yöntem adı geçmeyen bir arama cümlesi; kartopu, kaynak uyumu sütunlu eleme tablosu, doğrulama, durma kuralı. Sonunda temel makale ya da kör nokta adayları çıkar.</div></li>
     <li><div><b>Makaleyi ver.</b> "zayıf nokta raporu: makale.pdf" de. Sohbeti ve şüpheni görmeyen bir ajan okur, denetçi ajan kontrol eder. Bulguları tek tek, okunacak yeriyle dinlemek istersen "anlatımlı okuma" de. Yöntem fikirleri park edilir.</div></li>
-    <li><div><b>Zayıf noktayı sen seç.</b> İlk üç zayıf nokta en ucuz deneyleriyle gelir. Kişisel <code>kaynak.json</code>'daki "ilk tercih değil" maddelerine uyanlar sona gider. Literatürdeki ya da ajanın çıkardığı düşüş henüz hipotezdir.</div></li>
+    <li><div><b>Zayıf noktayı sen seç.</b> İlk üç zayıf nokta en ucuz deneyleriyle gelir. Kişisel <code>kaynak.json</code>'daki "izin yok" maddelerine uyanlar aday olamaz, "ilk tercih değil" olanlar sona gider. Literatürdeki ya da ajanın çıkardığı düşüş henüz hipotezdir.</div></li>
     <li><div><b>Kapıya sor.</b> "kapı" ya da "doğru yolda mıyım?" de. Önce aile kontrolü: aynı fiziksel koşul daha önce kapandıysa sayılı bir öngörü istenir ("önceki X, eşik Z; bu kez en az Z, çünkü..."). Kapı 1'de soru, koşul düzeyleri, eşik ve tek ölçüt ölçümden önce commit'lenir; düşüşü sen ölçersin: resmî ya da yeniden üretilmiş kodda, tohum dağılımından ve eşikten büyük. Eşiğin altında kalırsa kapalı kapıdır.</div></li>
     <li><div><b>Kapı 2: yeniden üret, platformu sor.</b> Makalenin sayısı ile seninki yan yana. Sonucu sınayacak gerçek platform şimdi sorulur (erişim, benzetimle eşleşme); yoksa "iddia benzetimle sınırlı" hemen sınırlılık olarak yazılır.</div></li>
     <li><div><b>Kapı 3: önce eşik, sonra üç sayı.</b> Taban, en güçlü basit çare (yöntemi bilmeyen bir ajanın listesinden, eşit ayarla), adil kâhin. Boşluk eşiğin altındaysa bulgu yaz ve <code>kapali_kapilar.json</code>'a ekle; başka koşula geçmek dönüştür, üçüncüsünde durulur.</div></li>
@@ -165,7 +165,7 @@ flowchart TD
       <div class="stage"><span class="gate">K2</span><div><b>Yeniden üretim</b><small>Kapı 2</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: makalenin sayısı ile bizim sayımız yan yana.</div>
       <div class="cell e">—</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Yeniden üretilmeden yeni yöntem kodu yazılmaz. Koşu kişisel <code>kaynak.json</code>'a uymuyorsa önce söylenir; yine de seçilirse Sapma. Gerçek platform burada sorulur; yoksa sonuçtan önce sınırlılık.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Yeniden üretilmeden yeni yöntem kodu yazılmaz. Koşu kişisel <code>kaynak.json</code>'daki "izin yok" listesine uyuyorsa DUR; "ilk tercih değil" ise önce söylenir, yine de seçilirse Sapma. Gerçek platform burada sorulur; yoksa sonuçtan önce sınırlılık.</div>
     </div>
 
     <div class="row">
@@ -240,7 +240,7 @@ flowchart TD
   <h2>Nerede duruyor</h2>
   <pre>~/CALISMALAR/_arastirma-sablonu/     şablon (GitHub deposu, herkes için aynı), skill'lerin asıl kopyası skills/ içinde
 ~/CALISMALAR/_arastirma-kisisel/     kişisel klasör (senin; birden çok makinede özel bir depo yap)
-  kaynak.json                        makinen ve kaynak tercihlerin ("ilk tercih değil" listesi)
+  kaynak.json                        makinen ve kaynak sınırların ("izin yok", "ilk tercih değil")
   kapali_kapilar.json                kapalı kapıların; aile kontrolü buradan okur
   gecmis.md                          kendi hataların ve örnekleri
 ~/.claude/skills/                    Claude'un kullandığı kopya (kur.sh / kur.ps1 kurar)

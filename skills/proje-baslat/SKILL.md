@@ -46,8 +46,10 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
 5. **Intake.** Ask only these, in one message:
    - project name and one-line goal;
    - the base paper/method (title or link), whether its code is available, and what it needs to run (training or
-     only a checkpoint, GPU memory, operating system). Compare with `kaynak.json` in the personal folder; if it matches an
-     item in `ilk_tercih_degil`, say so now and ask whether to look for a fitting base paper first;
+     only a checkpoint, GPU memory, operating system, graphics drivers). Compare with `kaynak.json` in the personal
+     folder: if it matches an item in `izin_yok`, say plainly that it cannot be the base method on this machine and
+     look for a fitting base paper first; if it matches `ilk_tercih_degil`, say so now and ask whether to look for a
+     fitting base paper first;
    - the condition the user suspects breaks it (if any). Record it as a hypothesis in KARAR.md; never pass it to the
      reader agents of `zayif-nokta-raporu`;
    - whether this condition or task was studied in an earlier project. Do not rely on the answer alone: run the
