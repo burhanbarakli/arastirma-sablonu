@@ -83,9 +83,9 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
   <p class="lede">Bir işe başlarken hangi skill'i ne zaman kullanacağımız. Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır; turuncu sütun, dört ayın karnesindeki hataların tam yerinde duran uyarılar.</p>
 
   <div class="three">
-    <div class="core"><b>proje-baslat</b><p>Yeni proje ya da yan iş klasörünü kurar: karar.json, KARAR.md, durum.html paneli, commit kilidi. Odak ve aile kontrolü yapar, kilidin engellediğini sınar.</p></div>
+    <div class="core"><b>proje-baslat</b><p>Yeni proje ya da yan iş klasörünü kurar: karar.json, KARAR.md, durum.html paneli, commit kilidi. Odak kontrolü yapar, aile kontrolünü taratır (eşleşme yoksa "yok" ve taranan kaynaklar), kilidin engellediğini sınar.</p></div>
     <div class="core"><b>zayif-nokta-raporu</b><p>Makaleyi sohbeti görmeyen bir ajan okur, denetçi ajan kontrol eder; ilk üç zayıf nokta çıkar, birini sen seçersin. "Alan taraması" (A, B), "anlatımlı okuma" ve kör denetim de burada.</p></div>
-    <div class="core"><b>arastirma-kapisi</b><p>Yedi kapı; Kapı 3'ten sonra yöntem arama, aktarım kontrolü ve "kim çözmüş" taraması (C). DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller, aşılan kararı kaydeder.</p></div>
+    <div class="core"><b>arastirma-kapisi</b><p>Adım 0 ve yedi kapı; Kapı 3'ten sonra yöntem arama, aktarım kontrolü ve "kim çözmüş" taraması (C). DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller, kapalı kapıyı ve aşılan kararı kaydeder.</p></div>
   </div>
 
   <h2>Akış</h2>
@@ -99,28 +99,34 @@ flowchart TD
   T -- "B: alanı tanımak" --&gt; K["Kör nokta adayları"]
   R --&gt; S["Sen ilk üçten birini seçersin"]
   K --&gt; S
-  S --&gt; K1["Kapı 1–2: kendi ölçtüğün düşüş,&lt;br/&gt;yeniden üretim"]
-  K1 --&gt; K3["Kapı 3: önce eşik, sonra üç sayı"]
-  K3 -- "boşluk &lt; eşik" --&gt; F["Bulgu yaz, dönüş +1&lt;br/&gt;sınırda durma kuralı"]
+  S --&gt; A0["Adım 0: kayıt, kanca, odak&lt;br/&gt;aile kontrolü"]
+  A0 -- "eşleşme var, öngörü yok" --&gt; D0["DUR"]
+  A0 --&gt; K1["Kapı 1: önce soru, düzeyler, eşik, tek ölçüt;&lt;br/&gt;sonra kendi ölçtüğün düşüş"]
+  K1 -- "düşüş &lt; eşik" --&gt; F["Kapalı kapı: bulgu yaz,&lt;br/&gt;kapali_kapilar.json, dönüş +1"]
+  K1 --&gt; K2["Kapı 2: yeniden üretim,&lt;br/&gt;gerçek platform var mı"]
+  K2 --&gt; K3["Kapı 3: önce eşik, sonra üç sayı"]
+  K3 -- "boşluk &lt; eşik" --&gt; F
+  F -- "3. dönüş" --&gt; DK["Durma kuralı:&lt;br/&gt;olumsuz sonucu yaz"]
   K3 -- "boşluk ≥ eşik" --&gt; Y["Yöntem arama&lt;br/&gt;alan taraması C burada"]
   Y --&gt; K45["Kapı 4–5: eşit rakip, kilitli protokol"]
   K45 --&gt; A["Ana koşu + kör denetim"]
   A --&gt; K67["Kapı 6–7: gerçek test, sınırlılıklar"]
 </pre>
   </div>
-  <p class="flow-note">Kilit ve panel her adımda çalışır: sapma, dönüş ve aşılan kararlar kayda geçer. 16 GB'tan fazla VRAM ya da Linux isteyen çalışmalar sıralamada sona gider.</p>
+  <p class="flow-note">Kilit ve panel her adımda çalışır: sapma, dönüş ve aşılan kararlar kayda geçer; Kapı 1'in sorusu, düzeyleri ve eşiği bozulmadan önce commit'lenmemişse kilit durdurur. Kapalı kapılar şablondaki <code>kapali_kapilar.json</code>'da toplanır, her makinede aynıdır. 16 GB'tan fazla VRAM ya da Linux isteyen çalışmalar sıralamada sona gider.</p>
 
   <h2>Nasıl başlarım, nasıl devam ederim</h2>
   <ol class="steps">
-    <li><div><b>Klasörü aç, projeyi kur.</b> Claude Code'da yeni klasörde <code>/proje-baslat</code> (yan iş de böyle açılır). Soruları cevapla: proje adı ve amacı; temel makale, kodu ve koşmak için ne istediği; şüphelendiğin koşul; bu koşul daha önce çalışıldı mı. Panel (<code>durum.html</code>) açılır.</div></li>
+    <li><div><b>Klasörü aç, projeyi kur.</b> Claude Code'da yeni klasörde <code>/proje-baslat</code> (yan iş de böyle açılır). Soruları cevapla: proje adı ve amacı; temel makale, kodu ve koşmak için ne istediği; şüphelendiğin koşul; bu koşul daha önce çalışıldı mı. Cevabın yetmez: aile kontrolü <code>kapali_kapilar.json</code>'u, hafızayı ve eski projeleri tarar. Panel (<code>durum.html</code>) açılır.</div></li>
     <li><div><b>Makalen yoksa alanı tara.</b> "alan taraması: konu" de. Amaç A (temel makale) ya da B (alanı tanımak); yöntem adı geçmeyen bir arama cümlesi; kartopu, kaynak uyumu sütunlu eleme tablosu, doğrulama, durma kuralı. Sonunda temel makale ya da kör nokta adayları çıkar.</div></li>
     <li><div><b>Makaleyi ver.</b> "zayıf nokta raporu: makale.pdf" de. Sohbeti ve şüpheni görmeyen bir ajan okur, denetçi ajan kontrol eder. Bulguları tek tek, okunacak yeriyle dinlemek istersen "anlatımlı okuma" de. Yöntem fikirleri park edilir.</div></li>
     <li><div><b>Zayıf noktayı sen seç.</b> İlk üç zayıf nokta en ucuz deneyleriyle gelir. 16 GB'tan fazla VRAM ya da Linux isteyenler sona gider (<code>kaynak.json</code>). Literatürdeki ya da ajanın çıkardığı düşüş henüz hipotezdir.</div></li>
-    <li><div><b>Kapıya sor.</b> "kapı" ya da "doğru yolda mıyım?" de. Kapı 1 düşüşü senin ölçmeni ister: resmî ya da yeniden üretilmiş kodda, koşul yöntemden önce yazılmış, düşüş tohum dağılımından büyük.</div></li>
-    <li><div><b>Kapı 3: önce eşik, sonra üç sayı.</b> Taban, en güçlü basit çare (yöntemi bilmeyen bir ajanın listesinden, eşit ayarla), adil kâhin. Boşluk eşiğin altındaysa bulgu yaz; başka koşula geçmek dönüştür.</div></li>
+    <li><div><b>Kapıya sor.</b> "kapı" ya da "doğru yolda mıyım?" de. Önce aile kontrolü: aynı fiziksel koşul daha önce kapandıysa sayılı bir öngörü istenir ("önceki X, eşik Z; bu kez en az Z, çünkü..."). Kapı 1'de soru, koşul düzeyleri, eşik ve tek ölçüt ölçümden önce commit'lenir; düşüşü sen ölçersin: resmî ya da yeniden üretilmiş kodda, tohum dağılımından ve eşikten büyük. Eşiğin altında kalırsa kapalı kapıdır.</div></li>
+    <li><div><b>Kapı 2: yeniden üret, platformu sor.</b> Makalenin sayısı ile seninki yan yana. Sonucu sınayacak gerçek platform şimdi sorulur (erişim, benzetimle eşleşme); yoksa "iddia benzetimle sınırlı" hemen sınırlılık olarak yazılır.</div></li>
+    <li><div><b>Kapı 3: önce eşik, sonra üç sayı.</b> Taban, en güçlü basit çare (yöntemi bilmeyen bir ajanın listesinden, eşit ayarla), adil kâhin. Boşluk eşiğin altındaysa bulgu yaz ve <code>kapali_kapilar.json</code>'a ekle; başka koşula geçmek dönüştür, üçüncüsünde durulur.</div></li>
     <li><div><b>Boşluk kalırsa yöntem ara.</b> "yeni yöntem bul" de: kâhin ne biliyor, basit çareler, boşluğun nedeni, gereken özellik, kim çözmüş (tarama C), şeytanın avukatı, adil kâhinli en küçük test.</div></li>
-    <li><div><b>Kapıları sırayla geç.</b> Rakip adaleti, kilitli protokol, ana koşu, kör denetim, gerçeklik. Benzetimde doğrulanan sonuçtan sonra gerçek test ya da "iddia benzetimle sınırlı" Sapması.</div></li>
-    <li><div><b>Yazım.</b> Kapı 7: gerçek test ya da Sapma, açık KOŞULLU yok, makaledeki sınırlılıklar kayıtla aynı, kör denetim yapılmış. Yardımcılar: <code>paper-critique</code>, <code>citation-check</code>.</div></li>
+    <li><div><b>Kapıları sırayla geç.</b> Rakip adaleti, kilitli protokol, ana koşu, kör denetim, gerçeklik. Hazır checkpoint değerlendirmesinde tohum farklı başlangıç kümesidir, fark eşli testle verilir. Benzetimde doğrulanan sonuçtan sonra gerçek test; sonuçtan sonra vazgeçilirse "iddia benzetimle sınırlı" Sapması.</div></li>
+    <li><div><b>Yazım.</b> Kapı 7: gerçek test ya da benzetim sınırı yazılı, açık KOŞULLU yok, makaledeki sınırlılıklar kayıtla aynı (projenin hafızası ve karar notları da taranır), kör denetim yapılmış. Yardımcılar: <code>paper-critique</code>, <code>citation-check</code>.</div></li>
   </ol>
   <p class="aside">Haftada bir: paneli aç, hangi aşamadasın, açık uyarı var mı, dönüş sayacı nerede. Olumsuz sonuç ve "burada yöntem için yer yok" kararı da bir bulgudur.</p>
 
@@ -138,7 +144,7 @@ flowchart TD
       <div class="stage"><span class="gate">0</span><div><b>Başlangıç</b><small>yeni klasör</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>proje-baslat</code>: şablonu kopyalar, commit kilidini takar, projeyi kayda ekler, paneli üretir.</div>
       <div class="cell e">—</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Bir ana proje, bir küçük yan iş; ikisi de sayılır. Bu koşulda daha önce basit bir kural kazandıysa "bu kez neden farklı?" ölçülebilir cevap ister.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Bir ana proje, bir küçük yan iş; klasör değil çalışma hattı sayılır. Aynı fiziksel koşul daha önce kapandıysa (basit kural kazandı ya da düşüş eşik altı) "bu kez neden farklı?" sayılı öngörü ister.</div>
     </div>
 
     <div class="row">
@@ -150,37 +156,37 @@ flowchart TD
 
     <div class="row">
       <div class="stage"><span class="gate">K1</span><div><b>Soru</b><small>Kapı 1</small></div></div>
-      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: "M yöntemi, C koşulunda, Q ölçütünü A'dan B'ye düşürüyor" cümlesi ölçümle kurulur.</div>
+      <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: önce aile kontrolü; soru, koşul düzeyleri, eşik ve tek ölçüt yazılır; sonra "M yöntemi, C koşulunda, Q ölçütünü A'dan B'ye düşürüyor" cümlesi ölçümle kurulur.</div>
       <div class="cell h"><span class="lab">Yardımcı</span><code>hypothesis-generation</code>, sadece bozulma ölçüldükten sonra: rakip açıklamalar, ayırt edici tahminler.</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Düşüşü sen ölçersin; başkasının makalesindeki düşüş hipotezdir. "Bunu kimse yapmamış": DUR.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Düşüşü sen ölçersin; başkasının makalesindeki düşüş hipotezdir. "Bunu kimse yapmamış": DUR. "Başarı ya da sıralama" gibi iki ölçüt olmaz. Bulut koşusu <code>karar.json</code>'un commit'ini çıktısına yazar.</div>
     </div>
 
     <div class="row">
       <div class="stage"><span class="gate">K2</span><div><b>Yeniden üretim</b><small>Kapı 2</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: makalenin sayısı ile bizim sayımız yan yana.</div>
       <div class="cell e">—</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Yeniden üretilmeden yeni yöntem kodu yazılmaz. Koşu <code>kaynak.json</code>'a uymuyorsa önce söylenir; yine de seçilirse Sapma.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Yeniden üretilmeden yeni yöntem kodu yazılmaz. Koşu <code>kaynak.json</code>'a uymuyorsa önce söylenir; yine de seçilirse Sapma. Gerçek platform burada sorulur; yoksa sonuçtan önce sınırlılık.</div>
     </div>
 
     <div class="row">
       <div class="stage"><span class="gate">K3</span><div><b>Üç sayı</b><small>Kapı 3</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: taban, en güçlü basit çare, adil kâhin. Boşluk eşiğin üstündeyse yöntem arama; başka alandan yöntem gelirse aktarım kontrolü.</div>
       <div class="cell h"><span class="lab">Yardımcı</span><code>paper-compare</code> rakip seçimi · <code>decision-matrix</code> hangi koşulu zorlayacağımız</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Eşik ölçümden önce. Basit çare yöntemden önce ve eşit ayarla. Boşluk eşiğin altındaysa bulgu; başka koşul dönüştür.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Eşik ölçümden önce. Basit çare yöntemden önce ve eşit ayarla. Boşluk eşiğin altındaysa bulgu ve kapalı kapı; başka koşul dönüştür.</div>
     </div>
 
     <div class="row">
       <div class="stage"><span class="gate">K4</span><div><b>Rakip adaleti, protokol</b><small>Kapı 4–5</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: eşit bütçe, ayar ve bilgi; karar kuralı, tohum, durma kuralı, dönüş sayacı yazılı.</div>
       <div class="cell e">—</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Protokol <code>karar.json</code>'da kilitli; sonradan değişen ya da ilk kez yazılan kural commit'te durur, Sapma ister.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Protokol <code>karar.json</code>'da kilitli; sonradan değişen ya da ilk kez yazılan kural commit'te durur, Sapma ister. Sonuçtan önceki değişiklik de kısa bir "planlama" kaydı ister.</div>
     </div>
 
     <div class="row">
       <div class="stage"><span class="gate">K6</span><div><b>Ana koşu, gerçeklik</b><small>Kapı 6</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: benzetimin kusursuz varsaydıkları, tavana yakın sonuçlar, küçük gerçek test planı.</div>
       <div class="cell e">—</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Tohumu değil koşulu azalt; 3'ten az tohum pilottur. Benzetimde doğrulanan sonuçtan sonra gerçek test ya da Sapma.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Tohumu değil koşulu azalt; 3'ten az tohum pilottur. Eğitim yoksa tohum = başlangıç kümesi, eşli test; tek eğitim koşusu sınırlılık. Benzetimde doğrulanan sonuçtan sonra gerçek test ya da Sapma.</div>
     </div>
 
     <div class="row">
@@ -194,7 +200,7 @@ flowchart TD
       <div class="stage"><span class="gate">K7</span><div><b>Yazım</b><small>Kapı 7</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>arastirma-kapisi</code>: iddia ölçülen boşlukla aynı boyda, sınırlılıklar yerinde.</div>
       <div class="cell h"><span class="lab">Yardımcı</span><code>related-work</code> kendi kaynaklarından · <code>paper-critique</code> hakem gözü · <code>citation-check</code> kaynaklar gerçek mi</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Gerçek test yoksa iddia benzetimle sınırlı. Sınırlılıklar makalede kayıtla satır satır aynı. "Hakem sorarsa ekleriz" yok.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Gerçek test yoksa iddia benzetimle sınırlı. Sınırlılıklar makalede kayıtla satır satır aynı; projenin hafızası da taranır. "Hakem sorarsa ekleriz" yok.</div>
     </div>
   </div>
 
@@ -218,6 +224,7 @@ flowchart TD
         <li>Başka alandan bir yöntem getirmek</li>
         <li>"Hızlı bir deneme", "makaleye küçük bir ek", "hakem istedi"</li>
         <li>Her yeni koşul (sonuç olumlu da olsa)</li>
+        <li>Durma kuralını doldurmuş bir yan işten yeni soru</li>
         <li>Eşik, kural, tohum veya rakip ayarı değişikliği</li>
         <li>Bir sınırlılığı çıkarmak</li>
         <li>Gönderim hazırlığı</li>
@@ -234,9 +241,10 @@ flowchart TD
   <pre>~/CALISMALAR/_arastirma-sablonu/     şablon (özel GitHub deposu), skill'lerin asıl kopyası skills/ içinde
 ~/.claude/skills/                    Claude'un kullandığı kopya (kur.sh / kur.ps1 kurar)
 ~/.claude/arastirma/projeler.json    aktif ve arşiv projeler (her makinede ayrı)
-_arastirma-sablonu/kaynak.json       kaynak tercihleri (16 GB üstü VRAM ve Linux ilk tercih değil)</pre>
+_arastirma-sablonu/kaynak.json       kaynak tercihleri (16 GB üstü VRAM ve Linux ilk tercih değil)
+_arastirma-sablonu/kapali_kapilar.json  bütün projelerin kapalı kapıları; aile kontrolü buradan okur</pre>
 
-  <footer>Güncelleme: 21 Kasım 2026. Skill'de değişiklik şablon deposunda yapılır, kur betiği çalıştırılır, commit edilir.</footer>
+  <footer>Güncelleme: 22 Kasım 2026. Skill'de değişiklik şablon deposunda yapılır, kur betiği çalıştırılır, commit edilir.</footer>
 </div>
 
 <!-- mermaid-yerel: yalnız dosya yerelde açılınca gerekir; claude.ai sayfası mermaid'i kendisi çizer -->
