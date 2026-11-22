@@ -1,11 +1,12 @@
 ---
 name: arastirma-kapisi
-description: Research gatekeeper that stops the user's known research mistakes before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım", "hızlı bir deneme yapalım", "makaleye küçük bir ek", "let's try", "quick experiment"); asks how to find or design a new method for a measured weak point ("yeni yöntem bul", "buna ne yöntem önerirsin", "boşluğu nasıl kapatırız"); wants to bring a method or component from another field into a paper's method ("başka alandan bir yöntem koyalım", "X alanındaki şeyi buraya uygulayalım", "bu parçayı Y ile değiştirelim"); pivots or changes the research question; adds a new condition; changes a threshold, decision rule, seed count or rival setting; wants to drop or soften a limitation ("bunu çıkaralım", "hakem sorarsa ekleriz"); answers a reviewer request ("hakem istedi"); or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the recorded mistakes, reads and updates the project's karar.json and KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
+description: Research gatekeeper that stops known research mistakes (and the user's own recorded ones, if any) before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım", "hızlı bir deneme yapalım", "makaleye küçük bir ek", "let's try", "quick experiment"); asks how to find or design a new method for a measured weak point ("yeni yöntem bul", "buna ne yöntem önerirsin", "boşluğu nasıl kapatırız"); wants to bring a method or component from another field into a paper's method ("başka alandan bir yöntem koyalım", "X alanındaki şeyi buraya uygulayalım", "bu parçayı Y ile değiştirelim"); pivots or changes the research question; adds a new condition; changes a threshold, decision rule, seed count or rival setting; wants to drop or soften a limitation ("bunu çıkaralım", "hakem sorarsa ekleriz"); answers a reviewer request ("hakem istedi"); or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the recorded mistakes, reads and updates the project's karar.json and KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
 ---
 
 # Araştırma kapısı
 
-The user asked for a gatekeeper that warns them directly when they slip into their recorded habits, and says plainly
+This skill is a gatekeeper: it warns the researcher (the user) directly when they slip into a known research mistake,
+and says plainly
 "hayır, yanlış yoldasın; kararımız şu; şöyle devam ediyoruz". Speak Turkish. Be direct and specific, never vague, and
 always end with the concrete next step. The user may override any verdict, but every override is recorded (see
 "Overrides"); never refuse to help after an override.
@@ -13,12 +14,14 @@ always end with the concrete next step. The user may override any verdict, but e
 The rules below are general: they apply to any method, paper, task or condition. Do not build a rule around one
 paper's condition; name the structure instead (for example "a condition where a simple rule already won").
 
-## The user's recorded mistakes (what to watch for)
+## Known research mistakes (what to watch for)
 
-From a review of the user's earlier projects. The rules here stay general; the projects, the examples behind each
-mistake and the closed doors live in the template folder (path in `~/.claude/arastirma/sablon_yolu.txt`):
-`docs/NEDEN.md` ("Kural → neden" and "Skill'deki örnekler") and `kapali_kapilar.json`. When a verdict needs "the
-user's own past example", take it from there, and name it only in the verdict, never in a rule.
+These ten mistakes come from a review of real research projects. The cases behind them are in the template's
+`docs/vakalar/` and `docs/NEDEN.md`: they are example cases from the template author's projects, not this user's
+history. Cite them only as "örnek vaka", never as "senin projen". The user's own history, if any, is in the
+personal folder (see Definitions): `gecmis.md` and `kapali_kapilar.json`. When a verdict needs the user's own past
+example, take it from there and name it only in the verdict, never in a rule. If the personal folder has none, give
+the verdict without a personal example.
 
 1. **Method or paper first, need later.** The idea comes from "nobody has done X" or "find a method for a paper",
    not from a measured failure.
@@ -53,8 +56,13 @@ user's own past example", take it from there, and name it only in the verdict, n
 - **Pivot (dönüş):** any switch to a new condition, question, task or method, whether the last result was negative
   or positive. A new project on a condition already studied continues that condition's pivot count.
 - **Closed door (kapalı kapı):** a condition where the measured gap stayed below the threshold or a simple remedy
-  sufficed. Both kinds are recorded in `kapali_kapilar.json` in the template folder (path in
-  `~/.claude/arastirma/sablon_yolu.txt`) as soon as they are measured, so every machine sees them.
+  sufficed. Both kinds are recorded in `kapali_kapilar.json` in the personal folder as soon as they are measured.
+- **Personal folder (kişisel klasör):** the folder whose path is in `~/.claude/arastirma/kisisel_yolu.txt` (set by
+  the template's `kur.sh` / `kur.ps1`). It belongs to this researcher, not to the template, and holds `kaynak.json`
+  (resource preferences), `kapali_kapilar.json` (closed doors) and `gecmis.md` (own past mistakes with examples).
+  If the path file or a file is missing, say once "kişisel klasör yok; kur betiğini çalıştır" and go on: no resource
+  preference, closed doors only from the registry and the projects' own files. If it is a git repository, commit and
+  push every change made there.
 - **Ceiling:** headline success above ~95% of the metric's best value. **Inside noise:** the difference is smaller
   than the spread across seeds, or its interval contains zero.
 
@@ -83,7 +91,7 @@ user's own past example", take it from there, and name it only in the verdict, n
    `"hatlar": [{"ad", "tur": "ana"|"yan"}]`. Do not infer lines from commit subjects yourself.
 4. **Family check (mistake 10).** Name the condition or task the work stresses by the physical quantity or job it
    changes (for example "the command reaches the robot k steps late"), not by a keyword: the same word can mean
-   different things in two projects, and two words the same thing. Search: `kapali_kapilar.json` in the template
+   different things in two projects, and two words the same thing. Search: `kapali_kapilar.json` in the personal
    folder; memory (this project's folders and those of registered projects); the registry, archived projects
    included; and the earlier projects' own decision and results files, whatever form they take. Was the same
    condition or task studied before, and how did it end: a simple rule or rival won, **or the condition's drop
@@ -101,7 +109,7 @@ user's own past example", take it from there, and name it only in the verdict, n
 ## The gates
 
 Run the gates in order. Stop at the first gate that fails: give the verdict, explain why in two or three sentences
-with the user's own past example where it fits, and give the exact next step. Do not run later gates on a failed
+with the user's own past example (personal folder) where it fits, and give the exact next step. Do not run later gates on a failed
 foundation.
 
 **Kapı 1: Soru (mistake 1).** What measured failure motivates the work? Accept only a sentence of the form "method M,
@@ -125,7 +133,7 @@ stays below `soru.esik` is a closed door: record it in `kapali_kapilar.json` and
 
 **Kapı 2: Yeniden üretim.** Has the base method been reproduced, with numbers next to the paper's? If not:
 **KOŞULLU DEVAM** only for reading and stress planning; no new method code. Before planning any run, check it
-against `kaynak.json` in the template folder (path in `~/.claude/arastirma/sablon_yolu.txt`). If the base method or a
+against `kaynak.json` in the personal folder (missing, or an empty list: no preference). If the base method or a
 planned run matches an item in `ilk_tercih_degil`, say so before any work starts and name a fitting alternative
 (a smaller released model, evaluation only, another base paper). Going ahead anyway is allowed; write it as a Sapma
 with the reason and the cost (time, cloud, another machine).
@@ -295,12 +303,12 @@ After the block, at most a short paragraph of explanation. Then update the recor
 `karar.json`, update it after every verdict (`asamalar.<stage>.durum` as `gecti` / `kosullu` / `durdu`, `tarih`, `not`;
 `son_karar`; `uc_sayi` rows when numbers were measured; `donus.kayit` for a pivot; `sapmalar` for a rule change;
 `overrides` for an override; `sinirliliklar` for every new limitation, idealisation or seed limit; a closed door also
-goes to `kapali_kapilar.json` in the template folder, committed there), add a row to
+goes to `kapali_kapilar.json` in the personal folder), add a row to
 KARAR.md under "Kapı kayıtları", then run `python3 tools/durum.py` to refresh `durum.html` and give the user its path.
 On Windows, if `python3 -c ""` fails (the Microsoft Store shortcut), use `python` instead.
 
 ## Tone
 
-Firm and kind. The user explicitly wants to be told "hayır, yanlış yoldasın". Do not soften a DUR into a suggestion.
+Firm and kind. The skill exists to say "hayır, yanlış yoldasın" plainly. Do not soften a DUR into a suggestion.
 Do not lecture: one clear reason, one clear next step. Credit what is done right (honest negative results,
 oracle thinking) when it is relevant, because those are the user's strengths.

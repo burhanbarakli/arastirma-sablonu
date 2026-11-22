@@ -2,8 +2,8 @@
 
 Her yeni araştırma projesi bu şablonla başlar. Amaç, tekrar eden hataları (önce yöntem, geç gelen basit rakip,
 eşitsiz rakip, sonradan değişen kural, az tohum, durmayan dönüşler, yalnız benzetim, silinen sınırlılık, çok proje,
-basit kuralın kazandığı koşula dönüş) yapı düzeyinde önlemek. Kurallar geneldir: belirli bir makaleye ya da koşula
-bağlı değildir.
+basit kuralın kazandığı koşula dönüş) yapı düzeyinde önlemek. Kurallar geneldir: belirli bir makaleye, koşula ya da
+kişiye bağlı değildir. Şablonu kim kullanırsa kullansın kendi verisi kendi **kişisel klasöründe** durur (aşağıda).
 
 ## Kurulum (her bilgisayarda bir kez)
 
@@ -19,8 +19,31 @@ git clone https://github.com/burhanbarakli/arastirma-sablonu.git $HOME\CALISMALA
 powershell -ExecutionPolicy Bypass -File $HOME\CALISMALAR\_arastirma-sablonu\kur.ps1
 ```
 
-`kur` betiği üç skill'i (`zayif-nokta-raporu`, `arastirma-kapisi`, `proje-baslat`) `~/.claude/skills/` altına kurar
-ve şablonun yerini `~/.claude/arastirma/sablon_yolu.txt` dosyasına yazar.
+`kur` betiği üç skill'i (`zayif-nokta-raporu`, `arastirma-kapisi`, `proje-baslat`) `~/.claude/skills/` altına kurar,
+şablonun yerini `~/.claude/arastirma/sablon_yolu.txt` dosyasına yazar ve kişisel klasörünü hazırlar.
+
+## Kişisel klasör
+
+Şablon herkes için aynıdır; senin verin şablonda değil, kişisel klasöründe durur. Varsayılan yeri şablonun yanındaki
+`_arastirma-kisisel` klasörüdür. `kur` betiği yoksa onu oluşturur, eksik dosyaları `kisisel-ornek/`'ten kopyalar
+(var olana dokunmaz) ve yolunu `~/.claude/arastirma/kisisel_yolu.txt`'ye yazar. İçinde üç dosya var:
+
+- `kaynak.json`: makinen ve kaynak tercihlerin. "İlk tercih değil" listesine uyan çalışmalar dışlanmaz, okuma ve
+  deney seçiminde sona gider. Liste boşsa tercih yoktur. İlk iş bunu doldur.
+- `kapali_kapilar.json`: kapalı kapıların, yani eşik altında kalan ya da basit çarenin yettiği koşullar. Aile kontrolü
+  buradan okur.
+- `gecmis.md`: kendi hataların ve örnekleri. Kapı bir kararda "senin şu projendeki gibi" derken örneği buradan alır.
+
+Birden çok bilgisayarda çalışıyorsan kişisel klasörü özel bir git deposu yap. Öbür bilgisayarda önce onu klonla,
+sonra kur betiğini klasörün yoluyla çalıştır (`sh kur.sh <yol>` ya da `kur.ps1 -Kisisel <yol>`).
+
+## Bu şablonu başkasıyla paylaşmak (öğrenci, ekip arkadaşı)
+
+1. Depoyu klonlasın ve `kur` betiğini çalıştırsın. Boş bir kişisel klasör oluşur.
+2. `kaynak.json`'a kendi makinesini yazsın; `gecmis.md` ile `kapali_kapilar.json` boş başlar ve projeleriyle dolar.
+3. `docs/vakalar/` ve `docs/NEDEN.md`'deki proje adları şablonu yazanın projeleridir. Kurallar oradaki hatalardan
+   doğdu; okumak öğreticidir, ama skill bunları yeni kullanıcının geçmişi saymaz, yalnız "örnek vaka" diye anar.
+4. Skill'i değiştirmek isterse kendi kopyasında (fork) yapsın; bu depoya değişiklik isteğiyle önerebilir.
 
 **Güncelleme (iki makinede de):** `git pull`, ardından `kur` betiğini yeniden çalıştır. Skill'lerde bir değişiklik yapacaksan bu
 depodaki `skills/` klasöründe yap, sonra `kur` betiğini çalıştır ve commit et. Doğru kaynak bu depodur.
@@ -36,7 +59,7 @@ Claude Code'da, projenin açılacağı klasörde:
 ya da "yeni bir araştırma projesi başlat" demen yeterli. Yan iş (örneğin bir alan taraması) de böyle açılır.
 `proje-baslat` skill'i:
 1. odağı denetler: bir ana proje, bir yan iş; kayıt boşsa başka makinedeki projeleri sorar;
-2. bu klasördeki dosyaları yeni projeye kopyalar (`kaynak.json` kopyalanmaz, okunur);
+2. bu klasördeki dosyaları yeni projeye kopyalar (kişisel klasör kopyalanmaz, okunur);
 3. `git init` yapar ve `tools/karar_koruma.py`'ı commit kancası olarak kurar;
 4. senden proje adını, temel yöntemi (ve koşmak için neye ihtiyaç duyduğunu), şüphelendiğin koşulu ve bu koşulun
    daha önce çalışılıp çalışılmadığını alır; `karar.json`'ı doldurur;
@@ -102,7 +125,7 @@ Aşamalar ve panelde görünenler:
 4. **Gösterilen yerleri oku.** İddiaları yargılamak isteğe bağlı; getirirsen kontrol edilir, `okuma-gunlugu.md`'ye
    işlenir. Literatürden, oyuncaktan ya da ajanın çıkarımından gelen düşüş ölçülecek bir hipotezdir, bozulma değil.
 5. **Zayıf noktayı sen seç.** Rapor ilk üç zayıf noktayı en ucuz deneyleriyle verir; birini sen seçersin.
-   16 GB'tan fazla VRAM ya da Linux isteyenler bu sıralamada sona gider (`kaynak.json`).
+   Kişisel `kaynak.json`'daki "ilk tercih değil" maddelerine uyanlar bu sıralamada sona gider.
 6. **Kapıya sor.** "kapı" / "doğru yolda mıyım?". Kapı 1 düşüşü senin ölçmeni ister: resmî ya da yeniden üretilmiş
    kodda, stres yokken sayı makaledekiyle yan yana, koşul yöntemden önce yazılmış, düşüş tohum dağılımından büyük.
 7. **Kapı 3: önce eşik, sonra üç sayı.** Taban, en güçlü basit çare (en az üç aday, yöntemi bilmeyen bir ajandan;
@@ -123,7 +146,7 @@ Aşamalar ve panelde görünenler:
   Hazır bir checkpoint'in değerlendirme bölümleri tohum değil denemedir. Eğitim yoksa tohum, farklı başlangıç kümesi
   demektir (`tohum.tanim`) ve fark eşli bölümler üzerinde sınanır; checkpoint'in tek eğitim koşusu sınırlılıktır.
 - **Aile kontrolü:** her soruda yapılır, eşleşme yoksa "yok" ve taranan kaynaklar yazılır. Eşik altı kalan ya da basit
-  çarenin yettiği koşullar (kapalı kapılar) `kapali_kapilar.json`'a girer; aynı fiziksel koşula dönüş ölçülebilir bir
+  çarenin yettiği koşullar (kapalı kapılar) kişisel klasördeki `kapali_kapilar.json`'a girer; aynı fiziksel koşula dönüş ölçülebilir bir
   öngörü ister.
 - **Dönüş:** yeni bir koşula, soruya, göreve ya da yönteme her geçiş; sonuç olumlu olsa da sayılır. Aynı koşulda
   açılan yeni proje sayacı devralır. Sınıra gelince durma kuralı devreye girer.
@@ -138,7 +161,7 @@ Aşamalar ve panelde görünenler:
   Kapı 1'in sorusu, koşul düzeyleri ve eşiği de kilitli: bozulma ilk kez yazılırken bunlar ve tek ölçüt önceki bir
   commit'te bulunmalı. Ölçümü olan eski projeye boş alan eklemek (şema eşitlemesi) engellenmez. Her oturum kancaların
   kurulu olduğuna bakar.
-- **Kaynak:** `kaynak.json`'daki "ilk tercih değil" maddelerine uyan çalışmalar dışlanmaz, sıralamada sona gider;
+- **Kaynak:** kişisel `kaynak.json`'daki "ilk tercih değil" maddelerine uyan çalışmalar dışlanmaz, sıralamada sona gider;
   yine de seçilirse Sapma yazılır.
 
 ## Makale arama (alan taraması)
@@ -188,8 +211,8 @@ hatalarımızdan biri; arama tam bu hataya kapı açabilir. Amaca göre üç yol
 
 Sonuç `alan-taramasi-<konu>.md` dosyasına yazılır.
 
-**Örnek:** GDA çalışması için kötü ve iyi arama cümleleri, amaç A/B/C ve uyarlanmış eleme tablosu:
-[`docs/ornekler/arama-cumlesi-gda.md`](docs/ornekler/arama-cumlesi-gda.md).
+**Örnek vaka:** bir GDA çalışması için kötü ve iyi arama cümleleri, amaç A/B/C ve uyarlanmış eleme tablosu:
+[`docs/vakalar/arama-cumlesi-gda.md`](docs/vakalar/arama-cumlesi-gda.md).
 
 > **Dikkat:** Aramanın sonu "**bunu kimse yapmamış**" cümlesine çıkıyorsa, kapı orada DUR der. Kör nokta bir problem
 > adayıdır, henüz problem değildir. Doğru sonraki adım: kör noktanın bozduğunu düşündüğün yöntemi seçip o koşulda
@@ -205,7 +228,7 @@ Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. 
 | 0. Başlangıç | `proje-baslat` | | Bir ana, bir yan iş; aile sorusu; kilit engelliyor mu |
 | 1. Okuma | `zayif-nokta-raporu` (bağımsız okuyucu + denetçi; "anlatımlı okuma"; makale yoksa "alan taraması" A/B) | `paper-search`, `research-litnote` | Zayıf noktayı sen seç; fikirler park edilir; kaynak uyumu |
 | Kapı 1: Soru | `arastirma-kapisi` | `hypothesis-generation` (sadece ölçümden sonra) | Düşüşü sen ölç; "kimse yapmamış" = DUR |
-| Kapı 2: Yeniden üretim | `arastirma-kapisi` | | Henüz yeni yöntem kodu yok; koşu `kaynak.json`'a uyuyor mu |
+| Kapı 2: Yeniden üretim | `arastirma-kapisi` | | Henüz yeni yöntem kodu yok; koşu kişisel `kaynak.json`'a uyuyor mu |
 | Kapı 3: Üç sayı | `arastirma-kapisi` (+ yöntem arama, aktarım kontrolü, alan taraması C) | `paper-compare`, `decision-matrix` | Önce eşik; basit çare yöntemden önce, eşit ayarla |
 | Kapı 4–5: Adalet, protokol | `arastirma-kapisi` | | Protokol kilitli; sonradan yazılan kural da sapma |
 | Ana koşu, Kapı 6: Gerçeklik | `arastirma-kapisi` | | Tohumu değil koşulu azalt; sonra gerçek test ya da Sapma |
@@ -218,12 +241,11 @@ Her aşamada: kapı kararından sonra `durum.html` güncellenir. İkinci görü�
 ## Belgeler
 
 - [`docs/NEDEN.md`](docs/NEDEN.md): her kuralın hangi hatadan ya da dersten doğduğu ve tarihli kararlar günlüğü.
-- [`docs/devir-2026-11-21.md`](docs/devir-2026-11-21.md): Mac'ten Windows'a devir: yapılanlar, hatalar, eski projeleri
-  eşitleme ve Windows'taki iki ajanlı inceleme görevi.
 - [`docs/skill-haritasi.html`](docs/skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
-- [`docs/ornekler/arama-cumlesi-gda.md`](docs/ornekler/arama-cumlesi-gda.md): GDA çalışması için arama cümlesi örneği.
-- [`docs/notlar/arastirma-pusulasi.html`](docs/notlar/arastirma-pusulasi.html): **Araştırma pusulası**, hepsinin özeti: hatalarım, yol, makale okuma, kâhin, yedi kapı, arama, komutlar.
-- `docs/notlar/`: araştırma notları (Boşluğu önce ölç, Problemden başla, Claude ile okumak, Dört ayın karnesi).
+- `docs/notlar/`: genel rehberler (Problemden başla, Claude ile okumak). Örnekleri şablonu yazanın projelerinden.
+- `docs/vakalar/`: örnek vakalar, şablonu yazanın 2026 projeleri: [Araştırma pusulası](docs/vakalar/arastirma-pusulasi.html)
+  (özet), Boşluğu önce ölç, Dört ayın karnesi, GDA arama cümlesi. Kuralların nedenini gösterirler; okuyanın geçmişi
+  değildir.
 
 HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tıkla (GitHub HTML'yi kod olarak gösterir).
 
@@ -235,10 +257,8 @@ HTML dosyalarını tarayıcıda açmak için depoyu klonla ve dosyayı çift tı
 - `tools/durum.py`: `durum.html` panelini üretir (`python3 tools/durum.py`; Windows'ta `python3` çalışmıyorsa
   `python`).
 - `tools/karar_koruma.py`: dondurulmuş bir kural sapma yazılmadan değişirse commit'i durdurur.
-- `kaynak.json`: kaynak tercihleri (şu an 16 GB'tan fazla VRAM isteyen ve Linux isteyen çalışmalar ilk tercih değil).
-  Skill'ler buradan okur; projelere kopyalanmaz. Makine değişirse yalnız bu dosyayı düzelt.
-- `kapali_kapilar.json`: bütün projelerin kapalı kapıları (eşik altı kalan ya da basit çarenin yettiği koşullar).
-  Aile kontrolü buradan okur; şablon deposunda durduğu için her makinede aynıdır. Projelere kopyalanmaz.
+- `kisisel-ornek/`: kişisel klasörün boş örnekleri (`kaynak.json`, `kapali_kapilar.json`, `gecmis.md`). `kur`
+  betiği eksik olanları kişisel klasöre kopyalar. Projelere kopyalanmaz.
 
 ## Haftalık alışkanlık
 

@@ -1,0 +1,16 @@
+# Kişisel klasör
+
+Bu klasör şablonun değil, senindir. İçindekiler:
+
+- `kaynak.json`: kaynak tercihlerin (makinen, GPU belleği, "ilk tercih değil" listesi).
+- `kapali_kapilar.json`: kapalı kapıların; aile kontrolü buradan okur.
+- `gecmis.md`: kendi hataların ve örnekleri; kapı kararlarında örnek buradan gelir.
+
+`kur.sh` / `kur.ps1` bu klasörün yolunu `~/.claude/arastirma/kisisel_yolu.txt`'ye yazar ve eksik dosyaları
+şablondaki `kisisel-ornek/`'ten oluşturur; var olan dosyaya dokunmaz.
+
+Birden çok bilgisayarda çalışıyorsan bu klasörü özel bir git deposu yap (örneğin GitHub'da `arastirma-kisisel`).
+Öbür bilgisayarda önce depoyu klonla, sonra kur betiğini klasörün yoluyla çalıştır:
+
+    ./kur.sh ~/CALISMALAR/_arastirma-kisisel
+    powershell -ExecutionPolicy Bypass -File kur.ps1 -Kisisel $HOME\CALISMALAR\_arastirma-kisisel

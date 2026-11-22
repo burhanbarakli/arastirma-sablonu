@@ -17,7 +17,7 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 ## Aile kontrolü
 
 - **Koşul / görev:** [değiştirdiği fiziksel büyüklük ya da iş; anahtar kelime değil]
-- **Taranan kaynaklar:** [şablondaki kapali_kapilar.json, hafıza, kayıt, önceki projelerin karar ve sonuç dosyaları]
+- **Taranan kaynaklar:** [kişisel klasördeki kapali_kapilar.json, hafıza, kayıt, önceki projelerin karar ve sonuç dosyaları]
 - **Daha önce aynı koşulda çalıştık mı:** [proje, tarih ya da "yok"; orada basit bir kural ya da rakip kazandı mı, düşüş
   eşiğin altında mı kaldı]
 - **Kazanan basit kuralın buradaki karşılığı:** [ilk ölçüme girer]

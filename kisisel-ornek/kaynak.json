@@ -1,0 +1,10 @@
+{
+  "aciklama": "Kaynak tercihleri. zayif-nokta-raporu ve arastirma-kapisi okur. Listedekiler dışlanmaz: haritada kalır, temel makale ve deney adayı sıralamasında sona gider. Liste boşsa tercih yok sayılır.",
+  "gpu_vram_gb": null,
+  "ilk_tercih_degil": [],
+  "ornek_maddeler": [
+    "16 GB'tan fazla VRAM isteyen çalışma (eğitim, ince ayar ya da değerlendirme)",
+    "Linux isteyen çalışma"
+  ],
+  "not": "Hesap yapacağın makineyi bir cümleyle yaz (işletim sistemi, GPU, bellek)."
+}

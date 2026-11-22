@@ -4,18 +4,22 @@ Bu şablondaki her kural bir hatadan ya da bir dersten doğdu. Bu belge her kura
 verdiğimiz kararları kayıt altına alır. Kural ağır geldiğinde önce buraya bak: kuralı esnetmek serbest, ama nedenini
 bilerek ve bir Sapma yazarak.
 
-Kaynak notlar (bu depoda, `docs/notlar/`):
-- [Boşluğu önce ölç](notlar/bosluk-once-olc.html): BCSDM ve dünya modeli çalışmasından beş ders, artı yazılmayan iki ders.
-- [Problemden başla](notlar/problemden-basla.html): bir makaleyi ilerletmenin sırası, kâhini kim belirler.
-- [Claude ile okumak](notlar/claude-ile-okumak.html): okuma ve taramada yapay zekâyı doğru kullanmak.
-- [Dört ayın karnesi](notlar/dort-ayin-karnesi.html): Temmuz–Kasım 2026 projelerinin değerlendirmesi, sekiz hata.
-- [Araştırma pusulası](notlar/arastirma-pusulasi.html): hepsinin tek sayfalık özeti (20 Kasım 2026).
+**Örnek vakalar hakkında:** bu belgedeki proje adları (BCSDM, GDA, dcovf, SETONET, V2G…) şablonu yazan araştırmacının
+2026 projeleridir. Kuralların nereden çıktığını gösterirler; şablonu kullanan başka birinin geçmişi değildir. Skill'ler
+bunları yalnız "örnek vaka" diye anar. Her kullanıcının kendi geçmişi kişisel klasöründeki `gecmis.md`'dedir.
+
+Kaynak notlar:
+- [Boşluğu önce ölç](vakalar/bosluk-once-olc.html) (vaka): BCSDM ve dünya modeli çalışmasından beş ders, artı yazılmayan iki ders.
+- [Problemden başla](notlar/problemden-basla.html) (rehber): bir makaleyi ilerletmenin sırası, kâhini kim belirler.
+- [Claude ile okumak](notlar/claude-ile-okumak.html) (rehber): okuma ve taramada yapay zekâyı doğru kullanmak.
+- [Dört ayın karnesi](vakalar/dort-ayin-karnesi.html) (vaka): Temmuz–Kasım 2026 projelerinin değerlendirmesi, sekiz hata.
+- [Araştırma pusulası](vakalar/arastirma-pusulasi.html) (vaka): hepsinin tek sayfalık özeti (20 Kasım 2026).
 - [Skill haritası](skill-haritasi.html): hangi skill ne zaman, başlangıç akışı.
 
 Notlar yazıldıkları günün fotoğrafıdır; sonradan eklenen skill modları (açık rapor, denetçi, alan taraması…) yalnız
 skill haritasında ve bu belgede güncel.
 
-## İki kök
+## İki kök (örnek vakalar)
 
 **1. BCSDM ve dünya modeli (Kasım 2026).** "Kararlı hareket sistemine dünya modeli ekleyelim" diye başladık. Altı
 deneyde her kapıyı basit kurallar kapattı:
@@ -96,20 +100,9 @@ doğru, sıra yanlış. Ölçme aletleri yöntemi seçmek için değil, seçilmi
 
 ## Skill'deki örnekler
 
-`arastirma-kapisi` kurallarını genel yazar; eski projelerin adları skill'de geçmez. Bir kapı kararında "senin şu
-projendeki gibi" demek gerektiğinde ajan örneği buradan ve şablondaki `kapali_kapilar.json`'dan alır. Bu bölüm
-2026-11-22'de skill'den taşınan örnekleri tutar.
-
-- **Hataların çıkarıldığı projeler (Temmuz–Kasım 2026):** dcovf, SETONET, GDA, residual RL, SkyJEPA, V2G güvenli RL,
-  V2G conformal, measure-aware set operators, BCSDM dünya modeli.
-- **Hata 2, geç gelip berabere kalan ya da kazanan basit rakipler:** GPI'ya denk politika, fiyat kuralı, ayarlanmış
-  marj, flat_arc, otoregresif model, el kuralları.
-- **Hata 6:** bir projede 10 haftada 8 dönüş (GDA'da yaklaşık 8, SETONET'te 6).
-- **Hata 10:** BCSDM'ye dört kez dönüldü, dördünde basit yöntem yetti.
-- **Aktarım kontrolü, bozulan parçayı ölçmek:** BCSDM algılayıcı çalışmasında sapma (bias), gürültü ve geometri
-  hatası tek tek kapatıldı; düşüşü taşıyan sapmaydı.
-- **Aktarım kontrolü, o alanın basit aracı önce:** BCSDM'de kuvvet algılayıcısını sıfırlamak (TARE, kuvvet ölçümünde
-  standart uygulama) S1 boşluğunun çoğunu kapattı; ödünç alınan dünya modeli işe yaramadı.
+`arastirma-kapisi` kurallarını genel yazar; proje adları skill'de geçmez. Bir kapı kararında "senin şu projendeki
+gibi" demek gerektiğinde ajan örneği kullanıcının kişisel klasöründen alır (`gecmis.md`, `kapali_kapilar.json`).
+Şablonu yazanın kendi örnekleri 2026-11-22'de buradan onun kişisel klasörüne taşındı; vakalar `docs/vakalar/`'da.
 
 ## Kararlar günlüğü
 
@@ -136,6 +129,7 @@ projendeki gibi" demek gerektiğinde ajan örneği buradan ve şablondaki `kapal
 | 2026-11-22 | Windows'ta iki ajanlı inceleme sonrası kilit ve Windows düzeltmeleri (10 bulgu): Türkçe harfli yol, sapma kopyası ve boş kayıt, eşik ile ilk ölçüm aynı commit'te, `birim`, yer tutucu gerekçe, yinelenen anahtar, Git Bash'te bozuk mesaj, `pre-push` kancası, BOM'suz/LF kanca ve alt klasör yolu, `python3` yedeği | Devir belgesinin 5. bölümü. Bulgular ana oturumda geçici depolarda yeniden üretildi; yeni kilit 17 senaryonun 17'sinde beklenen sonucu verdi. Kullanıcı önce yalnız kilit ve Windows bulgularını seçti; skill içeriğine dokunan bulgular (aile kontrolü, kayıtsız proje, Kapı 1 alanları, odak, tohum tanımı, Kapı 6–7) ayrıca konuşulacak. "Ölçüm var" sayımına `bozulma` katılmadı: Kapı 1 düşüşü ölçer, eşik Kapı 3'te yazılır; katılsaydı her projede Kapı 3 sapma isterdi. |
 | 2026-11-22 | Skill içeriği düzeltmeleri (bulgu 11–17 ve üç ek açık): aile kontrolü ve `kapali_kapilar.json`, kendi karar düzeni olan proje, Kapı 1 alanları ve kilidi, odak hatları, değerlendirme tohumu, Kapı 2'de platform, Kapı 7 hafıza taraması, yan işten dönüş, eksik sapma uyarısı, boş alan eşitlemesi | Öneriler iki bağımsız ajana (etkililik; maliyet ve yan etki) okutuldu, kanıtları dosyada doğrulandı; kullanıcı hepsini önerilen sırayla seçti. Ajanların ayrıştığı yerde: boş aile kontrolü yalnız soru açılırken DUR (eski projelerde bir kez uyarı); dönüşler tanıma göre listelenip kullanıcıya onaylatılır; odakta hat sayısını kullanıcı söyler; platform Kapı 2'de sorulur. `kapali_kapilar.json` doğrulanmış dört kayıtla başlatıldı (NEDEN.md'deki BCSDM sonuçları ve bir başka projenin eşik altı sonucu). 17 eski ve 29 yeni senaryonun hepsi beklenen sonucu verdi. |
 | 2026-11-22 | Eski projelerin adları `arastirma-kapisi`'den çıkarıldı, bu belgenin "Skill'deki örnekler" bölümüne taşındı; skill geçmiş örneği buradan ve `kapali_kapilar.json`'dan alır | Kullanıcının isteği: skill genel kalsın, kurallar eski çalışmalara atıf yapmasın. "Kullanıcının kendi örneğiyle uyar" özelliği kaybolmasın diye örnekler silinmedi, yer değiştirdi. |
+| 2026-11-22 | Şablon paylaşılabilir hâle getirildi: kişisel veri (`kaynak.json`, `kapali_kapilar.json`, geçmiş örnekleri) şablondan çıkıp kişisel klasöre taşındı (yolu `~/.claude/arastirma/kisisel_yolu.txt`; `kur` betiği boş örneklerden oluşturur); vaka notları `docs/vakalar/`'a, devir belgesi silindi; skill'ler vakaları "örnek vaka" diye anar, kullanıcının geçmişi saymaz | Kullanıcının isteği: skill'ler öğrencisiyle de paylaşılacak, öğrenci aynı hataları yaşamasın, skill genel olsun. Kişisel veri şablonda kalsaydı başka bir kullanıcının aile kontrolü ve kaynak sıralaması şablonu yazanın projelerine göre çalışırdı. Bedeli: kişisel klasör ayrı eşitlenir (özel depo); kurulum bir adım uzadı. |
 
 ## Temel kavramlar, kısaca
 

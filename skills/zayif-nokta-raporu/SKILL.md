@@ -30,8 +30,8 @@ user's language (Turkish unless they write in another language).
 8. **The user picks the problem.** End with the top three weak points, each with its cheapest experiment, and let the
    user choose; do not choose for them. A drop seen in a paper, a toy or a derivation is a hypothesis for Kapı 1, not a
    measured failure.
-9. **Resource fit.** Read `kaynak.json` in the template folder (its path is in
-   `~/.claude/arastirma/sablon_yolu.txt`). For every paper that may become a base paper or an experiment, record what
+9. **Resource fit.** Read `kaynak.json` in the personal folder (its path is in
+   `~/.claude/arastirma/kisisel_yolu.txt`; a missing file or an empty list means no preference). For every paper that may become a base paper or an experiment, record what
    running it needs: training or fine-tuning or only a released checkpoint, the GPU memory for that, and the operating
    system it needs. A paper that matches an item in `ilk_tercih_degil` stays in the map and the tables, but goes last
    among base-paper and experiment candidates; say so in one line with the reason. Unknown needs are marked "?" and

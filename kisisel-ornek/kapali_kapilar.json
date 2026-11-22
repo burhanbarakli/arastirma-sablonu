@@ -1,0 +1,4 @@
+{
+  "aciklama": "Kapalı kapılar: ölçülmüş boşluğun eşiğin altında kaldığı ya da basit bir çarenin yettiği koşullar. arastirma-kapisi'nin aile kontrolü (Adım 0.4) bu listeyi okur. Bu dosya araştırmacının kişisel klasöründe durur (yolu ~/.claude/arastirma/kisisel_yolu.txt); klasör bir git deposuysa her makinede aynı olur. Koşul anahtar kelimeyle değil, değiştirdiği fiziksel büyüklük ya da iş ile yazılır. Kayıtlar silinmez; bir sonuç sonradan değişirse yeni kayıt eklenir. sonuc: esik_alti | basit_care_yetti.",
+  "kayitlar": []
+}

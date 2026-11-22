@@ -10,8 +10,10 @@ panel are in place before any work starts. Speak Turkish.
 
 Template: the folder written in `~/.claude/arastirma/sablon_yolu.txt` (set by the template's `kur.sh` / `kur.ps1`);
 if that file is missing, `~/CALISMALAR/_arastirma-sablonu/`. It holds CLAUDE.md, KARAR.md, karar.json, README.md,
-tools/durum.py, tools/karar_koruma.py, `kaynak.json` (resource preferences) and `kapali_kapilar.json` (closed doors
-of all projects); read those two, do not copy them. Registry: `~/.claude/arastirma/projeler.json`. On Windows use `python`
+tools/durum.py, tools/karar_koruma.py, and `kisisel-ornek/` (blank personal files). The
+researcher's own `kaynak.json`, `kapali_kapilar.json` and `gecmis.md` are in the personal folder, whose path is in
+`~/.claude/arastirma/kisisel_yolu.txt`; read them, never copy them into a project. If that path file is missing, say
+once that the template's `kur.sh` / `kur.ps1` sets it, and go on. Registry: `~/.claude/arastirma/projeler.json`. On Windows use `python`
 where these steps say `python3` if `python3 -c ""` fails (it does for the Microsoft Store shortcut).
 
 ## Steps
@@ -28,7 +30,7 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
    continue until the user answers.
 3. **Copy** the template files into the folder (`cp -n`), keep `tools/` executable. Copy only CLAUDE.md, KARAR.md,
    karar.json, README.md and tools/. Never copy `.git/`, `ornek/` (a filled example panel), `skills/`, `kur.sh`,
-   `kur.ps1`, `kaynak.json`, `kapali_kapilar.json` or `.gitignore`; skip `README.md` if the project already has one.
+   `kur.ps1`, `kisisel-ornek/`, `docs/` or `.gitignore`; skip `README.md` if the project already has one.
 4. **Git.** If the folder is not a git repository, run `git init`. Install the guard as two hooks,
    `.git/hooks/pre-commit` and `.git/hooks/pre-push` (in a repository root found with `git rev-parse --git-dir`),
    each with these lines, then `chmod +x`:
@@ -44,12 +46,12 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
 5. **Intake.** Ask only these, in one message:
    - project name and one-line goal;
    - the base paper/method (title or link), whether its code is available, and what it needs to run (training or
-     only a checkpoint, GPU memory, operating system). Compare with `kaynak.json` in the template; if it matches an
+     only a checkpoint, GPU memory, operating system). Compare with `kaynak.json` in the personal folder; if it matches an
      item in `ilk_tercih_degil`, say so now and ask whether to look for a fitting base paper first;
    - the condition the user suspects breaks it (if any). Record it as a hypothesis in KARAR.md; never pass it to the
      reader agents of `zayif-nokta-raporu`;
    - whether this condition or task was studied in an earlier project. Do not rely on the answer alone: run the
-     family check of `arastirma-kapisi` (Step 0.4: `kapali_kapilar.json` in the template, memory, registry, earlier
+     family check of `arastirma-kapisi` (Step 0.4: `kapali_kapilar.json` in the personal folder, memory, registry, earlier
      decision files) and fill `aile_kontrolu` with `taranan_kaynaklar` and `onceki_proje` (`"yok"` if nothing
      matched). On a match, "bu kez neden farklı?" needs a measurable prediction before any work.
    Fill `karar.json`: `proje`, `tur`, `olusturma` (today's absolute date), `temel_yontem`. Leave `bozulma` and the
@@ -74,5 +76,5 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
 
 When the user says a project is finished or stopped ("projeyi kapat", "arşivle"), set its registry entry to
 `"durum": "arsiv"` with the date and a one-line reason, set `son_karar` accordingly, and regenerate the panel. Check
-that every closed door of the project is in `kapali_kapilar.json` in the template (add missing ones and commit them
-there). A stopped project with a written negative result counts as finished, not failed.
+that every closed door of the project is in `kapali_kapilar.json` in the personal folder (add missing ones;
+commit and push them if it is a git repository). A stopped project with a written negative result counts as finished, not failed.
