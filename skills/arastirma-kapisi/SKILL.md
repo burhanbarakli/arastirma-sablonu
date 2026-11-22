@@ -15,22 +15,24 @@ paper's condition; name the structure instead (for example "a condition where a 
 
 ## The user's recorded mistakes (what to watch for)
 
-From a review of their July–November 2026 projects (dcovf, SETONET, GDA, residual RL, SkyJEPA, V2G safe RL, V2G
-conformal, measure-aware set operators, BCSDM world model):
+From a review of the user's earlier projects. The rules here stay general; the projects, the examples behind each
+mistake and the closed doors live in the template folder (path in `~/.claude/arastirma/sablon_yolu.txt`):
+`docs/NEDEN.md` ("Kural → neden" and "Skill'deki örnekler") and `kapali_kapilar.json`. When a verdict needs "the
+user's own past example", take it from there, and name it only in the verdict, never in a rule.
 
 1. **Method or paper first, need later.** The idea comes from "nobody has done X" or "find a method for a paper",
    not from a measured failure.
-2. **The simple rival arrives late** and then ties or wins (GPI-equivalent, price rule, tuned margin, flat_arc,
-   autoregressive model, hand rules).
+2. **The simple rival arrives late** and then ties or wins (an equivalent classical policy, a hand rule, a tuned
+   margin, a simpler model).
 3. **Unequal effort for rivals** (fewer epochs, untuned hyperparameters, privileged information only for the method).
 4. **Choices made after seeing results** (thesis sentence, decision rule, thresholds, randomisation designed after
    looking at the target or test data).
 5. **Fewer seeds than planned**, differences inside noise.
-6. **No stop rule, many pivots** (8 in 10 weeks in one project).
+6. **No stop rule, many pivots** (several in a few weeks in one project).
 7. **Simulation only, results at the ceiling**, the planned real-world test never done.
 8. **Limitations weakened** ("remove it, add it back if a reviewer asks").
 9. **Too many projects at once.**
-10. **Returning to the same condition or task family** where simple methods already won (BCSDM four times).
+10. **Returning to the same condition or task family** where simple methods already won or the condition's drop stayed below the threshold.
 
 ## Definitions
 
@@ -222,14 +224,14 @@ add such a component. It sits between Kapı 1 and Kapı 4 and uses their verdict
 is not a motivation: it is mistake 1, so **DUR**. Start from the missing property, not from the borrowed method.
 
 1. **Which component causes the drop, measured?** Switch components off or replace them with their ideal one at a
-   time (as in the BCSDM sensor study, where switching off bias, noise and geometry showed bias was the culprit).
+   time (for a sensor: switch off bias, noise and geometry error one by one and see which one carries the drop).
    Not measured: **DUR**. Next step: the component switch-off run.
 2. **The needed property in field-free words.** One sentence naming the job, not a method ("estimate a slowly
    drifting unknown offset online", not "add a world model"). Search the literature with this sentence
    (`paper-search`, reference-lookup tools), so the fields that already solve it show up. Missing: **DUR**.
 3. **That field's simplest tool first, as a rival.** The classical, cheap tool of the source field enters the
-   three-numbers table as a simple remedy before any elaborate transfer (BCSDM: re-taring the force sensor, standard
-   practice in force sensing, closed most of the S1 gap; the borrowed world model did not help). Not tried: **DUR**.
+   three-numbers table as a simple remedy before any elaborate transfer (for a drifting sensor offset: re-taring the
+   sensor, standard practice in that field, before any learned model). Not tried: **DUR**.
 4. **Why it works there, and whether that holds here.** Run `zayif-nokta-raporu` on the source method's paper too
    and put the two assumption tables side by side (noise type, measurement rate, delay, data size, known geometry…).
    A source assumption that fails here: **KOŞULLU DEVAM**, with the test that would show whether it matters.

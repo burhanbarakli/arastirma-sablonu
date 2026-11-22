@@ -94,6 +94,23 @@ doğru, sıra yanlış. Ölçme aletleri yöntemi seçmek için değil, seçilmi
 | Alan taraması amaçla başlar, yöntem adı geçmeyen cümleyle arar, durma kuralıyla biter | Literatür taraması geçmişte "kimse yapmamış" sonucuna ve yeni yönteme kaydı. |
 | Yayımlanmamış fikir dış servislere gönderilmez | Gizlilik; `claude-council` gibi araçlar soruyu dışarı yollar. |
 
+## Skill'deki örnekler
+
+`arastirma-kapisi` kurallarını genel yazar; eski projelerin adları skill'de geçmez. Bir kapı kararında "senin şu
+projendeki gibi" demek gerektiğinde ajan örneği buradan ve şablondaki `kapali_kapilar.json`'dan alır. Bu bölüm
+2026-11-22'de skill'den taşınan örnekleri tutar.
+
+- **Hataların çıkarıldığı projeler (Temmuz–Kasım 2026):** dcovf, SETONET, GDA, residual RL, SkyJEPA, V2G güvenli RL,
+  V2G conformal, measure-aware set operators, BCSDM dünya modeli.
+- **Hata 2, geç gelip berabere kalan ya da kazanan basit rakipler:** GPI'ya denk politika, fiyat kuralı, ayarlanmış
+  marj, flat_arc, otoregresif model, el kuralları.
+- **Hata 6:** bir projede 10 haftada 8 dönüş (GDA'da yaklaşık 8, SETONET'te 6).
+- **Hata 10:** BCSDM'ye dört kez dönüldü, dördünde basit yöntem yetti.
+- **Aktarım kontrolü, bozulan parçayı ölçmek:** BCSDM algılayıcı çalışmasında sapma (bias), gürültü ve geometri
+  hatası tek tek kapatıldı; düşüşü taşıyan sapmaydı.
+- **Aktarım kontrolü, o alanın basit aracı önce:** BCSDM'de kuvvet algılayıcısını sıfırlamak (TARE, kuvvet ölçümünde
+  standart uygulama) S1 boşluğunun çoğunu kapattı; ödünç alınan dünya modeli işe yaramadı.
+
 ## Kararlar günlüğü
 
 | Tarih | Karar | Neden |
@@ -118,6 +135,7 @@ doğru, sıra yanlış. Ölçme aletleri yöntemi seçmek için değil, seçilmi
 | 2026-11-21 | Kaynak tercihi: 16 GB'tan fazla VRAM isteyen ve Linux isteyen çalışmalar ilk tercih değil (`kaynak.json`) | Kullanıcının isteği. Önceki "16 GB kuralı" yalnız robot kol taramasındaydı; artık bütün okuma ve seçimlerde geçerli. Dışlama değil, sıralama: alanın haritası eksik kalmasın. |
 | 2026-11-22 | Windows'ta iki ajanlı inceleme sonrası kilit ve Windows düzeltmeleri (10 bulgu): Türkçe harfli yol, sapma kopyası ve boş kayıt, eşik ile ilk ölçüm aynı commit'te, `birim`, yer tutucu gerekçe, yinelenen anahtar, Git Bash'te bozuk mesaj, `pre-push` kancası, BOM'suz/LF kanca ve alt klasör yolu, `python3` yedeği | Devir belgesinin 5. bölümü. Bulgular ana oturumda geçici depolarda yeniden üretildi; yeni kilit 17 senaryonun 17'sinde beklenen sonucu verdi. Kullanıcı önce yalnız kilit ve Windows bulgularını seçti; skill içeriğine dokunan bulgular (aile kontrolü, kayıtsız proje, Kapı 1 alanları, odak, tohum tanımı, Kapı 6–7) ayrıca konuşulacak. "Ölçüm var" sayımına `bozulma` katılmadı: Kapı 1 düşüşü ölçer, eşik Kapı 3'te yazılır; katılsaydı her projede Kapı 3 sapma isterdi. |
 | 2026-11-22 | Skill içeriği düzeltmeleri (bulgu 11–17 ve üç ek açık): aile kontrolü ve `kapali_kapilar.json`, kendi karar düzeni olan proje, Kapı 1 alanları ve kilidi, odak hatları, değerlendirme tohumu, Kapı 2'de platform, Kapı 7 hafıza taraması, yan işten dönüş, eksik sapma uyarısı, boş alan eşitlemesi | Öneriler iki bağımsız ajana (etkililik; maliyet ve yan etki) okutuldu, kanıtları dosyada doğrulandı; kullanıcı hepsini önerilen sırayla seçti. Ajanların ayrıştığı yerde: boş aile kontrolü yalnız soru açılırken DUR (eski projelerde bir kez uyarı); dönüşler tanıma göre listelenip kullanıcıya onaylatılır; odakta hat sayısını kullanıcı söyler; platform Kapı 2'de sorulur. `kapali_kapilar.json` doğrulanmış dört kayıtla başlatıldı (NEDEN.md'deki BCSDM sonuçları ve bir başka projenin eşik altı sonucu). 17 eski ve 29 yeni senaryonun hepsi beklenen sonucu verdi. |
+| 2026-11-22 | Eski projelerin adları `arastirma-kapisi`'den çıkarıldı, bu belgenin "Skill'deki örnekler" bölümüne taşındı; skill geçmiş örneği buradan ve `kapali_kapilar.json`'dan alır | Kullanıcının isteği: skill genel kalsın, kurallar eski çalışmalara atıf yapmasın. "Kullanıcının kendi örneğiyle uyar" özelliği kaybolmasın diye örnekler silinmedi, yer değiştirdi. |
 
 ## Temel kavramlar, kısaca
 
