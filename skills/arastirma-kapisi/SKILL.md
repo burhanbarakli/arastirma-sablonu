@@ -22,6 +22,8 @@ history. Cite them only as "örnek vaka", never as "senin projen". The user's ow
 personal folder (see Definitions): `gecmis.md` and `kapali_kapilar.json`. When a verdict needs the user's own past
 example, take it from there and name it only in the verdict, never in a rule. If the personal folder has none, give
 the verdict without a personal example.
+If `gecmis.md` has an "Amacım" (goal) section, quote its one-line goal after every DUR, so the stop reads as
+a step toward the user's own goal, not as a refusal.
 
 1. **Method or paper first, need later.** The idea comes from "nobody has done X" or "find a method for a paper",
    not from a measured failure.

@@ -6,6 +6,13 @@ o zaman kapı genel kurallarla çalışır ve kendi geçmişinden örnek vermez.
 Şablondaki `docs/vakalar/` ve `docs/NEDEN.md` başka bir araştırmacının projelerinden örnek vakalardır, senin
 geçmişin değildir. Kendi projelerinden bir ders çıkınca buraya yaz.
 
+## Amacım
+
+Hatalarının tersinden tek cümlelik araştırma amacın (örnek: "Bir yöntem kurmak değil, ölçülmüş bir boşluğu kapatmak;
+boşluk yoksa bunu erken gösterip dürüstçe yazmak."). Doluysa `arastirma-kapisi` her DUR'dan sonra bu cümleyi hatırlatır.
+
+> 
+
 ## Projelerim
 
 | Tarih | Proje | Nasıl bitti (bir cümle) |
