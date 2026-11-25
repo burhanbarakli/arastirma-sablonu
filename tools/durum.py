@@ -123,6 +123,12 @@ def outcome(at, row):
 
 def aktarim_checks(s, add):
     at = s.get("aktarim") or {}
+    ok = at.get("on_kesif") or {}
+    if ok.get("secilen_satir"):
+        same = not at.get("eksen_olcutu") or at.get("eksen_olcutu") == ok.get("olcut")
+        add("Darboğaz haritasından seçim", "ok" if ok.get("gerekce") and same else "uyari",
+            f"{ok.get('secilen_satir')} · ölçüt {ok.get('olcut') or '?'} · gerekçe: {ok.get('gerekce') or 'yok'}"
+            + ("" if same else " · eksen ölçütü satırın ölçütünden farklı: Sapma gerekir"), "soru")
     add("M'nin darboğazı ölçüldü", "ok" if at.get("darbogaz") else "eksik",
         at.get("darbogaz") or "Kendi koşunda ölçülmüş bir darboğaz cümlesi yok (makaleden okunan hipotezdir).", "soru")
     miss = [n for n, k in (("eksen", "eksen"), ("ölçütü", "eksen_olcutu"), ("yönü", "eksen_yonu"),

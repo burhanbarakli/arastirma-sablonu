@@ -19,6 +19,7 @@
     "satirlar": []
   },
   "aktarim": {
+    "on_kesif": {"harita": "", "secilen_satir": "", "olcut": "", "gerekce": "", "tarih": ""},
     "darbogaz": "",
     "eksen": "",
     "eksen_olcutu": "",

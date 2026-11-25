@@ -76,6 +76,7 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 
 ## Aktarım çalışması (calisma_turu: aktarim)
 
+- **Ön keşif (varsa):** [harita dosyası · seçilen satır · ölçüt (A1'de eksen ölçütü olur) · gerekçe, kullanım diliyle · tarih]
 - **M ve neden o:** [alanın güncel güçlü ya da standart yöntemi; daha güçlüsü varsa neden seçilmedi]
 - **Darboğaz (kendi koşumuzda):** "M, [koşul] altında [eksen ölçütü]'nde [değer]; [kullanım] için [hedef] gerekir." (tarih, tohum)
 - **Avantaj ekseni (aday adından önce, dondurulmuş):** [eksen] · ölçüt: [ölçülen davranış] · yön: [büyük/küçük iyi]

@@ -153,6 +153,11 @@ Aşamalar ve panelde görünenler:
   - Başka her şey **belirsiz**. "Fark çıkmadı" eşdeğerlik değildir.
 
 Aktarımda yol:
+0. **Ön keşif (isteğe bağlı, proje yokken):** "darboğaz haritası: <görev ya da alan>" (alan taraması E). Senin
+   favorini görmeyen bir ajan, alanın güçlü yöntemlerini (M) ve M'nin kendi kaynaklarından ölçülebilir darboğazlarını
+   listeler. Haritada **yöntem adı yok**; gördüğü yöntem adları kapalı `fikirler-park.md`'ye gider ve ancak A3'ten
+   sonra açılır. Kapalı kapılara değen satırlar işaretlenir. Bir satır seçer, gerekçeyi kullanım diliyle yazarsın;
+   seçim `aktarim.on_kesif`'e girer, satırın ölçütü A1'de eksen ölçütü olur. Başka satıra dönmek dönüştür.
 1. `/proje-baslat`, tür: aktarım. Aklındaki yöntem KARAR.md'ye fikir olarak yazılır, aday listesine girmez.
 2. M'nin makalesine `zayif-nokta-raporu`. Oradan gelen darboğaz bir hipotezdir.
 3. **Kapı A1:** M'nin darboğazını kendi koşunda ölç. Sonra, hiçbir aday adı geçmeden ekseni (ölçülen bir davranış,

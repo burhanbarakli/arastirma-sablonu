@@ -1,6 +1,6 @@
 ---
 name: zayif-nokta-raporu
-description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has an explained reading mode (anlatımlı okuma): the agent reads the paper and finds the weak points itself, then walks the user through them one at a time, each with the exact place to read ("şurayı oku"), so the user studies only the spots that matter; no quizzing: use it for "anlatarak oku", "anlatımlı okuma", "şurayı oku de", "birlikte okuyalım", "rehberli oku", "rehberli okuma", "zayıf noktaları anlat". Also has a field survey mode for literature search on a topic: use it for "alan taraması", "literatür tara", "makale ara", "bu konuda ne var", "alanı tanımak istiyorum", "temel makale bul", "bunu kim çözmüş", and for a candidate pool of recent or other-field methods in a method-transfer study ("aday yöntem ara", "güncel yöntemler", "hangi yeni yöntem buna uyar", "aday havuzu"). Not for summarising a paper or writing a review of the user's own manuscript.
+description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has an explained reading mode (anlatımlı okuma): the agent reads the paper and finds the weak points itself, then walks the user through them one at a time, each with the exact place to read ("şurayı oku"), so the user studies only the spots that matter; no quizzing: use it for "anlatarak oku", "anlatımlı okuma", "şurayı oku de", "birlikte okuyalım", "rehberli oku", "rehberli okuma", "zayıf noktaları anlat". Also has a field survey mode for literature search on a topic: use it for "alan taraması", "literatür tara", "makale ara", "bu konuda ne var", "alanı tanımak istiyorum", "temel makale bul", "bunu kim çözmüş", for a candidate pool of recent or other-field methods in a method-transfer study ("aday yöntem ara", "güncel yöntemler", "hangi yeni yöntem buna uyar", "aday havuzu"), and for a bottleneck map before any project exists ("ön keşif", "darboğaz haritası", "alternatif yöntem için fikir ver", "nereden başlasam"). Not for summarising a paper or writing a review of the user's own manuscript.
 ---
 
 # Zayıf nokta raporu (0. adım)
@@ -21,7 +21,14 @@ user's language (Turkish unless they write in another language).
    break?", never "does it break where I think?".
 4. **Say "emin değilim" (not sure) where you are not sure.** An honest gap beats a confident guess.
 5. **Every external paper you mention must exist.** Verify each one through the Semantic Scholar API or its DOI /
-   arXiv page before listing it, and give the link. Never list a paper you have not opened.
+   arXiv page before listing it (`verify_reference` where available), and give the link. Never list a paper you have
+   not opened; a row whose identifier does not resolve goes to "Doğrulanamayanlar", not into a table.
+5b. **No absence claims.** Never write "kimse uygulamamış", "daha önce denenmemiş" or "not applied before": an agent
+   cannot prove an absence. Write a query record instead: date, the queries, the databases, the number of hits and the
+   three closest papers. Agreement between two agents is not evidence either; only a verified quote (page and
+   sentence) or a measured number is.
+5c. **Live search for anything recent.** Never propose recent methods from memory. Search arXiv and OpenAlex for the
+   last 24 months and write the search date; without web access, write "son 24 ay taranmadı".
 6. **Privacy.** Send only public identifiers (paper title, arXiv id, DOI, repo name) to outside services. Never send
    the user's own unpublished ideas, drafts or data.
 7. **Park method ideas.** If a method idea comes up during reading or a survey (from the user or from you), write it
@@ -235,7 +242,11 @@ done X". The user's record: literature search tended to end in a method idea; ke
    - **D. Aday havuzu (aktarım):** in a method-transfer study after Kapı A3: M, its measured bottleneck, the advantage
      axis and the field-free property sentence → recent methods (about the last two years) and classical ones from
      any field that have that property. Precondition: `aktarim.eksen`, `delta`, `epsilon` and both outcome sentences
-     are committed; if not, say so and stop (the axis comes before the candidates).
+     are committed; if not, say so and stop (the axis comes before the candidates). The table holds at least one
+     classical tool (more than 5–10 years old, or the standard tool of its field).
+   - **E. Darboğaz haritası (ön keşif):** before any project exists, to choose where to measure: for a task or
+     field, the strong methods M in use and their known, measurable bottlenecks. It is a side task with a time box of
+     one to two sessions. See "Darboğaz haritası (E)" below; it never names candidate methods.
 2. **Search sentence, not a method name.** Write it with the user: task + condition (e.g. "policies that learn
    contact-rich insertion under noisy force sensing"), plus an optional field-free property sentence. A method name
    in the sentence locks the search onto that method; say so if the user proposes one.
@@ -264,6 +275,41 @@ assumption table and candidate blind spots (B), stop note, Doğrulanamayanlar, F
 report on the chosen paper; for B "the blind spot is a candidate problem, not a problem yet: pick a method it would
 break and measure the drop" (Kapı 1); for C the transfer check. If the conclusion drifts to "kimse yapmamış", say
 plainly that this is mistake 1 and give the Kapı 1 step instead.
+
+## Darboğaz haritası (E)
+
+Goal: a map of where a strong method M is measurably weak, so the user can pick one bottleneck to measure at Kapı A1
+of a method-transfer study. It is built so the pick is made by the bottleneck, not by a method the user likes.
+
+1. **Blind builder.** When a subagent tool is available, one agent builds the map. It gets the task or field and
+   these rules; it does not see the user's favourite method, `gecmis.md` or the conversation.
+2. **Sources of a bottleneck.** Only M's own paper (limitations, failure tables, appendix), the official code's
+   issues, and benchmark results that include M. A sentence in a newer method's paper saying "M is weak at X" is
+   not a source. Each bottleneck is a hypothesis with a location and a short quote.
+3. **Columns, one row per (M, bottleneck):** M (paper, year, link) | bottleneck hypothesis (quote and page) |
+   cheapest measurement (condition, metric, rough cost) | known simple remedy | needs training, or measurable with
+   a released checkpoint and paired evaluation seeds | resource fit (`kaynak.json`) | a current line of work targets
+   this bottleneck: var / yok (one verified source, no method names) | closed-door flag (filled in step 4).
+   The training column matters: under a seed cap, Sonuç A can be shown only for M and candidate pairs that need no
+   training (Kapı A5 of `arastirma-kapisi`).
+4. **No method names.** Candidate methods and method families never appear in the map. Any method name the builder
+   meets goes into a separate file `fikirler-park.md` (one line each), which stays closed until Kapı A3 of the
+   project and is opened only by purpose D.
+5. **Family check per row (separate pass).** After the builder finishes, run the family check of
+   `arastirma-kapisi` (Step 0.4: `kapali_kapilar.json` in the personal folder, memory, registry, earlier decision
+   files) on every row. A row that touches a closed door is marked; it stays only with a numbered "bu kez neden
+   farklı" prediction, otherwise it is struck.
+6. **The pick.** The user picks one row and writes the reason in the language of use ("[kullanım] için [hedef]
+   gerekir"), not in the language of a method. The pick goes into the new project's `karar.json` as
+   `aktarim.on_kesif` (`harita`, `secilen_satir`, `olcut`, `gerekce`, `tarih`) and is committed before the first
+   measurement. The row's metric becomes `aktarim.eksen_olcutu` at Kapı A1 unchanged; a different metric is a
+   Sapma. Going back to the map for another row is a pivot.
+7. **Verify and stop.** Every paper is verified (ground rule 5); the time box and saturation rule of the field survey
+   apply.
+
+Save as `darbogaz-haritasi-<short-topic>.md`: task, sources searched with dates, the table, struck rows with the
+closed door they touch, Doğrulanamayanlar. `fikirler-park.md` is saved beside it. End with: "Bir satır seç, gerekçeyi
+kullanım diliyle yaz; ölçüm Kapı A1'de." Do not pick for the user.
 
 ## Blind audit (optional, on request)
 

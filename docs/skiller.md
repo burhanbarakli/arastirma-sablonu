@@ -103,6 +103,15 @@ tek avantaj ekseninde en güçlü basit alternatiften önde) ya da **B** (basit 
 | **6. Gerçeklik** | Avantaj ekseni zor koşulda ya da gerçek testte | |
 | **A7. Yazım** | A "eşdeğer ve eksende önde" diye, B B olarak yazılır; geride kalınan yerler metinde | DUR, eksiklerle |
 
+**Ön keşif (alan taraması E, darboğaz haritası):** proje yokken fikir için. Kör bir ajan güçlü yöntemleri ve
+ölçülebilir darboğazlarını M'nin kendi kaynaklarından çıkarır; yöntem adı haritaya girmez, park dosyasına gider.
+Seçilen satır ve ölçütü kilitlenir.
+
+**Ajan ve araştırmacı:** ajanlar harita, aday havuzu, basit alternatif listesi, okuma, ölçüm betiği (commit hash'le),
+δ başına tohum hesabı ve taslaklar yapar; şeytanın avukatı adayı önerenden ayrı bir ajandır; oyuncak test tek
+düzenekte, ayar taraması önceden commit'li. Eksen, δ, ε, satır ve aday seçimi araştırmacıdadır; kararı panel verir.
+"Kimse uygulamamış" yazılmaz, sorgu kaydı yazılır.
+
 Panel bu türde "Üç sayı" yerine "Kollar" ve "Karşılaştırmalar" tablolarını, boşluk cümlesi yerine sonuç cümlesini
 gösterir; sonucu önceden yazılmış kuralla kendisi hesaplar.
 

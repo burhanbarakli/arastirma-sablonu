@@ -285,8 +285,24 @@ project has one), with the source field, the property sentence and the simple to
 Why this type exists: in the example cases, applying a newer method to a field usually lost to a simpler or older
 method, and the loss was then read as a failure, which pushed rules to change afterwards. The two-outcome
 registration makes the simple method's win a result ("X gerekli mi?"). It does not remove mistake 1: the starting
-point is M's measured bottleneck, never the method X. Gates run in this order: Kapı A1, Kapı 2, Kapı A3, candidate
-selection, Kapı 4, Kapı A5, main run, Kapı 6, Kapı A7.
+point is M's measured bottleneck, never the method X. Gates run in this order: (optional pre-exploration), Kapı A1,
+Kapı 2, Kapı A3, candidate selection, Kapı 4, Kapı A5, main run, Kapı 6, Kapı A7.
+
+**Ön keşif (optional, before a project).** When the user wants ideas before any project exists, run
+`zayif-nokta-raporu` field survey purpose E (bottleneck map). It is a side task of one to two sessions (focus rule).
+The map never names candidate methods; method names go to a closed `fikirler-park.md` opened only at purpose D. A row
+the user picks is a hypothesis: it enters `aktarim.on_kesif` and is committed before the first measurement, and its
+metric becomes `aktarim.eksen_olcutu` at Kapı A1 unchanged (a different metric is a Sapma). Picking another row later
+is a pivot. A map with a method-family column, or a pick justified by a method ("X'i denemek istiyorum"): **DUR**,
+mistake 1.
+
+**Who does what.** Agents may: build the map and the candidate pool (blind to the user's favourite), list simple
+alternatives, read papers, write and run measurement scripts (also M's bottleneck measurement: what makes it measured
+is the run, not who starts it; the run writes the `karar.json` commit hash into its output and the user checks it),
+compute for each δ option how many seeds it needs (`tools/aralik.py`), draft the outcome sentences and fill
+`karar.json`. The user decides: the axis, δ, ε, the outcome sentences, which row and which candidates; the panel
+applies the decision rule. An agent's output never contains "kimse uygulamamış" (a query record instead), and two
+agents agreeing is not evidence.
 
 **Kapı A1: Darboğaz ve eksen (replaces Kapı 1; mistakes 1, 4).** Before any candidate method is written in
 `aktarim.adaylar`, these are written and committed (the commit guard blocks a first candidate while any is missing):
@@ -332,13 +348,17 @@ recorded in `aktarim.olcumler` as `{"tarih", "rol": "taban"|"M"|"basit"|"aday", 
 3. **Per candidate:** the source paper (verified, linked); the principle; one sentence why it should move the axis;
    where it should be worse (predicted failure); whether its assumptions hold here (run `zayif-nokta-raporu` on its
    paper and put the two assumption tables side by side); resource fit (`kaynak.json`); code; whether it is already
-   applied to this task (then the study is a comparison: say so in `sonuc_a`).
-4. **Devil's advocate, before any code:** three reasons the candidate will tie the strongest simple alternative on
-   the axis, and the measurement that would show each.
+   applied to this task, as a query record (date, queries, hits, three closest papers), never as "not applied
+   before"; if it is, the study is a comparison: say so in `sonuc_a`. The pool holds at least one classical tool.
+4. **Devil's advocate, before any code, by a separate agent:** it sees the candidate, the strongest simple
+   alternative and the bottleneck, not the proposer's reasons. Three reasons the candidate will tie the strongest
+   simple alternative on the axis, and the measurement that would show each.
 5. **At most two candidates** enter `aktarim.adaylar` (`{"ad", "kaynak", "alan", "gerekce", "beklenen_bozulma"}`); a
    candidate without `gerekce` and `beklenen_bozulma`: **DUR**. A third candidate is a pivot.
 6. **Toy test (afternoon-sized, a pilot):** taban, M, the strongest simple alternative and the candidates, on the
-   axis. A candidate that does not move the axis by ε over the strongest simple alternative here stops. If both
+   axis, all in one harness (same data, budget and evaluation code), with the tuning-sweep configuration committed
+   before the run (mistake 3). If toy code is to become main-run code, a separate agent reads the code and the
+   protocol, without the results, before Kapı 4. A candidate that does not move the axis by ε over the strongest simple alternative here stops. If both
    stop, write the finding (Sonuç B or a closed door) and stop; do not search for a new axis on which the candidate
    wins (mistake 4).
 

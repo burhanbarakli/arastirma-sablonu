@@ -14,7 +14,9 @@ Rules may change; they may not change silently. The guard blocks when:
 - in a method-transfer study (calisma_turu "aktarim"): the advantage axis, its metric and direction, δ, ε, the
   required seeds or the two pre-registered outcome sentences change, or are written after the first measurement in
   "aktarim.olcumler" / "aktarim.karsilastirmalar"; a first candidate enters "aktarim.adaylar" while the axis, its
-  metric and direction, δ, ε and both outcome sentences were not yet in the previous commit; or a measured row in
+  metric and direction, δ, ε and both outcome sentences were not yet in the previous commit; the row picked from a
+  bottleneck map ("aktarim.on_kesif") or its metric changes, or the axis metric differs from the picked row's metric;
+  or a measured row in
   "aktarim.olcumler" / "aktarim.karsilastirmalar" is changed or removed; each without such an entry;
 - an entry is removed from or edited in "sapmalar", "donus.kayit" or "overrides" (these lists only grow; no sapma
   can excuse it);
@@ -51,6 +53,7 @@ FROZEN = [
     ("aktarim", "eksen"), ("aktarim", "eksen_olcutu"), ("aktarim", "eksen_yonu"), ("aktarim", "performans_yonu"),
     ("aktarim", "delta"), ("aktarim", "epsilon"), ("aktarim", "tohum_gerekli"),
     ("aktarim", "sonuc_a"), ("aktarim", "sonuc_b"),
+    ("aktarim", "on_kesif", "secilen_satir"), ("aktarim", "on_kesif", "olcut"),
 ]
 # Kapı 1 fields: frozen once the Kapı 1 drop ("bozulma") exists, not only once three-number rows exist.
 KAPI1 = [("soru", "metin"), ("soru", "kosul_duzeyleri"), ("soru", "esik")]
@@ -133,6 +136,11 @@ def problems(old, new):
         if missing:
             excusable.append("ilk aday, şunlar önceki bir commit'te yazılmadan girildi (eksen adaydan önce): "
                              + ", ".join(missing))
+    ok_row = get(new, ("aktarim", "on_kesif", "olcut"))
+    ax = get(new, ("aktarim", "eksen_olcutu"))
+    if ok_row not in EMPTY and ax not in EMPTY and ax != ok_row and (
+            ax != get(old, ("aktarim", "eksen_olcutu")) or ok_row != get(old, ("aktarim", "on_kesif", "olcut"))):
+        excusable.append(f"eksen ölçütü haritada seçilen satırın ölçütünden farklı: {ax!r} ≠ {ok_row!r}")
     for rp in MEASURED_ROWS:
         new_rows = get(new, rp) or []
         for r in (get(old, rp) or []):
