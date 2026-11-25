@@ -99,7 +99,7 @@ tek avantaj ekseninde en güçlü basit alternatiften önde) ya da **B** (basit 
 | **A3. Kollar** | Taban, M ve en az üç basit alternatif, biri "M + ilkenin ucuz eki" | Basit alternatif zaten yetiyorsa bulgu (B) ve kapalı kapı |
 | **Aday seçimi** | Alandan bağımsız özellik cümlesi, aday havuzu (alan taraması D), gerekçe ve beklenen bozulma, şeytanın avukatı, en çok iki aday, oyuncak test | Gerekçesiz aday DUR; üçüncü aday dönüş |
 | **4. Rakip adaleti** | Boşluk türüyle aynı | |
-| **A5. Protokol** | İki sonuçlu karar kuralı (%90 aralıklar), `tools/aralik.py` ile hesaplanan tohum | Tohum yetmiyorsa sonuç pilot |
+| **A5. Protokol** | İki sonuçlu karar kuralı (%90 aralıklar), `tools/aralik.py` ile hesaplanan tohum, kilitli ölçüm dosyaları; doğrulama koşusu yeni tohumlarla, pilot tohumu katılmaz | Tohum yetmiyorsa ya da pilot tohumu katıldıysa sonuç pilot |
 | **6. Gerçeklik** | Avantaj ekseni zor koşulda ya da gerçek testte | |
 | **A7. Yazım** | A "eşdeğer ve eksende önde" diye, B B olarak yazılır; geride kalınan yerler metinde | DUR, eksiklerle |
 

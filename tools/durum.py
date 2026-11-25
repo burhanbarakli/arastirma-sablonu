@@ -10,7 +10,10 @@ import html
 import json
 import os
 import re
+import subprocess
 import sys
+
+KARAR_DIR = "."  # folder of the karar.json being rendered (set in main)
 
 STAGES = [
     ("okuma", "0", "Okuma", "zayif-nokta-raporu", "Makalenin zayıf noktaları kaynaklarıyla çıkarıldı mı?"),
@@ -105,6 +108,23 @@ def outcome(at, row):
     if not (num(d) and num(e)):
         return "eksik", "δ ya da ε yazılmamış: kural uygulanamaz."
     n = row.get("tohum") or 0
+    if row.get("tur") != "dogrulama":
+        return "pilot", f"{n} tohum; doğrulama koşusu değil (\"tur\": \"dogrulama\" yok): pilot, kapı geçirmez."
+    seeds = row.get("tohumlar")
+    if not isinstance(seeds, list) or not seeds:
+        return "eksik", "Doğrulama satırında tohum listesi (\"tohumlar\") yok: pilot tohumlarından ayrı olduğu denetlenemez."
+    used = set()
+    for r in at.get("karsilastirmalar") or []:
+        if isinstance(r, dict) and r.get("tur") != "dogrulama":
+            used.update(map(str, r.get("tohumlar") or []))
+    for r in at.get("olcumler") or []:
+        if isinstance(r, dict) and r.get("pilot"):
+            used.update(map(str, r.get("tohumlar") or []))
+    shared = sorted(used & set(map(str, seeds)))
+    if shared:
+        return "pilot", "Pilot tohumları doğrulamaya katılmış (" + ", ".join(shared) + "): pilot, kapı geçirmez."
+    if len(seeds) != n:
+        return "eksik", f"\"tohum\" ({n}) ile tohum listesinin uzunluğu ({len(seeds)}) farklı."
     if not num(need):
         return "pilot", f"{n} tohum; gereken tohum hesaplanmamış: pilot."
     if n < max(3, need):
@@ -236,6 +256,30 @@ def checks(s):
     missing = [k for k in ("karar_kurali", "olcut", "kilitli_test", "durma_kurali") if not pr.get(k)]
     add("Protokol yazılı", "ok" if not missing else "eksik",
         "Karar kuralı, ölçüt, kilitli test ve durma kuralı yazılı." if not missing else "Eksik: " + ", ".join(missing), "protokol")
+    files = pr.get("olcum_dosyalari") or {}
+    has_measure = bool(u.get("satirlar") or (s.get("aktarim") or {}).get("olcumler")
+                       or (s.get("aktarim") or {}).get("karsilastirmalar"))
+    if isinstance(files, dict) and files:
+        changed = []
+        for rel, want in files.items():
+            f = os.path.join(KARAR_DIR, rel)
+            try:
+                r = subprocess.run(["git", "hash-object", "--", f], capture_output=True, cwd=KARAR_DIR)
+                have = r.stdout.decode().strip() if r.returncode == 0 else None
+            except Exception:
+                have = None
+            if have is None:
+                changed.append(f"{rel} (okunamadı)")
+            elif have != str(want).strip():
+                changed.append(rel)
+        add("Ölçüm dosyaları kilitli", "ok" if not changed else "uyari",
+            f"{len(files)} dosya: " + ", ".join(files) + (" · çalışma kopyasında değişmiş: " + ", ".join(changed)
+            + " (commit kilidi bunu durdurur)" if changed else ""), "okuma" if changed else "protokol")
+    else:
+        add("Ölçüm dosyaları kilitli", "uyari" if has_measure else "eksik",
+            ("Ölçüm var ama ölçüt kodu, test koşulları ve tohum listesi kilitlenmemiş" if has_measure
+             else "Ölçüt kodu, test koşulları ve tohum listesi kilitlenmeli")
+            + ": python3 tools/karar_koruma.py --dondur <dosya>...", "protokol")
     rk = s.get("rakipler", [])
     unfair = [r.get("ad", "?") for r in rk if not (r.get("butce_esit") and r.get("ayar_esit") and r.get("bilgi_esit"))]
     add("Rakip adaleti", "ok" if rk and not unfair else ("uyari" if unfair else "eksik"),
@@ -356,10 +400,10 @@ def render(s, karar_path):
                            for r in at.get("olcumler") or [] if isinstance(r, dict)) or '<tr><td colspan="6">Henüz ölçüm yok.</td></tr>'
         def iv(x):
             return f"[{x[0]:g}, {x[1]:g}]" if interval(x) else "?"
-        cmp_rows = "".join(f"<tr><td>{esc(r.get('tarih'))}</td><td>{esc(r.get('aday'))}</td><td>{esc(r.get('basit'))}</td><td>{fmt(r.get('tohum'))}</td>"
+        cmp_rows = "".join(f"<tr><td>{esc(r.get('tarih'))}</td><td>{esc(r.get('aday'))}</td><td>{esc(r.get('basit'))}</td><td>{esc(r.get('tur') or 'pilot')}</td><td>{fmt(r.get('tohum'))}</td>"
                            f"<td>{iv(r.get('perf_aday_eksi_m'))}</td><td>{iv(r.get('perf_basit_eksi_aday'))}</td><td>{iv(r.get('eksen_aday_eksi_basit'))}</td>"
                            f"<td><b>{esc(outcome(at, r)[0])}</b></td></tr>"
-                           for r in at.get("karsilastirmalar") or [] if isinstance(r, dict)) or '<tr><td colspan="8">Henüz karşılaştırma yok.</td></tr>'
+                           for r in at.get("karsilastirmalar") or [] if isinstance(r, dict)) or '<tr><td colspan="9">Henüz karşılaştırma yok.</td></tr>'
         last = [r for r in at.get("karsilastirmalar") or [] if isinstance(r, dict)]
         code, text = outcome(at, last[-1]) if last else ("", "")
         if code == "A":
@@ -374,7 +418,7 @@ def render(s, karar_path):
                    "B: basit alternatif yetiyor; adayın eksendeki üstünlüğü ε'un altında.")
         main_section = f"""<section><h2>Kollar</h2><p class="muted">Darboğaz: {esc(at.get('darbogaz') or '—')} · Eksen: {esc(at.get('eksen') or '—')} ({esc(at.get('eksen_olcutu') or '?')}, {esc(at.get('eksen_yonu') or '?')}) · δ = {fmt(at.get('delta'))} · ε = {fmt(at.get('epsilon'))} · gereken tohum {fmt(at.get('tohum_gerekli'))}</p>
 <div class="tw"><table class="num"><thead><tr><th>Rol</th><th>Kol</th><th>Performans</th><th>Eksen</th><th>Tohum</th><th></th></tr></thead><tbody>{arm_rows}</tbody></table></div></section>
-<section><h2>Karşılaştırmalar (%90 aralıklar, pozitif = ilk kol daha iyi)</h2><div class="tw"><table class="num"><thead><tr><th>Tarih</th><th>Aday</th><th>Basit alt.</th><th>Tohum</th><th>Perf. aday − M</th><th>Perf. basit − aday</th><th>Eksen aday − basit</th><th>Sonuç</th></tr></thead><tbody>{cmp_rows}</tbody></table></div>
+<section><h2>Karşılaştırmalar (%90 aralıklar, pozitif = ilk kol daha iyi)</h2><div class="tw"><table class="num"><thead><tr><th>Tarih</th><th>Aday</th><th>Basit alt.</th><th>Tür</th><th>Tohum</th><th>Perf. aday − M</th><th>Perf. basit − aday</th><th>Eksen aday − basit</th><th>Sonuç</th></tr></thead><tbody>{cmp_rows}</tbody></table></div>
 <div class="card"><span class="lbl">Sonuç cümlesi</span><p class="sent">{res}</p></div></section>"""
     else:
         main_section = f"""<section><h2>Üç sayı</h2><div class="tw"><table class="num"><thead><tr><th>Koşul</th><th>Taban</th><th>Basit çare</th><th>Adil kâhin</th><th>Kâhin − çare</th><th>Tohum</th></tr></thead><tbody>{rows}</tbody></table></div>
@@ -460,6 +504,8 @@ def main():
         return 1
     with open(path, encoding="utf-8-sig") as f:
         s = json.load(f)
+    global KARAR_DIR
+    KARAR_DIR = os.path.dirname(os.path.abspath(path))
     out = os.path.join(os.path.dirname(os.path.abspath(path)), "durum.html")
     with open(out, "w", encoding="utf-8") as f:
         f.write(render(s, os.path.basename(os.path.dirname(os.path.abspath(path))) + "/karar.json"))

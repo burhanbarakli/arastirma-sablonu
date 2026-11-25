@@ -18,6 +18,12 @@ Rules may change; they may not change silently. The guard blocks when:
   bottleneck map ("aktarim.on_kesif") or its metric changes, or the axis metric differs from the picked row's metric;
   or a measured row in
   "aktarim.olcumler" / "aktarim.karsilastirmalar" is changed or removed; each without such an entry;
+- a file listed in "protokol.olcum_dosyalari" (the files that define how results are measured: metric code, test
+  conditions, seed list; path relative to karar.json, value its git blob hash) differs from its recorded hash in
+  the commit (always blocked: record the new hash; before any measurement the record may be updated freely, after
+  one a changed record needs a sapma). Write the hashes with `python3 tools/karar_koruma.py --dondur <dosya>...`;
+- in a method-transfer study, "aktarim.tohum_gerekli" may first be written after pilot measurements (it is sized
+  from the pilot's spread), but not after the first confirming comparison ("tur": "dogrulama");
 - an entry is removed from or edited in "sapmalar", "donus.kayit" or "overrides" (these lists only grow; no sapma
   can excuse it);
 - karar.json is deleted, is not valid UTF-8 JSON, or has a duplicate key.
@@ -35,10 +41,14 @@ commit-tree, a changed core.hooksPath) bypass it; `--push`, installed as .git/ho
 pushed against its parent, and the remote tip against the new tip, so such changes are caught before they leave the
 machine. A project without a remote has only the pre-commit check.
 
+pre-commit also checks the recorded files of every karar.json in the index, not only a staged one, so a commit
+that changes only the metric code is caught.
+
 Installed by proje-baslat. Bypass on purpose with `git commit --no-verify` / `git push --no-verify` (not advised).
 """
 import json
 import os
+import posixpath
 import re
 import subprocess
 import sys
@@ -48,6 +58,7 @@ FROZEN = [
     ("uc_sayi", "esik"), ("uc_sayi", "birim"), ("uc_sayi", "kahin_tanimi"), ("uc_sayi", "basit_care_tanimi"),
     ("tohum", "plan"), ("tohum", "tanim"), ("donus", "sinir"),
     ("protokol", "karar_kurali"), ("protokol", "olcut"), ("protokol", "kilitli_test"), ("protokol", "durma_kurali"),
+    ("protokol", "olcum_dosyalari"),
     ("soru", "metin"), ("soru", "kosul_duzeyleri"), ("soru", "esik"),
     ("calisma_turu",),
     ("aktarim", "eksen"), ("aktarim", "eksen_olcutu"), ("aktarim", "eksen_yonu"), ("aktarim", "performans_yonu"),
@@ -62,6 +73,11 @@ KAPI1_BEFORE_DROP = KAPI1 + [("protokol", "olcut")]
 # Method-transfer study: must already be committed when the first candidate is named (axis before candidate).
 AKTARIM_BEFORE_CANDIDATE = [("aktarim", "eksen"), ("aktarim", "eksen_olcutu"), ("aktarim", "eksen_yonu"),
                             ("aktarim", "delta"), ("aktarim", "epsilon"), ("aktarim", "sonuc_a"), ("aktarim", "sonuc_b")]
+# Sized from a pilot's spread, so frozen only once a confirming comparison exists.
+CONFIRM_ONLY = [("aktarim", "tohum_gerekli")]
+# Measurement files: fixing metric code before any measurement is ordinary work, so the record is frozen only once a
+# measurement exists (the hash check itself always applies).
+AFTER_MEASURE_ONLY = [("protokol", "olcum_dosyalari")]
 MEASURED_ROWS = [("uc_sayi", "satirlar"), ("aktarim", "olcumler"), ("aktarim", "karsilastirmalar")]
 GROW_ONLY = [("sapmalar",), ("donus", "kayit"), ("overrides",)]
 EMPTY = (None, "", [], {})
@@ -115,6 +131,8 @@ def problems(old, new):
     excusable, fatal = [], []
     measured = any(get(old, p) or get(new, p) for p in MEASURED_ROWS)
     dropped = measured or bool(get(old, ("bozulma",)) or get(new, ("bozulma",)))
+    confirmed = any(isinstance(r, dict) and r.get("tur") == "dogrulama"
+                    for d in (old, new) for r in (get(d, ("aktarim", "karsilastirmalar")) or []))
     for p in FROZEN:
         a, b = get(old, p), get(new, p)
         if a == b:
@@ -122,9 +140,11 @@ def problems(old, new):
         name = ".".join(p)
         if p == ("calisma_turu",) and a is None and b == "bosluk":
             continue  # an old project synced to the schema keeps its default type
+        if p in AFTER_MEASURE_ONLY and not measured:
+            continue
         if a not in EMPTY:
             excusable.append(f"değişen: {name}  ({a!r} -> {b!r})")
-        elif b not in EMPTY and (dropped if p in KAPI1 else measured):
+        elif b not in EMPTY and (dropped if p in KAPI1 else confirmed if p in CONFIRM_ONLY else measured):
             # an empty field added to an old project (schema sync) is not a rule being written
             excusable.append(f"ölçümden sonra ya da ölçümle birlikte ilk kez yazılan: {name}  (-> {b!r})")
     if get(old, ("bozulma",)) in EMPTY and get(new, ("bozulma",)) not in EMPTY:
@@ -156,6 +176,47 @@ def problems(old, new):
             if x not in new_list:
                 fatal.append(f"{'.'.join(p)} listesinden silinen ya da değiştirilen kayıt: {x}")
     return excusable, fatal
+
+
+def blob(spec):
+    r = git("rev-parse", "-q", "--verify", spec)
+    return r.stdout.decode().strip() if r.returncode == 0 else None
+
+
+def file_problems(karar_spec, prefix):
+    """Recorded measurement files whose content at the same snapshot differs from the record.
+
+    karar_spec is ":path" (index) or "<sha>:path"; prefix is ":" or "<sha>:". Paths in the record are relative to
+    karar.json's folder.
+    """
+    try:
+        k = git_show(karar_spec)
+    except Exception:
+        return []  # an unreadable karar.json is reported by check()
+    files = get(k, ("protokol", "olcum_dosyalari")) if k else None
+    if not isinstance(files, dict):
+        return []
+    base = posixpath.dirname(karar_spec.split(":", 1)[1])
+    out = []
+    for rel, want in files.items():
+        path = posixpath.normpath(posixpath.join(base, str(rel)))
+        have = blob(f"{prefix}{path}")
+        if have is None:
+            out.append(f"{rel}: commit'te yok (silinmiş ya da taşınmış)")
+        elif str(want).strip() != have:
+            out.append(f"{rel}: içerik değişmiş ({str(want)[:10]} -> {have[:10]})")
+    return out
+
+
+def report_files(bad, label):
+    if not bad:
+        return 0
+    print(f"\nAraştırma kapısı ({label}): ölçümü belirleyen dosya kayıttaki halinden farklı.")
+    for x in bad:
+        print(f"  - {x}")
+    print("Ya değişikliği geri al, ya da yeni özeti yaz: python3 tools/karar_koruma.py --dondur <dosya>.")
+    print("Ölçüm girildikten sonra özet değişirse aynı commit'te 'sapmalar' kaydı gerekir.\n")
+    return 1
 
 
 def check(old_spec, new_spec, label):
@@ -201,6 +262,8 @@ def pre_commit():
     rc = 0
     for path in karar_paths(names):
         rc = max(rc, check(f"HEAD:{path}", f":{path}", path))
+    for path in karar_paths(git("ls-files", "-z").stdout):
+        rc = max(rc, report_files(file_problems(f":{path}", ":"), path))
     return rc
 
 
@@ -219,6 +282,8 @@ def pre_push(lines):
             names = git("diff-tree", "--no-commit-id", "--name-only", "-r", "-z", "--no-renames", f"{c}^", c).stdout
             for path in karar_paths(names):
                 rc = max(rc, check(f"{c}^:{path}", f"{c}:{path}", f"{path} @ {c[:7]}"))
+            for path in karar_paths(git("ls-tree", "-r", "--name-only", "-z", c).stdout):
+                rc = max(rc, report_files(file_problems(f"{c}:{path}", f"{c}:"), f"{path} @ {c[:7]}"))
         if known:  # catches history rewritten under a pushed tip (dropped or reverted entries)
             names = git("diff", "--name-only", "-z", "--no-renames", remote, local).stdout
             for path in karar_paths(names):
@@ -226,11 +291,49 @@ def pre_push(lines):
     return rc
 
 
+def freeze(args):
+    """Write git blob hashes of the given files into protokol.olcum_dosyalari of karar.json (keeps other entries)."""
+    karar = "karar.json"
+    if "--karar" in args:
+        i = args.index("--karar")
+        karar = args[i + 1]
+        args = args[:i] + args[i + 2:]
+    if not args:
+        print("Kullanım: python3 tools/karar_koruma.py --dondur [--karar yol/karar.json] <dosya>...")
+        return 2
+    text = open(karar, encoding="utf-8-sig").read()
+    data = json.loads(text, object_pairs_hook=no_duplicates)
+    files = dict(get(data, ("protokol", "olcum_dosyalari")) or {})
+    base = os.path.dirname(os.path.abspath(karar))
+    for f in args:
+        if not os.path.isfile(f):
+            raise SystemExit(f"dosya yok: {f}")
+        rel = os.path.relpath(os.path.abspath(f), base).replace(os.sep, "/")
+        r = git("hash-object", "--", f)
+        if r.returncode != 0:
+            raise SystemExit(f"git hash-object çalışmadı: {f}")
+        files[rel] = r.stdout.decode().strip()
+        print(f"{rel}: {files[rel][:10]}")
+    snippet = '"olcum_dosyalari": ' + json.dumps(files, ensure_ascii=False)
+    new, n = re.subn(r'"olcum_dosyalari"\s*:\s*\{[^{}]*\}', lambda m: snippet, text, count=1)
+    if n == 0:
+        if not isinstance(data.get("protokol"), dict):
+            raise SystemExit("karar.json'da 'protokol' yok.")
+        data["protokol"]["olcum_dosyalari"] = files
+        new = json.dumps(data, ensure_ascii=False, indent=2) + "\n"
+    with open(karar, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(new)
+    print(f"{karar} > protokol.olcum_dosyalari güncellendi; karar.json ile bu dosyaları birlikte commit et.")
+    return 0
+
+
 def main():
     try:  # Git Bash pipes need UTF-8; never crash on printing
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
+    if sys.argv[1:2] == ["--dondur"]:
+        return freeze(sys.argv[2:])
     if "--push" in sys.argv[1:]:
         return pre_push(sys.stdin.read().splitlines())
     return pre_commit()

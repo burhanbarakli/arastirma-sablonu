@@ -281,8 +281,24 @@ plainly that this is mistake 1 and give the Kapı 1 step instead.
 Goal: a map of where a strong method M is measurably weak, so the user can pick one bottleneck to measure at Kapı A1
 of a method-transfer study. It is built so the pick is made by the bottleneck, not by a method the user likes.
 
-1. **Blind builder.** When a subagent tool is available, one agent builds the map. It gets the task or field and
-   these rules; it does not see the user's favourite method, `gecmis.md` or the conversation.
+1. **Blind builder, fixed brief.** When a subagent tool is available, one agent builds the map. It gets only this
+   brief, filled in and otherwise unchanged; it never gets the conversation, the personal folder's path or files,
+   `gecmis.md`, `kapali_kapilar.json` or the user's favourite method. Before filling it, remove any method name
+   from the user's task line (it goes to `fikirler-park.md`).
+   ```
+   Görev / alan: <görev, yöntem adı olmadan>
+   Kaynak dönemi: <bugünün tarihi> itibarıyla son 24 ay canlı tarama, ve alanın standart güçlü yöntemleri (M).
+   İş: zayif-nokta-raporu skill'inin "Darboğaz haritası (E)" bölümündeki 2., 3., 4. ve 7. adımları uygula.
+   Kurallar: Tabloya yöntem ya da yöntem ailesi adı yazma; karşılaştığın her yöntem adını ayrı bir park listesine
+   koy. Darboğaz kaynağı yalnız M'nin kendi makalesi, resmi kodunun issue'ları ve M'yi içeren benchmark
+   sonuçlarıdır; her satır yer ve kısa alıntıyla bir hipotezdir. "Kimse yapmamış" yazma. Kullanıcının tercihlerini,
+   geçmiş projelerini ya da bu konuşmayı bilmiyorsun; sorma, tahmin etme. Kapalı kapı sütununu boş bırak.
+   Çıktı: tablo, elenenler, Doğrulanamayanlar, park listesi.
+   ```
+   The map file starts with a section "Ajana verilen girdi" holding the filled brief word for word, so the
+   blindness can be checked later. After the agent returns, search the table for every name in the park list; a
+   hit moves to the park file. This hides the user's preference from the agent; it does not remove the agent's own
+   prior knowledge, which is why the sources are restricted (step 2).
 2. **Sources of a bottleneck.** Only M's own paper (limitations, failure tables, appendix), the official code's
    issues, and benchmark results that include M. A sentence in a newer method's paper saying "M is weak at X" is
    not a source. Each bottleneck is a hypothesis with a location and a short quote.
@@ -307,7 +323,7 @@ of a method-transfer study. It is built so the pick is made by the bottleneck, n
 7. **Verify and stop.** Every paper is verified (ground rule 5); the time box and saturation rule of the field survey
    apply.
 
-Save as `darbogaz-haritasi-<short-topic>.md`: task, sources searched with dates, the table, struck rows with the
+Save as `darbogaz-haritasi-<short-topic>.md`: Ajana verilen girdi, task, sources searched with dates, the table, struck rows with the
 closed door they touch, Doğrulanamayanlar. `fikirler-park.md` is saved beside it. End with: "Bir satır seç, gerekçeyi
 kullanım diliyle yaz; ölçüm Kapı A1'de." Do not pick for the user.
 

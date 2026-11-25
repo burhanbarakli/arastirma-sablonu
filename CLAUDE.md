@@ -10,7 +10,9 @@ Bu klasördeki her araştırma işinde aşağıdaki yapı geçerlidir. Kullanıc
 - `durum.html`: `python3 tools/durum.py` ile `karar.json`'dan üretilen durum paneli. Elle düzenlenmez. Windows'ta
   `python3 -c ""` çalışmıyorsa (Microsoft Store kısayolu) bu dosyadaki `python3` yerine `python` kullan.
 - `tools/karar_koruma.py`: git kancası (`pre-commit`, uzak depo varsa `pre-push`); dondurulmuş bir kural
-  "sapmalar"a yazılmadan değişirse commit'i ya da gönderimi durdurur.
+  "sapmalar"a yazılmadan değişirse commit'i ya da gönderimi durdurur. `protokol.olcum_dosyalari`'ndaki dosyalar
+  (ölçüt kodu, test koşulları, tohum listesi) kayıttaki özetinden farklıysa da durdurur; özeti
+  `python3 tools/karar_koruma.py --dondur <dosya>…` yazar.
 
 ## Her oturumda
 
@@ -35,6 +37,7 @@ Bu klasördeki her araştırma işinde aşağıdaki yapı geçerlidir. Kullanıc
 - Tohum ≥ 3. Daha az tohumla (kullanıcı sınır koyduysa da) alınan sonuç pilottur: kapı geçirmez, üç sayı tablosuna ve
   tez cümlesine girmez, sınırlılık olarak yazılır. Eğitim yoksa (hazır checkpoint değerlendirmesi) tohum, farklı
   başlangıç kümesi demektir ve fark eşli bölümler üzerinde sınanır; checkpoint'in tek eğitim koşusu sınırlılıktır.
+  Doğrulama koşusu pilottan ayrıdır: yeni tohumlar, pilot tohumu katılmaz (`"tur": "dogrulama"`, `"tohumlar"`).
 - Kapı 1'in sorusu, koşul düzeyleri, eşiği ve tek ölçütü bozulma ölçülmeden yazılır (`soru`, `protokol.olcut`).
 - Aile kontrolü her soruda yapılır: eşleşme yoksa "yok" ve taranan kaynaklar yazılır. Eşik altı kalan ya da basit
   çarenin yettiği koşullar (kapalı kapılar) kişisel klasördeki `kapali_kapilar.json`'a girer (yolu

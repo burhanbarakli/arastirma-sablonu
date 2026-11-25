@@ -48,6 +48,7 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 - **Varsayımlar ve bozulursa ne olur:** [her varsayım için: bozulursa sonuç nasıl değişir, nasıl anlaşılır]
 - **Koşullar ve ölçüt:** [başarısız koşu nasıl sayılır]
 - **Kilitli test kümesi / ayrılmış koşullar:** [ayar için hiç kullanılmayan]
+- **Kilitli ölçüm dosyaları:** [ölçüt kodu, test koşulları, tohum listesi; `python3 tools/karar_koruma.py --dondur` ile, tarih]
 - **Rakip adaleti:** [aynı bütçe, aynı tarama, aynı ayrıcalıklı bilgi]
 - **Benzetimin kusursuzlukları:** [liste; sonuç hangisine dayanıyor]
 - **Gerçek dünya testi:** [platform, erişim, benzetimle eşleşme (Kapı 2'de sorulur); koşul × deneme × tohum, tarih.
@@ -82,7 +83,8 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 - **Avantaj ekseni (aday adından önce, dondurulmuş):** [eksen] · ölçüt: [ölçülen davranış] · yön: [büyük/küçük iyi]
 - **δ (ana ölçütte eşdeğerlik payı) ve ε (eksende sayılan üstünlük):** [değerler; δ ≤ ½·(M − taban); ε'un kullanımdan gerekçesi]
 - **Sonuç A cümlesi:** [...] · **Sonuç B cümlesi:** [...]
-- **Gereken tohum:** [n; `tools/aralik.py tohum` ile, sd kaynağı]
+- **Gereken tohum:** [n; `tools/aralik.py tohum` ile, sd kaynağı; ilk doğrulama satırından önce]
+- **Pilot ve doğrulama tohumları:** [pilot: ... · doğrulama (yeni, pilotla ortak yok): ...]
 - **Akıldaki yöntem fikirleri (aday değil, Kapı A3'ten önce):** [...]
 
 | Tarih | Basit alternatif | Tür (ucuz_ek / klasik / küçük M …) | Ölçüldü mü, sonuç |

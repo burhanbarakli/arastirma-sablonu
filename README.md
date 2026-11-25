@@ -169,9 +169,13 @@ Aktarımda yol:
 6. **Aday seçimi:** "aday havuzu" (alan taraması D) ile güncel ve klasik adaylar; her biri için gerekçe, beklenen
    bozulma, varsayım tablosu, şeytanın avukatı. **En çok iki aday**, öğleden sonralık oyuncak test.
 7. **Kapı 4 ve A5:** eşit emek; iki sonuçlu karar kuralı; gereken tohum `python3 tools/aralik.py tohum --delta δ
-   --sd s` ile (pilotun sd'sinin üst sınırıyla). Tohum sınırı bunun altındaysa sonuç pilottur.
+   --sd s` ile (pilotun sd'sinin üst sınırıyla), ilk doğrulama satırından önce commit edilir. Ölçüt kodu, test
+   koşulları ve tohum listesi `python3 tools/karar_koruma.py --dondur <dosya>…` ile kilitlenir; kayıttaki halinden
+   farklıysa commit ve gönderim durur.
 8. **Ana koşu:** tohum başına eşli farklar → `python3 tools/aralik.py fark …` → aralıklar
-   `aktarim.karsilastirmalar`'a; panel A / B / belirsiz / pilot der.
+   `aktarim.karsilastirmalar`'a, satır başına `"tur": "pilot"` ya da `"dogrulama"` ve kullanılan `"tohumlar"` ile.
+   Pilot iyi görünürse doğrulama koşusu açılabilir: **yeni tohumlarla**, tam gereken sayıda; pilot tohumu doğrulamaya
+   katılmaz. Panel yalnız doğrulama satırından A / B çıkarır; diğerlerini pilot sayar.
 9. **Kapı 6 ve A7:** eksen zor koşulda ya da gerçek testte; yazım sonucun türü kadar ("eşdeğer ve eksende önde",
    ya da B olarak), geride kalınan yerler metinde.
 
@@ -180,6 +184,7 @@ Aktarımda yol:
 - **Pilot:** `protokol.pilot_butcesi` içinde, kodu sınamak ya da protokolü boyutlamak için yapılan koşu. Sayıları
   kapı geçirmez. 3'ten az tohumla alınan her sonuç pilottur.
 - **Tohum sınırı:** Bir sınır koyarsan (örneğin 2 tohum) ona uyulur; sonuç pilot sayılır ve sınırlılık olarak yazılır.
+  Sınırı yalnız doğrulama koşuları için kaldırabilirsin: pilotlar sınırda kalır, doğrulama hesaplanan tohumla koşar.
   Hazır bir checkpoint'in değerlendirme bölümleri tohum değil denemedir. Eğitim yoksa tohum, farklı başlangıç kümesi
   demektir (`tohum.tanim`) ve fark eşli bölümler üzerinde sınanır; checkpoint'in tek eğitim koşusu sınırlılıktır.
 - **Aile kontrolü:** her soruda yapılır, eşleşme yoksa "yok" ve taranan kaynaklar yazılır. Eşik altı kalan ya da basit
@@ -187,6 +192,9 @@ Aktarımda yol:
   öngörü ister.
 - **Dönüş:** yeni bir koşula, soruya, göreve ya da yönteme her geçiş; sonuç olumlu olsa da sayılır. Aynı koşulda
   açılan yeni proje sayacı devralır. Sınıra gelince durma kuralı devreye girer.
+- **Ölçüm dosyaları:** ölçütü belirleyen dosyalar (ölçüt kodu, test koşulları, tohum listesi) `protokol.olcum_dosyalari`'na
+  özetleriyle yazılır (`python3 tools/karar_koruma.py --dondur <dosya>…`). Ölçümden önce özet serbestçe yenilenir;
+  ölçümden sonra değişirse sapma gerekir. Yöntem kodu kilitlenmez.
 - **Sapma:** sonuç görüldükten sonra bir kural değişirse `sapmalar`'a tarih, ne değişti ve gerekçeyle yazılır.
   Dürüst kayıttır, başarısızlık değil; panel onu uyarı olarak göstermez.
 - **Aşılan karar:** bir kapı kararını aşarsan yardım sürer, `overrides`'a yazılır; ikincisinde danışmanla konuşman

@@ -54,7 +54,9 @@ a step toward the user's own goal, not as a refusal.
   more independent checkpoints exist, use them.
 - **Seed limit:** if the user caps seeds (for example "2 seed'den fazla koşma"), respect it and do not run more
   without asking; the result is a pilot. Say once: "Bu sonuç pilot; kapı geçirmez, sınırlılık olarak yazılır." Cheap
-  evaluation episodes of a fixed, released checkpoint are trials, not seeds, and are not capped by a seed limit.
+  evaluation episodes of a fixed, released checkpoint are trials, not seeds, and are not capped by a seed limit. A
+  user may lift the limit for confirming runs only (check the personal `gecmis.md` and KARAR.md); then pilots keep
+  the limit and a confirming run uses the computed seeds (Kapı A5).
 - **Pivot (dönüş):** any switch to a new condition, question, task or method, whether the last result was negative
   or positive. A new project on a condition already studied continues that condition's pivot count.
 - **Closed door (kapalı kapı):** a condition where the measured gap stayed below the threshold or a simple remedy
@@ -200,6 +202,10 @@ commit guard) and KARAR.md contain:
 - decision rule with threshold and interval (e.g. "method − strongest rival ≥ δ and lower bound > 0");
 - metric and how failures count; seeds (≥ 3) and conditions;
 - a locked test set or held-out conditions never used for tuning;
+- the files that define how results are measured (metric code, test-condition list, seed list), frozen in
+  `protokol.olcum_dosyalari` with `python3 tools/karar_koruma.py --dondur <dosya>...`: the commit guard then blocks
+  any commit where one of them differs from its recorded hash, so the metric cannot change silently after a result
+  (a recorded change after a measurement needs a Sapma). Method code is not frozen;
 - the assumptions, and for each, what happens to the conclusion if it fails and how that would show;
 - **stop rule**: "after 3 closed doors / 2 failed design attempts, write the negative result and stop";
 - the pilot budget and the current pivot count.
@@ -320,7 +326,9 @@ agents agreeing is not evidence.
 - `aktarim.delta`, the non-inferiority margin on the main metric, at most half of (M − taban) measured in this
   project; and `aktarim.epsilon`, the advantage that counts on the axis, in its unit, with a reason from the use
   (for example the tolerance of the task);
-- `aktarim.sonuc_a` and `sonuc_b`: the sentence that will be written for each outcome.
+- `aktarim.sonuc_a` and `sonuc_b`: the sentence that will be written for each outcome;
+- the script that measures the bottleneck and the axis metric, frozen in `protokol.olcum_dosyalari` (as in Kapı 5)
+  before that measurement.
 M at the ceiling of the metric, M barely above taban, or δ above half of (M − taban): **DUR** (parity would be
 trivial). "Kimse uygulamamış", "yeni çıktı", "bu alanda transformer/difüzyon denenmemiş" is not a bottleneck: **DUR**,
 and say: "Bu bir yöntem, henüz bir darboğaz değil." Next step: measure M's bottleneck on its own code.
@@ -369,13 +377,19 @@ recorded in `aktarim.olcumler` as `{"tarih", "rol": "taban"|"M"|"basit"|"aday", 
   Differences are paired by seed and oriented so that positive means better (multiply by −1 when smaller is better);
 - `aktarim.tohum_gerekli` and `tohum_hesabi`: computed with `python3 tools/aralik.py tohum --delta <δ> --sd <sd>`
   (or `--pilot <farklar>`), from the 95% upper bound of the pilot's spread or from an earlier comparable project,
-  never from the pilot's point estimate alone. `tohum.plan` is at least this. If the user caps seeds below it, say
+  never from the pilot's point estimate alone, and never from the pilot's mean difference. It is committed before
+  the first confirming comparison (the guard blocks it after one). `tohum.plan` is at least this;
+- **pilot and confirming run are separate.** Every row of `aktarim.karsilastirmalar` has `"tur": "pilot"` or
+  `"dogrulama"` and `"tohumlar"` (the seed ids used). A confirming run uses new seeds, none of them used in a pilot or
+  in the toy test, exactly `tohum_gerekli` of them; pilot seeds are never added to it. Running a confirmation because
+  a pilot looked promising is allowed (a two-stage design); only the confirming row decides, and the panel reads any
+  other row, or a confirming row that shares a seed with a pilot, as a pilot. If the user caps seeds below it, say
   once "Bu seed sınırıyla eşdeğerlik gösterilemez; sonuç pilot olur." and offer the three ways: lift the limit only
   for the confirming run; prefer a candidate that needs no training (analytical, or a released checkpoint with
   paired evaluation seeds; the single training run is a limitation); or keep the result as a pilot. The user
   chooses; record the choice;
 - intervals are computed with `python3 tools/aralik.py fark <tohum başına eşli farklar>` and recorded in
-  `aktarim.karsilastirmalar` (`{"tarih", "aday", "basit", "tohum", "perf_aday_eksi_m": [alt, üst],
+  `aktarim.karsilastirmalar` (`{"tarih", "aday", "basit", "tur", "tohum", "tohumlar", "perf_aday_eksi_m": [alt, üst],
   "perf_basit_eksi_aday": [alt, üst], "eksen_aday_eksi_basit": [alt, üst]}`); the panel applies the rule. Never
   decide by eye or from means.
 
@@ -392,7 +406,9 @@ Compare the request with the record and warn immediately when:
 - a new condition, question or direction is proposed (after a negative or a positive result): increment the pivot
   count; at the limit say "Durma kuralımız devrede: olumsuz sonucu yazıyoruz, devam kararı danışmanla verilir.";
 - seeds are being cut below the plan ("Koşulu azalt, tohumu değil."), or a pilot number is about to be used as a
-  result;
+  result, or pilot seeds are about to be added to a confirming run ("Pilot tohumu doğrulamaya girmez.");
+- metric code, test conditions or the seed list are being edited after a measurement (the guard blocks it; say why
+  before the user meets the block);
 - a limitation is being removed or softened, in `karar.json` or in the manuscript ("hakem sorarsa ekleriz" is
   mistake 8);
 - the same condition or task family is reopened where a simple method already won or the drop stayed below the

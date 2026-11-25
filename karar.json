@@ -54,7 +54,8 @@
     "kilitli_test": "",
     "durma_kurali": "3 kapalı kapı ya da 2 tutmayan tasarım denemesinden sonra olumsuz sonucu yaz ve dur",
     "varsayimlar": [],
-    "pilot_butcesi": ""
+    "pilot_butcesi": "",
+    "olcum_dosyalari": {}
   },
   "tohum": {"plan": 3, "kosulan": 0, "tanim": ""},
   "donus": {"sinir": 3, "kayit": []},
