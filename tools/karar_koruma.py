@@ -11,6 +11,11 @@ Rules may change; they may not change silently. The guard blocks when:
 - "bozulma" is written for the first time while soru.metin, soru.kosul_duzeyleri, soru.esik or protokol.olcut was
   not yet in the previous commit (the question, its levels, its threshold and one metric come before the drop);
 - a measured row in "uc_sayi.satirlar" is changed or removed, or a limitation is removed, without such an entry;
+- in a method-transfer study (calisma_turu "aktarim"): the advantage axis, its metric and direction, δ, ε, the
+  required seeds or the two pre-registered outcome sentences change, or are written after the first measurement in
+  "aktarim.olcumler" / "aktarim.karsilastirmalar"; a first candidate enters "aktarim.adaylar" while the axis, its
+  metric and direction, δ, ε and both outcome sentences were not yet in the previous commit; or a measured row in
+  "aktarim.olcumler" / "aktarim.karsilastirmalar" is changed or removed; each without such an entry;
 - an entry is removed from or edited in "sapmalar", "donus.kayit" or "overrides" (these lists only grow; no sapma
   can excuse it);
 - karar.json is deleted, is not valid UTF-8 JSON, or has a duplicate key.
@@ -42,11 +47,19 @@ FROZEN = [
     ("tohum", "plan"), ("tohum", "tanim"), ("donus", "sinir"),
     ("protokol", "karar_kurali"), ("protokol", "olcut"), ("protokol", "kilitli_test"), ("protokol", "durma_kurali"),
     ("soru", "metin"), ("soru", "kosul_duzeyleri"), ("soru", "esik"),
+    ("calisma_turu",),
+    ("aktarim", "eksen"), ("aktarim", "eksen_olcutu"), ("aktarim", "eksen_yonu"), ("aktarim", "performans_yonu"),
+    ("aktarim", "delta"), ("aktarim", "epsilon"), ("aktarim", "tohum_gerekli"),
+    ("aktarim", "sonuc_a"), ("aktarim", "sonuc_b"),
 ]
 # Kapı 1 fields: frozen once the Kapı 1 drop ("bozulma") exists, not only once three-number rows exist.
 KAPI1 = [("soru", "metin"), ("soru", "kosul_duzeyleri"), ("soru", "esik")]
 # Must already be committed when "bozulma" is first written (question, levels, threshold, one metric).
 KAPI1_BEFORE_DROP = KAPI1 + [("protokol", "olcut")]
+# Method-transfer study: must already be committed when the first candidate is named (axis before candidate).
+AKTARIM_BEFORE_CANDIDATE = [("aktarim", "eksen"), ("aktarim", "eksen_olcutu"), ("aktarim", "eksen_yonu"),
+                            ("aktarim", "delta"), ("aktarim", "epsilon"), ("aktarim", "sonuc_a"), ("aktarim", "sonuc_b")]
+MEASURED_ROWS = [("uc_sayi", "satirlar"), ("aktarim", "olcumler"), ("aktarim", "karsilastirmalar")]
 GROW_ONLY = [("sapmalar",), ("donus", "kayit"), ("overrides",)]
 EMPTY = (None, "", [], {})
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
@@ -97,13 +110,15 @@ def complete(entry):
 def problems(old, new):
     """Return (excusable, fatal) lists of problems for one karar.json."""
     excusable, fatal = [], []
-    measured = bool(get(old, ("uc_sayi", "satirlar")) or get(new, ("uc_sayi", "satirlar")))
+    measured = any(get(old, p) or get(new, p) for p in MEASURED_ROWS)
     dropped = measured or bool(get(old, ("bozulma",)) or get(new, ("bozulma",)))
     for p in FROZEN:
         a, b = get(old, p), get(new, p)
         if a == b:
             continue
         name = ".".join(p)
+        if p == ("calisma_turu",) and a is None and b == "bosluk":
+            continue  # an old project synced to the schema keeps its default type
         if a not in EMPTY:
             excusable.append(f"değişen: {name}  ({a!r} -> {b!r})")
         elif b not in EMPTY and (dropped if p in KAPI1 else measured):
@@ -113,10 +128,17 @@ def problems(old, new):
         missing = [".".join(p) for p in KAPI1_BEFORE_DROP if get(old, p) in EMPTY]
         if missing:
             excusable.append("Kapı 1 bozulması, şunlar önceki bir commit'te yazılmadan girildi: " + ", ".join(missing))
-    new_rows = get(new, ("uc_sayi", "satirlar")) or []
-    for r in (get(old, ("uc_sayi", "satirlar")) or []):
-        if r not in new_rows:
-            excusable.append(f"değişen ya da silinen ölçüm satırı: {r.get('kosul', r) if isinstance(r, dict) else r}")
+    if get(old, ("aktarim", "adaylar")) in EMPTY and get(new, ("aktarim", "adaylar")) not in EMPTY:
+        missing = [".".join(p) for p in AKTARIM_BEFORE_CANDIDATE if get(old, p) in EMPTY]
+        if missing:
+            excusable.append("ilk aday, şunlar önceki bir commit'te yazılmadan girildi (eksen adaydan önce): "
+                             + ", ".join(missing))
+    for rp in MEASURED_ROWS:
+        new_rows = get(new, rp) or []
+        for r in (get(old, rp) or []):
+            if r not in new_rows:
+                label = (r.get("kosul") or r.get("kol") or r.get("rol") or r.get("aday") or r) if isinstance(r, dict) else r
+                excusable.append(f"değişen ya da silinen ölçüm satırı ({'.'.join(rp)}): {label}")
     for x in (old.get("sinirliliklar") or []):
         if x not in (new.get("sinirliliklar") or []):
             excusable.append(f"silinen sınırlılık: {x}")

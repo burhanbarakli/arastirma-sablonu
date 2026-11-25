@@ -86,10 +86,30 @@ Kapıların dışında çalışan parçalar:
   - 3'ten az tohumla alınan sonuç pilottur.
   - Bir kapı kararı aşılırsa yardım sürer, ama `overrides`'a kaydedilir.
 
+## 4. Aktarım türü: yeni yöntemi M'nin yerine koymak
+
+`arastirma-kapisi`'nin ikinci çalışma türü (`calisma_turu: aktarim`). Amaç alternatif yöntem: güncel ya da başka
+alandan bir yöntem X, var olan güçlü yöntem M'nin yerine konur. İki sonuç baştan yazılır: **A** (X, M kadar iyi ve
+tek avantaj ekseninde en güçlü basit alternatiften önde) ya da **B** (basit alternatif yetiyor: "X gerekli mi?").
+
+| Kapı | Ne sorar | Geçmezse |
+|---|---|---|
+| **A1. Darboğaz ve eksen** | M güçlü ve güncel mi? Darboğazı kendi koşunda ölçüldü mü? Eksen, ölçütü, δ ≤ ½·(M − taban), ε ve iki sonuç cümlesi aday adı geçmeden commit'lendi mi? | "Bu bir yöntem, henüz bir darboğaz değil" (DUR) |
+| **2. Yeniden üretim** | Boşluk türüyle aynı | |
+| **A3. Kollar** | Taban, M ve en az üç basit alternatif, biri "M + ilkenin ucuz eki" | Basit alternatif zaten yetiyorsa bulgu (B) ve kapalı kapı |
+| **Aday seçimi** | Alandan bağımsız özellik cümlesi, aday havuzu (alan taraması D), gerekçe ve beklenen bozulma, şeytanın avukatı, en çok iki aday, oyuncak test | Gerekçesiz aday DUR; üçüncü aday dönüş |
+| **4. Rakip adaleti** | Boşluk türüyle aynı | |
+| **A5. Protokol** | İki sonuçlu karar kuralı (%90 aralıklar), `tools/aralik.py` ile hesaplanan tohum | Tohum yetmiyorsa sonuç pilot |
+| **6. Gerçeklik** | Avantaj ekseni zor koşulda ya da gerçek testte | |
+| **A7. Yazım** | A "eşdeğer ve eksende önde" diye, B B olarak yazılır; geride kalınan yerler metinde | DUR, eksiklerle |
+
+Panel bu türde "Üç sayı" yerine "Kollar" ve "Karşılaştırmalar" tablolarını, boşluk cümlesi yerine sonuç cümlesini
+gösterir; sonucu önceden yazılmış kuralla kendisi hesaplar.
+
 ## Akış ve kayıt
 
 **Akış:** proje-baslat, sonra zayif-nokta-raporu, sonra arastirma-kapisi'nin Kapı 1–7'si. Yöntem arama ancak Kapı
-3'ten sonra açılır.
+3'ten sonra açılır. Aktarım türünde: Kapı A1, 2, A3, aday seçimi, 4, A5, ana koşu, 6, A7.
 
 **Kayıt:** Her kapı kararından sonra `karar.json` ve `KARAR.md` güncellenir, panel yenilenir. Kapanan kapılar kişisel
 klasördeki `kapali_kapilar.json` dosyasına gider. Böylece bir sonraki projede aynı koşula dönülürse aile kontrolü bunu

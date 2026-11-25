@@ -140,6 +140,36 @@ Aşamalar ve panelde görünenler:
 10. **Yazım.** Kapı 7: gerçek test ya da Sapma, açık KOŞULLU yok, makaledeki sınırlılıklar kayıtla satır satır aynı,
     kör denetim yapılmış (`paper-critique`, `citation-check` yardımcı).
 
+## Aktarım çalışması: yeni bir yöntemi var olan M'nin yerine koymak
+
+İki tür çalışma var; `proje-baslat` hangisi olduğunu sorar (`karar.json > calisma_turu`):
+
+- **boşluk:** ölçülmüş bir düşüş bir yöntem için yer bırakıyor mu? Yukarıdaki akış.
+- **aktarım:** güncel ya da başka alandan bir yöntem X, var olan güçlü yöntem M'nin yerine, M'nin ölçülmüş bir
+  darboğazı için konur. Baştan iki sonuç yazılır, ikisi de yayımlanabilir:
+  - **Sonuç A (alternatif yöntem):** X, ana ölçütte M'den en fazla δ geride ve önceden yazılmış tek avantaj
+    ekseninde en güçlü basit alternatiften en az ε önde.
+  - **Sonuç B ("X gerekli mi?"):** basit alternatif X kadar iyi; X'in eksendeki ε kadar üstünlüğü dışlandı.
+  - Başka her şey **belirsiz**. "Fark çıkmadı" eşdeğerlik değildir.
+
+Aktarımda yol:
+1. `/proje-baslat`, tür: aktarım. Aklındaki yöntem KARAR.md'ye fikir olarak yazılır, aday listesine girmez.
+2. M'nin makalesine `zayif-nokta-raporu`. Oradan gelen darboğaz bir hipotezdir.
+3. **Kapı A1:** M'nin darboğazını kendi koşunda ölç. Sonra, hiçbir aday adı geçmeden ekseni (ölçülen bir davranış,
+   adayın eğitim hedefi değil), ölçütünü, δ'yı (en fazla ½·(M − taban)), ε'u ve iki sonuç cümlesini yaz, commit et.
+   Commit kilidi, bunlar yokken aday yazılmasını engeller.
+4. **Kapı 2:** M'yi makalenin sayısına yakın üret (kaynak sınırı burada).
+5. **Kapı A3:** taban, M ve en az üç basit alternatif; biri mutlaka "M + ilkenin ucuz eki" (fizik kaybı, conformal
+   sarmalayıcı, veri artırma, küçültülmüş M…). Basit alternatif zaten yetiyorsa bulgu: B yazılır.
+6. **Aday seçimi:** "aday havuzu" (alan taraması D) ile güncel ve klasik adaylar; her biri için gerekçe, beklenen
+   bozulma, varsayım tablosu, şeytanın avukatı. **En çok iki aday**, öğleden sonralık oyuncak test.
+7. **Kapı 4 ve A5:** eşit emek; iki sonuçlu karar kuralı; gereken tohum `python3 tools/aralik.py tohum --delta δ
+   --sd s` ile (pilotun sd'sinin üst sınırıyla). Tohum sınırı bunun altındaysa sonuç pilottur.
+8. **Ana koşu:** tohum başına eşli farklar → `python3 tools/aralik.py fark …` → aralıklar
+   `aktarim.karsilastirmalar`'a; panel A / B / belirsiz / pilot der.
+9. **Kapı 6 ve A7:** eksen zor koşulda ya da gerçek testte; yazım sonucun türü kadar ("eşdeğer ve eksende önde",
+   ya da B olarak), geride kalınan yerler metinde.
+
 ## Kurallar kısaca
 
 - **Pilot:** `protokol.pilot_butcesi` içinde, kodu sınamak ya da protokolü boyutlamak için yapılan koşu. Sayıları

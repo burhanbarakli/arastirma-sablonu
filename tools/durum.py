@@ -24,6 +24,22 @@ STAGES = [
     ("kor_denetim", "·", "Kör denetim", "", "Sonucu bilmeyen biri baştan hesapladı mı?"),
     ("yazim", "7", "Yazım", "arastirma-kapisi", "Sınırlılıklar duruyor, iddialar ölçülen boşlukla uyumlu mu?"),
 ]
+# Method-transfer study (calisma_turu "aktarim"): same stage keys, different questions.
+STAGES_AKTARIM = [
+    ("okuma", "0", "Okuma", "zayif-nokta-raporu", "M'nin makalesinin zayıf noktaları kaynaklarıyla çıkarıldı mı?"),
+    ("soru", "A1", "Darboğaz ve eksen", "arastirma-kapisi",
+     "M'nin darboğazı kendi koşunda ölçüldü mü; eksen, δ, ε ve iki sonuç cümlesi aday adı geçmeden yazıldı mı?"),
+    ("yeniden_uretim", "2", "Yeniden üretim", "arastirma-kapisi", "M makalenin sayılarıyla üretildi mi?"),
+    ("uc_sayi", "A3", "Kollar", "arastirma-kapisi",
+     "Taban, M ve basit alternatifler (ilkenin ucuz eki dahil) ölçüldü mü; eksende pay var mı?"),
+    ("rakip_adaleti", "4", "Rakip adaleti", "arastirma-kapisi", "M ve basit alternatifler aynı bütçe, ayar ve bilgiyle mi?"),
+    ("protokol", "5", "Protokol", "arastirma-kapisi",
+     "İki sonuçlu karar kuralı, hesaplanan tohum, kilitli test ve durma kuralı sonuçtan önce yazıldı mı?"),
+    ("ana_kosu", "·", "Ana koşu", "", "Protokole göre, hesaplanan tohumla koşuldu mu?"),
+    ("gerceklik", "6", "Gerçeklik ve tavan", "arastirma-kapisi", "Avantaj ekseni zor koşulda ya da gerçek testte sınandı mı?"),
+    ("kor_denetim", "·", "Kör denetim", "", "Sonucu bilmeyen biri baştan hesapladı mı?"),
+    ("yazim", "7", "Yazım", "arastirma-kapisi", "Alternatifin geride kaldığı yerler metinde mi; iddia sonucun türü kadar mı?"),
+]
 ORDER = [s[0] for s in STAGES]
 STATUS_LABEL = {"gecti": "Geçti", "kosullu": "Koşullu", "durdu": "Durdu", "bekliyor": "Bekliyor"}
 REGISTRY = os.path.expanduser("~/.claude/arastirma/projeler.json")
@@ -35,7 +51,7 @@ def esc(x):
 
 def reached(state, stage):
     """True when every stage before `stage` has at least started (not 'bekliyor')."""
-    i = ORDER.index(stage)
+    i = ORDER.index(stage)  # both stage tables share the same keys and order
     return all(state.get("asamalar", {}).get(k, {}).get("durum", "bekliyor") != "bekliyor" for k in ORDER[:i])
 
 
@@ -65,6 +81,90 @@ def gap(u):
     return best, best["kahin"] - best["basit_care"]
 
 
+def is_aktarim(s):
+    return s.get("calisma_turu") == "aktarim"
+
+
+def num(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool)
+
+
+def interval(x):
+    return isinstance(x, (list, tuple)) and len(x) == 2 and all(num(v) for v in x)
+
+
+def arm_value(at, role, key):
+    """Mean of a measured value for one arm role (taban, M) in aktarim.olcumler; None when absent."""
+    vals = [r.get(key) for r in at.get("olcumler") or [] if isinstance(r, dict) and r.get("rol") == role and num(r.get(key))]
+    return sum(vals) / len(vals) if vals else None
+
+
+def outcome(at, row):
+    """Apply the pre-registered two-outcome rule to one comparison row. Returns (code, text)."""
+    d, e, need = at.get("delta"), at.get("epsilon"), at.get("tohum_gerekli")
+    if not (num(d) and num(e)):
+        return "eksik", "δ ya da ε yazılmamış: kural uygulanamaz."
+    n = row.get("tohum") or 0
+    if not num(need):
+        return "pilot", f"{n} tohum; gereken tohum hesaplanmamış: pilot."
+    if n < max(3, need):
+        return "pilot", f"{n} tohum < gereken {max(3, int(need))}: pilot, kapı geçirmez."
+    pm, pb, ax = row.get("perf_aday_eksi_m"), row.get("perf_basit_eksi_aday"), row.get("eksen_aday_eksi_basit")
+    if interval(pm) and pm[1] < -d:
+        return "geride", "Aday M'nin δ kadar gerisinde: kapalı kapı."
+    if interval(pm) and interval(ax) and pm[0] > -d and ax[0] > e:
+        return "A", "Sonuç A: aday M'ye göre eksik değil ve eksende en güçlü basit alternatiften en az ε önde."
+    if interval(pb) and interval(ax) and pb[0] > -d and ax[1] < e:
+        return "B", "Sonuç B: basit alternatif adaya göre eksik değil; adayın eksendeki ε kadar üstünlüğü dışlandı."
+    if not (interval(pm) and interval(ax)):
+        return "eksik", "Aralıklar eksik ([alt, üst] olarak, tools/aralik.py fark ile)."
+    return "belirsiz", "Belirsiz: aralıklar ne A'yı ne B'yi gösteriyor (daha çok tohum ya da belirsiz diye yazılır)."
+
+
+def aktarim_checks(s, add):
+    at = s.get("aktarim") or {}
+    add("M'nin darboğazı ölçüldü", "ok" if at.get("darbogaz") else "eksik",
+        at.get("darbogaz") or "Kendi koşunda ölçülmüş bir darboğaz cümlesi yok (makaleden okunan hipotezdir).", "soru")
+    miss = [n for n, k in (("eksen", "eksen"), ("ölçütü", "eksen_olcutu"), ("yönü", "eksen_yonu"),
+                           ("performans yönü", "performans_yonu")) if not at.get(k)]
+    add("Avantaj ekseni adaydan önce yazıldı", "ok" if not miss else ("uyari" if at.get("adaylar") else "eksik"),
+        f"{at.get('eksen')} · {at.get('eksen_olcutu')} ({at.get('eksen_yonu')})" if not miss
+        else "Eksik: " + ", ".join(miss) + (" (aday bunlardan önce yazılmış)" if at.get("adaylar") else ""), "soru")
+    d, e = at.get("delta"), at.get("epsilon")
+    m, t = arm_value(at, "M", "performans"), arm_value(at, "taban", "performans")
+    if not (num(d) and num(e)):
+        add("δ ve ε önceden yazıldı", "eksik", "δ (ana ölçütte eşdeğerlik payı) ve ε (eksende sayılan üstünlük) yok.", "soru")
+    elif m is None or t is None:
+        add("δ ve ε önceden yazıldı", "ok", f"δ = {d:g}, ε = {e:g} · δ ≤ ½·(M − taban) henüz denetlenemiyor (M ya da taban ölçülmedi).", "soru")
+    else:
+        half = abs(m - t) / 2
+        add("δ ve ε önceden yazıldı", "ok" if d <= half else "durdu",
+            f"δ = {d:g}, ε = {e:g} · ½·(M − taban) = {half:g}" + ("" if d <= half else " → δ çok geniş, eşdeğerlik kendiliğinden çıkar: DUR"), "soru")
+    add("İki sonuç ön kaydı", "ok" if at.get("sonuc_a") and at.get("sonuc_b") else "eksik",
+        f"A: {at.get('sonuc_a')} · B: {at.get('sonuc_b')}" if at.get("sonuc_a") and at.get("sonuc_b")
+        else "A (alternatif yöntem) ve B (X gerekli mi?) cümleleri sonuçtan önce yazılmalı.", "soru")
+    ba = [x for x in at.get("basit_alternatifler") or [] if isinstance(x, dict)]
+    cheap = [x for x in ba if x.get("tur") == "ucuz_ek"]
+    add("Basit alternatifler", "ok" if len(ba) >= 3 and cheap else ("uyari" if ba else "eksik"),
+        (f"{len(ba)} aday" + ("" if cheap else "; \"M + ilkenin ucuz eki\" (tur: ucuz_ek) yok") + ("" if len(ba) >= 3 else "; en az 3 olmalı"))
+        if ba else "Liste yok: en ucuz üç yol ve \"M + ilkenin ucuz eki\".", "uc_sayi")
+    ad = [x for x in at.get("adaylar") or [] if isinstance(x, dict)]
+    bad = [x.get("ad", "?") for x in ad if not (x.get("gerekce") and x.get("beklenen_bozulma"))]
+    add("Adaylar", "ok" if ad and len(ad) <= 2 and not bad else ("uyari" if ad else "eksik"),
+        (f"{len(ad)} aday: " + ", ".join(str(x.get("ad")) for x in ad) + (" · 2'den fazla aday: dönüş sayılır" if len(ad) > 2 else "")
+         + (" · gerekçe ya da beklenen bozulma eksik: " + ", ".join(bad) if bad else "")) if ad else "Henüz aday yok (kollar ölçüldükten sonra).", "uc_sayi")
+    need = at.get("tohum_gerekli")
+    add("Tohum hesabı", "ok" if num(need) and at.get("tohum_hesabi") else "eksik",
+        f"gereken {need} · {at.get('tohum_hesabi')}" if num(need) else "tools/aralik.py tohum ile hesaplanmalı (sd'nin üst sınırıyla).", "protokol")
+    rows = [r for r in at.get("karsilastirmalar") or [] if isinstance(r, dict)]
+    if not rows:
+        add("Karşılaştırma sonucu", "eksik", "Henüz karşılaştırma yok.", "ana_kosu")
+    else:
+        code, text = outcome(at, rows[-1])
+        st = {"A": "ok", "B": "ok", "geride": "uyari", "belirsiz": "uyari", "pilot": "uyari", "eksik": "eksik"}[code]
+        add("Karşılaştırma sonucu", st, f"{rows[-1].get('aday')} ↔ {rows[-1].get('basit')}: {text}", "ana_kosu")
+
+
 def checks(s):
     u, a = s.get("uc_sayi") or {}, s.get("asamalar") or {}
     out = []
@@ -84,45 +184,48 @@ def checks(s):
         add("Aile kontrolü", "ok" if why else "eksik",
             f"{ak.get('kosul') or '?'} daha önce: {ak.get('onceki_proje')} ({ak.get('onceki_sonuc') or 'sonuç yazılmamış'}). "
             + (f"Bu kez: {why}" if why else "\"Bu kez neden farklı?\" öngörüsü yok: DUR."), "soru")
-    q = s.get("soru") or {}
-    olcut = (s.get("protokol") or {}).get("olcut")
-    qmiss = [n for n, v in (("soru", q.get("metin")), ("koşul düzeyleri", q.get("kosul_duzeyleri")),
-                            ("eşik", q.get("esik")), ("ölçüt", olcut)) if v in (None, "", [], {})]
-    add("Kapı 1 sorusu ölçümden önce yazıldı", "ok" if not qmiss else ("uyari" if s.get("bozulma") else "eksik"),
-        (f"{q.get('metin')} · düzeyler {q.get('kosul_duzeyleri')} · eşik {q.get('esik')} · ölçüt {olcut}") if not qmiss
-        else "Eksik: " + ", ".join(qmiss) + (" (bozulma bunlardan önce yazılmış)" if s.get("bozulma") else ""), "soru")
-    add("Bozulma ölçüldü", "ok" if s.get("bozulma") else "eksik", s.get("bozulma") or "Ölçülmüş bir bozulma cümlesi yok.", "soru")
-    t = s.get("tez_cumlesi", {})
-    add("Tez cümlesi donduruldu", "ok" if t.get("metin") and t.get("tarih") else "eksik",
-        f"{t.get('metin')} ({t.get('tarih')})" if t.get("metin") else "Tez cümlesi yazılmamış.", "soru")
-    rows = u.get("satirlar", [])
-    full = rows and all(None not in (r.get("taban"), r.get("basit_care"), r.get("kahin")) for r in rows)
-    seeds_ok = rows and all((r.get("tohum") or 0) >= 3 for r in rows)
-    add("Üç sayı tam", "ok" if full and seeds_ok else "eksik",
-        f"{len(rows)} koşul" + ("" if seeds_ok else "; en az bir satırda 3'ten az tohum: pilot, kapı geçirmez") if rows else "Ölçüm yok.", "uc_sayi")
-    b4 = u.get("basit_care_yontemden_once")
-    add("Basit çare yöntemden önce kuruldu", "ok" if b4 is True else ("uyari" if b4 is False else "eksik"),
-        u.get("basit_care_tanimi") or "Basit çare tanımlanmamış.", "uc_sayi")
-    if u.get("kahin_tanimi"):
-        add("Adil kâhin tanımlı", "ok", u.get("kahin_tanimi"), "uc_sayi")
-    elif u.get("kahin_tanimlanamaz"):
-        add("Adil kâhin tanımlı", "uyari", "Tanımlanamaz: " + u.get("kahin_tanimlanamaz"), "uc_sayi")
+    if is_aktarim(s):
+        aktarim_checks(s, add)
     else:
-        add("Adil kâhin tanımlı", "eksik", "Kâhinin neyi, ne zamandan itibaren bildiği yazılmamış.", "uc_sayi")
-    add("Eşik önceden yazıldı", "ok" if u.get("esik") is not None else "eksik",
-        f"δ = {u.get('esik')} {u.get('birim', '')}" if u.get("esik") is not None else "Eşik yok.", "uc_sayi")
-    best, g = gap(u)
-    if g is None:
-        add("Boşluk (kâhin − basit çare)", "eksik", "Hesaplanamıyor.", "uc_sayi")
-    else:
-        esik = u.get("esik")
-        st = "eksik" if esik is None else ("ok" if g >= esik else "uyari")
-        msg = f"En büyük boşluk {g:g} {u.get('birim', '')} ({best.get('kosul')})"
-        if esik is None:
-            msg += " → eşik önceden yazılmamış, boşluk yorumlanamaz"
+        q = s.get("soru") or {}
+        olcut = (s.get("protokol") or {}).get("olcut")
+        qmiss = [n for n, v in (("soru", q.get("metin")), ("koşul düzeyleri", q.get("kosul_duzeyleri")),
+                                ("eşik", q.get("esik")), ("ölçüt", olcut)) if v in (None, "", [], {})]
+        add("Kapı 1 sorusu ölçümden önce yazıldı", "ok" if not qmiss else ("uyari" if s.get("bozulma") else "eksik"),
+            (f"{q.get('metin')} · düzeyler {q.get('kosul_duzeyleri')} · eşik {q.get('esik')} · ölçüt {olcut}") if not qmiss
+            else "Eksik: " + ", ".join(qmiss) + (" (bozulma bunlardan önce yazılmış)" if s.get("bozulma") else ""), "soru")
+        add("Bozulma ölçüldü", "ok" if s.get("bozulma") else "eksik", s.get("bozulma") or "Ölçülmüş bir bozulma cümlesi yok.", "soru")
+        t = s.get("tez_cumlesi", {})
+        add("Tez cümlesi donduruldu", "ok" if t.get("metin") and t.get("tarih") else "eksik",
+            f"{t.get('metin')} ({t.get('tarih')})" if t.get("metin") else "Tez cümlesi yazılmamış.", "soru")
+        rows = u.get("satirlar", [])
+        full = rows and all(None not in (r.get("taban"), r.get("basit_care"), r.get("kahin")) for r in rows)
+        seeds_ok = rows and all((r.get("tohum") or 0) >= 3 for r in rows)
+        add("Üç sayı tam", "ok" if full and seeds_ok else "eksik",
+            f"{len(rows)} koşul" + ("" if seeds_ok else "; en az bir satırda 3'ten az tohum: pilot, kapı geçirmez") if rows else "Ölçüm yok.", "uc_sayi")
+        b4 = u.get("basit_care_yontemden_once")
+        add("Basit çare yöntemden önce kuruldu", "ok" if b4 is True else ("uyari" if b4 is False else "eksik"),
+            u.get("basit_care_tanimi") or "Basit çare tanımlanmamış.", "uc_sayi")
+        if u.get("kahin_tanimi"):
+            add("Adil kâhin tanımlı", "ok", u.get("kahin_tanimi"), "uc_sayi")
+        elif u.get("kahin_tanimlanamaz"):
+            add("Adil kâhin tanımlı", "uyari", "Tanımlanamaz: " + u.get("kahin_tanimlanamaz"), "uc_sayi")
         else:
-            msg += " → yöntem için yer var" if g >= esik else " → eşiğin altında, yöntem için yer yok"
-        add("Boşluk (kâhin − basit çare)", st, msg, "uc_sayi")
+            add("Adil kâhin tanımlı", "eksik", "Kâhinin neyi, ne zamandan itibaren bildiği yazılmamış.", "uc_sayi")
+        add("Eşik önceden yazıldı", "ok" if u.get("esik") is not None else "eksik",
+            f"δ = {u.get('esik')} {u.get('birim', '')}" if u.get("esik") is not None else "Eşik yok.", "uc_sayi")
+        best, g = gap(u)
+        if g is None:
+            add("Boşluk (kâhin − basit çare)", "eksik", "Hesaplanamıyor.", "uc_sayi")
+        else:
+            esik = u.get("esik")
+            st = "eksik" if esik is None else ("ok" if g >= esik else "uyari")
+            msg = f"En büyük boşluk {g:g} {u.get('birim', '')} ({best.get('kosul')})"
+            if esik is None:
+                msg += " → eşik önceden yazılmamış, boşluk yorumlanamaz"
+            else:
+                msg += " → yöntem için yer var" if g >= esik else " → eşiğin altında, yöntem için yer yok"
+            add("Boşluk (kâhin − basit çare)", st, msg, "uc_sayi")
     pr = s.get("protokol", {})
     missing = [k for k in ("karar_kurali", "olcut", "kilitli_test", "durma_kurali") if not pr.get(k)]
     add("Protokol yazılı", "ok" if not missing else "eksik",
@@ -196,7 +299,8 @@ def lines_of(reg, kind):
 def render(s, karar_path):
     a = s.get("asamalar") or {}
     current = next((k for k in ORDER if a.get(k, {}).get("durum", "bekliyor") != "gecti"), None)
-    cur = next((x for x in STAGES if x[0] == current), None)
+    stages = STAGES_AKTARIM if is_aktarim(s) else STAGES
+    cur = next((x for x in stages if x[0] == current), None)
     ch = checks(s)
     nbad = sum(1 for c in ch if c[1] in ("eksik", "durdu", "uyari"))
     reg = registry()
@@ -216,7 +320,7 @@ def render(s, karar_path):
         sentence = "[Yöntem], [koşul] altında [ölçüt]'te [X] kadar düşüyor. Kâhin [Y] kazandırıyor. En iyi basit çare [Z] kadarını kapatıyor. Geriye kalan [Y − Z] hedefimiz."
 
     stage_html = []
-    for key, num, name, skill, q in STAGES:
+    for key, num, name, skill, q in stages:
         st = a.get(key, {})
         d = st.get("durum", "bekliyor")
         cls = d + (" now" if key == current else "")
@@ -238,6 +342,38 @@ def render(s, karar_path):
     rows = "".join(f"<tr><td>{esc(r.get('kosul'))}</td><td>{fmt(r.get('taban'))}</td><td>{fmt(r.get('basit_care'))}</td>"
                    f"<td>{fmt(r.get('kahin'))}</td><td><b>{fmt(None if None in (r.get('kahin'), r.get('basit_care')) else r['kahin'] - r['basit_care'])}</b></td>"
                    f"<td>{fmt(r.get('tohum'))}</td></tr>" for r in u.get("satirlar", [])) or '<tr><td colspan="6">Henüz ölçüm yok.</td></tr>'
+
+    if is_aktarim(s):
+        at = s.get("aktarim") or {}
+        arm_rows = "".join(f"<tr><td>{esc(r.get('rol'))}</td><td>{esc(r.get('kol'))}</td><td>{fmt(r.get('performans'))}</td>"
+                           f"<td>{fmt(r.get('eksen'))}</td><td>{fmt(r.get('tohum'))}</td><td>{'pilot' if r.get('pilot') else ''}</td></tr>"
+                           for r in at.get("olcumler") or [] if isinstance(r, dict)) or '<tr><td colspan="6">Henüz ölçüm yok.</td></tr>'
+        def iv(x):
+            return f"[{x[0]:g}, {x[1]:g}]" if interval(x) else "?"
+        cmp_rows = "".join(f"<tr><td>{esc(r.get('tarih'))}</td><td>{esc(r.get('aday'))}</td><td>{esc(r.get('basit'))}</td><td>{fmt(r.get('tohum'))}</td>"
+                           f"<td>{iv(r.get('perf_aday_eksi_m'))}</td><td>{iv(r.get('perf_basit_eksi_aday'))}</td><td>{iv(r.get('eksen_aday_eksi_basit'))}</td>"
+                           f"<td><b>{esc(outcome(at, r)[0])}</b></td></tr>"
+                           for r in at.get("karsilastirmalar") or [] if isinstance(r, dict)) or '<tr><td colspan="8">Henüz karşılaştırma yok.</td></tr>'
+        last = [r for r in at.get("karsilastirmalar") or [] if isinstance(r, dict)]
+        code, text = outcome(at, last[-1]) if last else ("", "")
+        if code == "A":
+            res = esc(at.get("sonuc_a") or text)
+        elif code == "B":
+            res = esc(at.get("sonuc_b") or text)
+        elif last:
+            res = esc(text)
+        else:
+            res = ("[M], [koşul] altında [ölçüt]'te [değer]; darboğazı [eksen]'de [değer]. "
+                   "A: aday M'ye göre en fazla δ geride ve eksende en güçlü basit alternatiften en az ε önde. "
+                   "B: basit alternatif yetiyor; adayın eksendeki üstünlüğü ε'un altında.")
+        main_section = f"""<section><h2>Kollar</h2><p class="muted">Darboğaz: {esc(at.get('darbogaz') or '—')} · Eksen: {esc(at.get('eksen') or '—')} ({esc(at.get('eksen_olcutu') or '?')}, {esc(at.get('eksen_yonu') or '?')}) · δ = {fmt(at.get('delta'))} · ε = {fmt(at.get('epsilon'))} · gereken tohum {fmt(at.get('tohum_gerekli'))}</p>
+<div class="tw"><table class="num"><thead><tr><th>Rol</th><th>Kol</th><th>Performans</th><th>Eksen</th><th>Tohum</th><th></th></tr></thead><tbody>{arm_rows}</tbody></table></div></section>
+<section><h2>Karşılaştırmalar (%90 aralıklar, pozitif = ilk kol daha iyi)</h2><div class="tw"><table class="num"><thead><tr><th>Tarih</th><th>Aday</th><th>Basit alt.</th><th>Tohum</th><th>Perf. aday − M</th><th>Perf. basit − aday</th><th>Eksen aday − basit</th><th>Sonuç</th></tr></thead><tbody>{cmp_rows}</tbody></table></div>
+<div class="card"><span class="lbl">Sonuç cümlesi</span><p class="sent">{res}</p></div></section>"""
+    else:
+        main_section = f"""<section><h2>Üç sayı</h2><div class="tw"><table class="num"><thead><tr><th>Koşul</th><th>Taban</th><th>Basit çare</th><th>Adil kâhin</th><th>Kâhin − çare</th><th>Tohum</th></tr></thead><tbody>{rows}</tbody></table></div>
+<p class="muted">Eşik δ = {fmt(u.get('esik'))} {esc(u.get('birim',''))} · Kâhin: {esc(u.get('kahin_tanimi') or '—')}</p>
+<div class="card"><span class="lbl">Boşluk cümlesi</span><p class="sent">{sentence}</p></div></section>"""
 
     piv = "".join(f"<li>{esc(p.get('tarih'))}: {esc(p.get('neden'))}</li>" for p in s.get("donus", {}).get("kayit", [])) or "<li>Dönüş yok.</li>"
     sap = "".join(f"<li>{esc(p.get('tarih'))}: {esc(p.get('ne'))} <i>({esc(p.get('gerekce'))})</i></li>" for p in s.get("sapmalar", [])) or "<li>Sapma yok.</li>"
@@ -293,7 +429,7 @@ tr.ok td.i,tr.ok td.l{{color:var(--accent)}}tr.uyari td.i,tr.uyari td.l{{color:v
 .num td{{font-variant-numeric:tabular-nums}}
 @media (max-width:720px){{.top,.two{{grid-template-columns:1fr}}}}
 </style></head><body><main class="wrap">
-<header><span class="eb">Araştırma durumu · {esc(s.get('tur'))} proje</span><h1>{esc(s.get('proje'))}</h1>
+<header><span class="eb">Araştırma durumu · {esc(s.get('tur'))} proje · {'aktarım çalışması (iki sonuçlu)' if is_aktarim(s) else 'boşluk çalışması'}</span><h1>{esc(s.get('proje'))}</h1>
 <p class="muted">{esc(karar_path)} · üretildi {now} · {nbad} açık uyarı ya da eksik</p></header>
 <div class="top">
  <div class="card"><span class="lbl">Son karar ({esc(sk.get('tarih'))})</span><span class="verdict {vcls}">{esc(verdict)}</span><p>{esc(sk.get('neden'))}</p>
@@ -304,9 +440,7 @@ tr.ok td.i,tr.ok td.l{{color:var(--accent)}}tr.uyari td.i,tr.uyari td.l{{color:v
 {focus}
 <section><h2>Aşamalar</h2><ol class="stages">{''.join(stage_html)}</ol></section>
 <section><h2>Yeterlilik denetimleri</h2><div class="tw"><table><tbody>{''.join(chk_html)}</tbody></table></div></section>
-<section><h2>Üç sayı</h2><div class="tw"><table class="num"><thead><tr><th>Koşul</th><th>Taban</th><th>Basit çare</th><th>Adil kâhin</th><th>Kâhin − çare</th><th>Tohum</th></tr></thead><tbody>{rows}</tbody></table></div>
-<p class="muted">Eşik δ = {fmt(u.get('esik'))} {esc(u.get('birim',''))} · Kâhin: {esc(u.get('kahin_tanimi') or '—')}</p>
-<div class="card"><span class="lbl">Boşluk cümlesi</span><p class="sent">{sentence}</p></div></section>
+{main_section}
 <div class="two"><section class="card"><span class="lbl">Dönüşler ({len(s.get('donus',{}).get('kayit',[]))} / {s.get('donus',{}).get('sinir',3)})</span><ul>{piv}</ul></section>
 <section class="card"><span class="lbl">Sapmalar ve aşılan kararlar</span><ul>{sap}</ul></section></div>
 </main></body></html>"""

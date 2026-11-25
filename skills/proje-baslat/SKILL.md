@@ -45,12 +45,18 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
    replace it; tell the user how to chain it. The guard is tested after the first commit (step 8).
 5. **Intake.** Ask only these, in one message:
    - project name and one-line goal;
+   - the study type, in one line each: **boşluk** ("ölçülmüş bir düşüş, bir yöntem için yer bırakıyor mu?") or
+     **aktarım** ("yeni ya da başka alandan bir yöntemi var olan M'nin yerine koymak; iki sonuç da yayımlanabilir:
+     A alternatif yöntem, B 'X gerekli mi?'"). Write it to `calisma_turu` (`bosluk` / `aktarim`). If the user names a
+     method to apply, it is `aktarim`, and the method goes to KARAR.md as a candidate idea, not into `aktarim.adaylar`
+     (candidates come after Kapı A3);
    - the base paper/method (title or link), whether its code is available, and what it needs to run (training or
      only a checkpoint, GPU memory, operating system, graphics drivers). Compare with `kaynak.json` in the personal
      folder: if it matches an item in `izin_yok`, say plainly that it cannot be the base method on this machine and
      look for a fitting base paper first; if it matches `ilk_tercih_degil`, say so now and ask whether to look for a
      fitting base paper first;
-   - the condition the user suspects breaks it (if any). Record it as a hypothesis in KARAR.md; never pass it to the
+   - the condition the user suspects breaks it (if any), or for `aktarim` the bottleneck of M the user suspects
+     (memory, data, out-of-distribution error, latency…). Record it as a hypothesis in KARAR.md; never pass it to the
      reader agents of `zayif-nokta-raporu`;
    - whether this condition or task was studied in an earlier project. Do not rely on the answer alone: run the
      family check of `arastirma-kapisi` (Step 0.4: `kapali_kapilar.json` in the personal folder, memory, registry, earlier
@@ -58,7 +64,9 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
      matched). On a match, "bu kez neden farklı?" needs a measurable prediction before any work.
    Fill `karar.json`: `proje`, `tur`, `olusturma` (today's absolute date), `temel_yontem`. Leave `bozulma` and the
    thesis sentence empty: they are filled only from measurements. Set `son_karar` to
-   `{"karar": "KOŞULLU DEVAM", "neden": "Proje kuruldu; henüz ölçüm yok.", "siradaki_adim": "Temel makale için zayıf nokta raporu (0. adım)."}`.
+   `{"karar": "KOŞULLU DEVAM", "neden": "Proje kuruldu; henüz ölçüm yok.", "siradaki_adim": "Temel makale için zayıf nokta raporu (0. adım)."}`;
+   for `aktarim` the next step is "M için zayıf nokta raporu (0. adım); sonra M'nin darboğazını kendi koşunda ölç ve
+   ekseni, δ'yı, ε'u ve iki sonuç cümlesini aday adı geçmeden yaz (Kapı A1)."
    Mirror the same in `KARAR.md` (project name, date, base method).
 6. **Register.** Add `{"ad", "yol", "tur", "durum": "aktif", "olusturma"}` to the registry (create the folder and
    file if missing; keep it a JSON list). When the structure is added to an existing project that keeps decisions in

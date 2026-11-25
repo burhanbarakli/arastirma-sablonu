@@ -1,6 +1,7 @@
 {
   "proje": "PROJE_ADI",
   "tur": "ana",
+  "calisma_turu": "bosluk",
   "olusturma": "YYYY-AA-GG",
   "temel_yontem": "",
   "bozulma": "",
@@ -16,6 +17,23 @@
     "basit_care_adaylari": [],
     "basit_care_yontemden_once": null,
     "satirlar": []
+  },
+  "aktarim": {
+    "darbogaz": "",
+    "eksen": "",
+    "eksen_olcutu": "",
+    "eksen_yonu": "",
+    "performans_yonu": "",
+    "delta": null,
+    "epsilon": null,
+    "tohum_gerekli": null,
+    "tohum_hesabi": "",
+    "sonuc_a": "",
+    "sonuc_b": "",
+    "basit_alternatifler": [],
+    "adaylar": [],
+    "olcumler": [],
+    "karsilastirmalar": []
   },
   "asamalar": {
     "okuma":       {"durum": "bekliyor", "tarih": "", "not": "", "dosya": ""},

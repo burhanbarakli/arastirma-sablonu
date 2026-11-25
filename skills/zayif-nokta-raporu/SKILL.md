@@ -1,6 +1,6 @@
 ---
 name: zayif-nokta-raporu
-description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has an explained reading mode (anlatımlı okuma): the agent reads the paper and finds the weak points itself, then walks the user through them one at a time, each with the exact place to read ("şurayı oku"), so the user studies only the spots that matter; no quizzing: use it for "anlatarak oku", "anlatımlı okuma", "şurayı oku de", "birlikte okuyalım", "rehberli oku", "rehberli okuma", "zayıf noktaları anlat". Also has a field survey mode for literature search on a topic: use it for "alan taraması", "literatür tara", "makale ara", "bu konuda ne var", "alanı tanımak istiyorum", "temel makale bul", "bunu kim çözmüş". Not for summarising a paper or writing a review of the user's own manuscript.
+description: Weak-point report for a research paper, before reproducing it ("step 0"). Use when the user gives one or more papers (PDF path, arXiv/OpenReview/DOI link or title) and wants to know where the method may break, what it assumes, which constants were hand-picked, which conditions were never tested, whether results sit at the ceiling, what reviewers and GitHub issues say, or wants an assumption table across several papers of a new field. Triggers include "zayıf nokta raporu", "makaleyi zorla", "nerede bozulur", "varsayım tablosu", "0. adım", "weak points of this paper", "where does this method break". Also has an explained reading mode (anlatımlı okuma): the agent reads the paper and finds the weak points itself, then walks the user through them one at a time, each with the exact place to read ("şurayı oku"), so the user studies only the spots that matter; no quizzing: use it for "anlatarak oku", "anlatımlı okuma", "şurayı oku de", "birlikte okuyalım", "rehberli oku", "rehberli okuma", "zayıf noktaları anlat". Also has a field survey mode for literature search on a topic: use it for "alan taraması", "literatür tara", "makale ara", "bu konuda ne var", "alanı tanımak istiyorum", "temel makale bul", "bunu kim çözmüş", and for a candidate pool of recent or other-field methods in a method-transfer study ("aday yöntem ara", "güncel yöntemler", "hangi yeni yöntem buna uyar", "aday havuzu"). Not for summarising a paper or writing a review of the user's own manuscript.
 ---
 
 # Zayıf nokta raporu (0. adım)
@@ -26,7 +26,8 @@ user's language (Turkish unless they write in another language).
    the user's own unpublished ideas, drafts or data.
 7. **Park method ideas.** If a method idea comes up during reading or a survey (from the user or from you), write it
    in one line under "Fikirler (park edildi)" and do not develop it. Methods come only after Kapı 3 of
-   `arastirma-kapisi`.
+   `arastirma-kapisi` (in a method-transfer study, `calisma_turu: aktarim`, after Kapı A3, through purpose D of the
+   field survey).
 8. **The user picks the problem.** End with the top three weak points, each with its cheapest experiment, and let the
    user choose; do not choose for them. A drop seen in a paper, a toy or a derivation is a hypothesis for Kapı 1, not a
    measured failure.
@@ -231,6 +232,10 @@ done X". The user's record: literature search tended to end in a method idea; ke
    - **B. Alanı tanımak:** 5–10 core papers → assumption table and blind spot.
    - **C. Kim çözmüş:** a field-free property sentence from method search (arastirma-kapisi) → candidates from any
      field.
+   - **D. Aday havuzu (aktarım):** in a method-transfer study after Kapı A3: M, its measured bottleneck, the advantage
+     axis and the field-free property sentence → recent methods (about the last two years) and classical ones from
+     any field that have that property. Precondition: `aktarim.eksen`, `delta`, `epsilon` and both outcome sentences
+     are committed; if not, say so and stop (the axis comes before the candidates).
 2. **Search sentence, not a method name.** Write it with the user: task + condition (e.g. "policies that learn
    contact-rich insertion under noisy force sensing"), plus an optional field-free property sentence. A method name
    in the sentence locks the search onto that method; say so if the user proposes one.
@@ -241,9 +246,14 @@ done X". The user's record: literature search tended to end in a method idea; ke
    sweep. Record which papers were expanded.
 5. **Triage table** from title and abstract, one row per candidate: paper (year, venue, link) | task | what is varied |
    simple baseline? | real robot / real data? | seeds | code | resource fit (ground rule 9). Mark unknown cells "?".
+   For D the columns are: method (paper, year, link) | field | principle | why it should move the axis (one
+   sentence) | where it should be worse | assumptions that may fail here | already applied to this task? | resource
+   fit | code. For D, the candidates come from an agent that does not see the user's favourite (when a subagent tool
+   is available); the user's own candidates join the table. Record which fields were searched.
 6. **Core and depth.** Pick 5–10 with the user (purpose A: 1–2). For B, fill the assumption table from the PDFs (the
    "Assumption table" section above) and name the blind spot. For A, hand over to the normal report. For C, run the
-   transfer check in arastirma-kapisi on each candidate.
+   transfer check in arastirma-kapisi on each candidate. For D, hand the table to "Aday seçimi" in arastirma-kapisi
+   (devil's advocate, at most two candidates, toy test); do not pick for the user.
 7. **Verify existence.** Every paper listed is checked through OpenAlex, arXiv or its DOI (`verify_reference` where
    available) and linked. Nothing from memory. Unverifiable items go to "Doğrulanamayanlar".
 8. **Stop rule.** Agree a time box (default: one to two working sessions). Stop when new papers add no new column

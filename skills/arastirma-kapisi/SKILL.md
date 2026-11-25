@@ -1,6 +1,6 @@
 ---
 name: arastirma-kapisi
-description: Research gatekeeper that stops known research mistakes (and the user's own recorded ones, if any) before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım", "hızlı bir deneme yapalım", "makaleye küçük bir ek", "let's try", "quick experiment"); asks how to find or design a new method for a measured weak point ("yeni yöntem bul", "buna ne yöntem önerirsin", "boşluğu nasıl kapatırız"); wants to bring a method or component from another field into a paper's method ("başka alandan bir yöntem koyalım", "X alanındaki şeyi buraya uygulayalım", "bu parçayı Y ile değiştirelim"); pivots or changes the research question; adds a new condition; changes a threshold, decision rule, seed count or rival setting; wants to drop or soften a limitation ("bunu çıkaralım", "hakem sorarsa ekleriz"); answers a reviewer request ("hakem istedi"); or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the recorded mistakes, reads and updates the project's karar.json and KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
+description: Research gatekeeper that stops known research mistakes (and the user's own recorded ones, if any) before they happen. Use whenever the user starts a new study, project, paper or thesis direction; proposes a method, model, module or architecture to build ("X ekleyelim", "şu yöntemi deneyelim", "dünya modeli kuralım", "makale çıkaralım", "hızlı bir deneme yapalım", "makaleye küçük bir ek", "let's try", "quick experiment"); asks how to find or design a new method for a measured weak point ("yeni yöntem bul", "buna ne yöntem önerirsin", "boşluğu nasıl kapatırız"); wants to bring a method or component from another field into a paper's method ("başka alandan bir yöntem koyalım", "X alanındaki şeyi buraya uygulayalım", "bu parçayı Y ile değiştirelim"); wants to apply a recent or other-field method in place of an existing one, as an alternative method ("alternatif yöntem", "yeni çıkan yöntemi bu alana uygulayalım", "güncel yöntemi M'nin yerine koyalım", "transformer / difüzyon / Mamba / Koopman koyalım", "aktarım çalışması"); pivots or changes the research question; adds a new condition; changes a threshold, decision rule, seed count or rival setting; wants to drop or soften a limitation ("bunu çıkaralım", "hakem sorarsa ekleriz"); answers a reviewer request ("hakem istedi"); or prepares a manuscript or submission. Also when the user types "kapı", "araştırma kapısı", "/arastirma-kapisi", "doğru yolda mıyım", "devam mı dur mu". It checks the recorded mistakes, reads and updates the project's karar.json and KARAR.md, and gives a firm DUR / KOŞULLU DEVAM / DEVAM verdict with the next concrete step.
 ---
 
 # Araştırma kapısı
@@ -68,6 +68,27 @@ a step toward the user's own goal, not as a refusal.
 - **Ceiling:** headline success above ~95% of the metric's best value. **Inside noise:** the difference is smaller
   than the spread across seeds, or its interval contains zero.
 
+## Study types
+
+`karar.json > calisma_turu` says which kind of study this is. Read it in Step 0; missing means `bosluk`.
+
+- **`bosluk` (gap study):** does a measured drop leave room for a method? Kapı 1–7 as written below.
+- **`aktarim` (method transfer, two-outcome pre-registration):** a recent or other-field method X is applied in
+  place of an existing method M, for a measured bottleneck of M. It is registered so that both outcomes are results:
+  - **Sonuç A (alternatif yöntem):** X is non-inferior to M on the main metric (within δ) and better than the
+    strongest simple alternative on the one pre-registered advantage axis (by at least ε);
+  - **Sonuç B ("X gerekli mi?"):** the strongest simple alternative is non-inferior to X on the main metric, and an
+    advantage of X over it of ε or more on the axis is ruled out.
+  Anything else is **belirsiz** (more seeds, or written as inconclusive); a candidate behind M by more than δ is a
+  closed door. "No significant difference" with a wide interval is neither A nor B: it is not equivalence.
+  Kapı 2, 4 and 6, the family check, the focus rule, the definitions, overrides and ongoing checks apply unchanged;
+  Kapı 1, 3, 5 and 7 take the forms in "Aktarım türü" below, and its candidate rules replace the method search and
+  the transfer check.
+
+A user who says "alternatif yöntem", "yeni yöntemi bu alana uygulayalım", "X'i M'nin yerine koyalım", or names a
+recent method to apply, is describing `aktarim`. If the project is `bosluk` or has no record, ask once which type it
+is. Switching an existing project's type is a pivot, recorded as a Sapma.
+
 ## Step 0: read the record
 
 1. If the project has `karar.json`, read it first (it is the source of truth), then `KARAR.md`. If only `KARAR.md`
@@ -107,6 +128,9 @@ a step toward the user's own goal, not as a refusal.
    bunu sınar, tutmazsa bu kapı da kapanır". A reason without a number and a measurable difference does not count:
    **DUR**. With it, the earlier setting or the winning rule's analogue and any published simple remedy enter the very
    first measurement, next to the drop (Kapı 1), and the pivot count carries over.
+   In an `aktarim` study, name the condition by M's bottleneck and the task. Reopening a closed door "with a new
+   axis" counts only if the earlier winner enters the first measurement on that axis, with a numbered prediction of
+   its weakness there.
 
 ## The gates
 
@@ -232,8 +256,8 @@ to KARAR.md under "Yöntem arama":
 
 ## Transfer check: a method from another field
 
-Run this whenever the user wants to replace a component of the base method with something from another field, or to
-add such a component. It sits between Kapı 1 and Kapı 4 and uses their verdicts. "Bunu bu alana kimse uygulamamış"
+Run this in a `bosluk` study whenever the user wants to replace a component of the base method with something from another field, or to
+add such a component (in an `aktarim` study, "Aday seçimi" replaces it). It sits between Kapı 1 and Kapı 4 and uses their verdicts. "Bunu bu alana kimse uygulamamış"
 is not a motivation: it is mistake 1, so **DUR**. Start from the missing property, not from the borrowed method.
 
 1. **Which component causes the drop, measured?** Switch components off or replace them with their ideal one at a
@@ -256,6 +280,89 @@ is not a motivation: it is mistake 1, so **DUR**. Start from the missing propert
 Record the answers in KARAR.md under "Aktarım" (and in `karar.json` under `sapmalar` or the stage `not` if the
 project has one), with the source field, the property sentence and the simple tool tried.
 
+## Aktarım türü (calisma_turu: aktarim)
+
+Why this type exists: in the example cases, applying a newer method to a field usually lost to a simpler or older
+method, and the loss was then read as a failure, which pushed rules to change afterwards. The two-outcome
+registration makes the simple method's win a result ("X gerekli mi?"). It does not remove mistake 1: the starting
+point is M's measured bottleneck, never the method X. Gates run in this order: Kapı A1, Kapı 2, Kapı A3, candidate
+selection, Kapı 4, Kapı A5, main run, Kapı 6, Kapı A7.
+
+**Kapı A1: Darboğaz ve eksen (replaces Kapı 1; mistakes 1, 4).** Before any candidate method is written in
+`aktarim.adaylar`, these are written and committed (the commit guard blocks a first candidate while any is missing):
+- `temel_yontem`: M, the field's current strong or standard method for the task; if a stronger one exists, why it
+  is not chosen. Run `zayif-nokta-raporu` on M's paper first;
+- `aktarim.darbogaz`: M's bottleneck measured in the user's own runs on M's official or reproduced code, as
+  "M, [koşul] altında [eksen ölçütü]'nde [değer]; [kullanım] için [hedef] gerekir". A bottleneck read in a paper, a
+  weak-point report or derived by the agent is a hypothesis: **KOŞULLU DEVAM**, only to measure it;
+- one primary advantage axis `aktarim.eksen`, its metric `eksen_olcutu` and direction `eksen_yonu` (`buyuk_iyi` /
+  `kucuk_iyi`). The axis is a measured behaviour: error out of distribution, memory, data needed, latency, violation
+  of a physical law, empirical coverage of a guarantee. It is never the candidate's own training objective, and never
+  "has a guarantee" alone; if M, or a cheap addition to M, already has the property, the axis does not count. Other
+  axes are exploratory and never decide;
+- the main metric `protokol.olcut` and its direction `aktarim.performans_yonu`;
+- `aktarim.delta`, the non-inferiority margin on the main metric, at most half of (M − taban) measured in this
+  project; and `aktarim.epsilon`, the advantage that counts on the axis, in its unit, with a reason from the use
+  (for example the tolerance of the task);
+- `aktarim.sonuc_a` and `sonuc_b`: the sentence that will be written for each outcome.
+M at the ceiling of the metric, M barely above taban, or δ above half of (M − taban): **DUR** (parity would be
+trivial). "Kimse uygulamamış", "yeni çıktı", "bu alanda transformer/difüzyon denenmemiş" is not a bottleneck: **DUR**,
+and say: "Bu bir yöntem, henüz bir darboğaz değil." Next step: measure M's bottleneck on its own code.
+
+**Kapı A3: Kollar (replaces Kapı 3; mistakes 2, 3).** Measured before X is built, with the seeds of `tohum.plan`,
+recorded in `aktarim.olcumler` as `{"tarih", "rol": "taban"|"M"|"basit"|"aday", "kol", "performans", "eksen", "tohum",
+"pilot"}`:
+- taban and M, on the main metric and the axis;
+- the simple alternatives in `aktarim.basit_alternatifler` (`{"ad", "tur", "durum"}`): at least the three cheapest
+  ways a practitioner would get the same advantage, always including one **"M + ilkenin ucuz eki"**
+  (`"tur": "ucuz_ek"`): the principle of the candidate family added cheaply to M (a physics loss term, a conformal
+  wrapper, data augmentation, a smaller or distilled M, a classical estimator or filter). When a subagent tool is
+  available, get this list from an agent that sees M and the bottleneck but not the user's candidate. Each is
+  measured or excluded with a reason; the strongest gets the tuning sweep X will get;
+- room on the axis: if M's bottleneck is already within ε of what the use needs, or the strongest simple
+  alternative already meets both conditions of Sonuç A against M: **DUR**, and write it as the finding ("basit
+  alternatif yetiyor"); it is a closed door.
+
+**Aday seçimi (replaces the method search and the transfer check for this type; after Kapı A3).**
+1. **Property sentence, field-free:** what X must do to move the axis ("keep the energy of a long rollout bounded",
+   not "use a Hamiltonian network"). Missing: **DUR**.
+2. **Candidate pool:** `zayif-nokta-raporu` field survey, purpose D, with that sentence: recent methods and
+   classical ones from any field. Record which fields were searched. When a subagent tool is available, one agent
+   that does not see the user's favourite proposes candidates; the user's own candidates join the list.
+3. **Per candidate:** the source paper (verified, linked); the principle; one sentence why it should move the axis;
+   where it should be worse (predicted failure); whether its assumptions hold here (run `zayif-nokta-raporu` on its
+   paper and put the two assumption tables side by side); resource fit (`kaynak.json`); code; whether it is already
+   applied to this task (then the study is a comparison: say so in `sonuc_a`).
+4. **Devil's advocate, before any code:** three reasons the candidate will tie the strongest simple alternative on
+   the axis, and the measurement that would show each.
+5. **At most two candidates** enter `aktarim.adaylar` (`{"ad", "kaynak", "alan", "gerekce", "beklenen_bozulma"}`); a
+   candidate without `gerekce` and `beklenen_bozulma`: **DUR**. A third candidate is a pivot.
+6. **Toy test (afternoon-sized, a pilot):** taban, M, the strongest simple alternative and the candidates, on the
+   axis. A candidate that does not move the axis by ε over the strongest simple alternative here stops. If both
+   stop, write the finding (Sonuç B or a closed door) and stop; do not search for a new axis on which the candidate
+   wins (mistake 4).
+
+**Kapı A5 (Kapı 5, plus).** Besides the items of Kapı 5:
+- `protokol.karar_kurali` is the two-outcome rule: "Sonuç A: (aday − M) performans farkının %90 aralığının alt
+  sınırı > −δ ve (aday − en güçlü basit alternatif) eksen farkının %90 aralığının alt sınırı > ε. Sonuç B: (basit −
+  aday) performans farkının %90 alt sınırı > −δ ve eksen farkının %90 üst sınırı < ε. Başka her durum belirsiz."
+  Differences are paired by seed and oriented so that positive means better (multiply by −1 when smaller is better);
+- `aktarim.tohum_gerekli` and `tohum_hesabi`: computed with `python3 tools/aralik.py tohum --delta <δ> --sd <sd>`
+  (or `--pilot <farklar>`), from the 95% upper bound of the pilot's spread or from an earlier comparable project,
+  never from the pilot's point estimate alone. `tohum.plan` is at least this. If the user caps seeds below it, say
+  once "Bu seed sınırıyla eşdeğerlik gösterilemez; sonuç pilot olur." and offer the three ways: lift the limit only
+  for the confirming run; prefer a candidate that needs no training (analytical, or a released checkpoint with
+  paired evaluation seeds; the single training run is a limitation); or keep the result as a pilot. The user
+  chooses; record the choice;
+- intervals are computed with `python3 tools/aralik.py fark <tohum başına eşli farklar>` and recorded in
+  `aktarim.karsilastirmalar` (`{"tarih", "aday", "basit", "tohum", "perf_aday_eksi_m": [alt, üst],
+  "perf_basit_eksi_aday": [alt, üst], "eksen_aday_eksi_basit": [alt, üst]}`); the panel applies the rule. Never
+  decide by eye or from means.
+
+**Kapı A7 (Kapı 7, plus).** The claim matches the outcome: A is written "eşdeğer ve [eksen]'de önde", not "daha
+iyi"; B is written as B ("X gerekli mi?"), never reframed as A on another axis; belirsiz is written as belirsiz.
+Every condition and metric where X is behind M stays in the text and in `sinirliliklar`.
+
 ## Ongoing checks (every time the skill runs on an existing project)
 
 Compare the request with the record and warn immediately when:
@@ -270,6 +377,10 @@ Compare the request with the record and warn immediately when:
   mistake 8);
 - the same condition or task family is reopened where a simple method already won or the drop stayed below the
   threshold (Step 0, family check);
+- in an `aktarim` study: the axis, δ, ε, the outcome sentences or the required seeds are changed after a
+  measurement; a new axis or candidate is proposed after a result (a pivot); a "no difference" result is called
+  equivalence ("Fark çıkmadı demek eşdeğer demek değil; aralık ±δ içinde mi?"); or a candidate is named before Kapı A1
+  is committed;
 - a side task (`tur: yan`) that has met its own stop rule or duration opens a new question (a gate, a measurement):
   that is a pivot and a change of kind. Record the pivot and ask once whether it becomes a main project (then the
   focus rule applies) or stops here.
@@ -299,14 +410,16 @@ ana, bir küçük yan iş. Hangisini durduruyoruz?" Do not nag beyond that.
 ```
 KARAR: DUR | KOŞULLU DEVAM | DEVAM
 Neden: two or three sentences, naming the gate and, where it fits, the user's own past example.
-Boşluk cümlesi: filled as far as measured, "?" where not.
+Boşluk cümlesi: filled as far as measured, "?" where not. In an `aktarim` study instead:
+Sonuç cümlesi: "M, [koşul]'da [ölçüt] [değer], darboğaz [eksen]'de [değer]; aday … → A | B | belirsiz | pilot", "?" where not measured.
 Sıradaki adım: one concrete action (what to measure or build, with conditions × seeds), small enough to start today.
 KARAR.md: what was added or changed.
 ```
 
 After the block, at most a short paragraph of explanation. Then update the record. If the project has a
 `karar.json`, update it after every verdict (`asamalar.<stage>.durum` as `gecti` / `kosullu` / `durdu`, `tarih`, `not`;
-`son_karar`; `uc_sayi` rows when numbers were measured; `donus.kayit` for a pivot; `sapmalar` for a rule change;
+`son_karar`; `uc_sayi` rows when numbers were measured (in an `aktarim` study: `aktarim.olcumler` and
+`aktarim.karsilastirmalar`); `donus.kayit` for a pivot; `sapmalar` for a rule change;
 `overrides` for an override; `sinirliliklar` for every new limitation, idealisation or seed limit; a closed door also
 goes to `kapali_kapilar.json` in the personal folder), add a row to
 KARAR.md under "Kapı kayıtları", then run `python3 tools/durum.py` to refresh `durum.html` and give the user its path.

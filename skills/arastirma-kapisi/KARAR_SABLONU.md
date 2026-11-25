@@ -74,6 +74,28 @@ Bu dosya araştırma kapısının kayıt defteridir. Kurallar sonuçlardan önce
 |---|---|---|---|---|---|---|
 | | | | | | | |
 
+## Aktarım çalışması (calisma_turu: aktarim)
+
+- **M ve neden o:** [alanın güncel güçlü ya da standart yöntemi; daha güçlüsü varsa neden seçilmedi]
+- **Darboğaz (kendi koşumuzda):** "M, [koşul] altında [eksen ölçütü]'nde [değer]; [kullanım] için [hedef] gerekir." (tarih, tohum)
+- **Avantaj ekseni (aday adından önce, dondurulmuş):** [eksen] · ölçüt: [ölçülen davranış] · yön: [büyük/küçük iyi]
+- **δ (ana ölçütte eşdeğerlik payı) ve ε (eksende sayılan üstünlük):** [değerler; δ ≤ ½·(M − taban); ε'un kullanımdan gerekçesi]
+- **Sonuç A cümlesi:** [...] · **Sonuç B cümlesi:** [...]
+- **Gereken tohum:** [n; `tools/aralik.py tohum` ile, sd kaynağı]
+- **Akıldaki yöntem fikirleri (aday değil, Kapı A3'ten önce):** [...]
+
+| Tarih | Basit alternatif | Tür (ucuz_ek / klasik / küçük M …) | Ölçüldü mü, sonuç |
+|---|---|---|---|
+| | | | |
+
+| Tarih | Aday (en çok 2) | Kaynak makale | Alan | Neden ekseni oynatmalı | Nerede kötü olmalı | Şeytanın avukatı | Oyuncak test |
+|---|---|---|---|---|---|---|---|
+| | | | | | | | |
+
+| Tarih | Aday ↔ basit | Tohum | Perf. aday − M (%90) | Perf. basit − aday (%90) | Eksen aday − basit (%90) | Sonuç (A / B / belirsiz / pilot) |
+|---|---|---|---|---|---|---|
+| | | | | | | |
+
 ## Dönüş sayacı
 
 | # | Tarih | Neden | Kim onayladı |

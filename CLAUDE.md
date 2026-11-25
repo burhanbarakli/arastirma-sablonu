@@ -48,5 +48,8 @@ Bu klasördeki her araştırma işinde aşağıdaki yapı geçerlidir. Kullanıc
   Gerekçe yer tutucu olamaz ("doldurulacak"); eksik kalmış eski bir kayıt düzenlenmez, `"duzeltir": "<eski tarih>"`
   alanlı yeni bir kayıtla tamamlanır.
 - Üçüncü dönüşte durma kuralı devreye girer.
+- Aktarım çalışmasında (`calisma_turu: aktarim`) avantaj ekseni, ölçütü, δ, ε ve iki sonuç cümlesi hiçbir aday adı
+  geçmeden yazılır; en çok iki aday denenir; karar `tools/aralik.py` ile hesaplanan %90 aralıklarla ve hesaplanan
+  tohum sayısıyla verilir. "Fark çıkmadı" eşdeğerlik değildir.
 - Gerçek bir sınırlılık metinden çıkarılmaz; ortaya çıktığı anda `sinirliliklar`'a yazılır.
 - Kullanıcı bir kapı kararını aşarsa yardım sürer, ama `overrides`'a tarih, kapı, karar ve gerekçeyle yazılır.
