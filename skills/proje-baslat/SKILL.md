@@ -22,12 +22,9 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
    stop and say so (offer to open the panel instead). If it has other files, do not overwrite anything: copy only
    the template files that are missing; if a `CLAUDE.md` exists, append the template's section under a heading
    instead of replacing it.
-2. **Focus check (before copying).** Read the registry. The rule is one main project and one small side task. If
-   there is already an active main project (`"durum": "aktif", "tur": "ana"`) or an active side task (`"tur": "yan"`),
-   say so plainly: "Şu an aktif ana proje: X; yan iş: Y. Kural: bir ana, bir küçük yan iş." Ask what this new project
-   is and which existing one is archived or paused to make room. If the registry is empty or missing, it may only
-   mean this machine has no record: ask which projects are active on any machine and register them first. Do not
-   continue until the user answers.
+2. **Registry check (before copying).** Read the registry. If this folder is already registered, say so and offer to
+   open the panel instead. If the registry is empty or missing, say once that this machine has no record (the family
+   check in step 5 then relies on the other sources). There is no limit on how many projects are active.
 3. **Copy** the template files into the folder (`cp -n`), keep `tools/` executable. Copy only CLAUDE.md, KARAR.md,
    karar.json, README.md and tools/. Never copy `.git/`, `ornek/` (a filled example panel), `skills/`, `kur.sh`,
    `kur.ps1`, `kisisel-ornek/`, `docs/` or `.gitignore`; skip `README.md` if the project already has one.
@@ -62,16 +59,15 @@ where these steps say `python3` if `python3 -c ""` fails (it does for the Micros
      family check of `arastirma-kapisi` (Step 0.4: `kapali_kapilar.json` in the personal folder, memory, registry, earlier
      decision files) and fill `aile_kontrolu` with `taranan_kaynaklar` and `onceki_proje` (`"yok"` if nothing
      matched). On a match, "bu kez neden farklı?" needs a measurable prediction before any work.
-   Fill `karar.json`: `proje`, `tur`, `olusturma` (today's absolute date), `temel_yontem`. Leave `bozulma` and the
+   Fill `karar.json`: `proje`, `olusturma` (today's absolute date), `temel_yontem`. Leave `bozulma` and the
    thesis sentence empty: they are filled only from measurements. Set `son_karar` to
    `{"karar": "KOŞULLU DEVAM", "neden": "Proje kuruldu; henüz ölçüm yok.", "siradaki_adim": "Temel makale için zayıf nokta raporu (0. adım)."}`;
    for `aktarim` the next step is "M için zayıf nokta raporu (0. adım); sonra M'nin darboğazını kendi koşunda ölç ve
    ekseni, δ'yı, ε'u ve iki sonuç cümlesini aday adı geçmeden yaz (Kapı A1)."
    Mirror the same in `KARAR.md` (project name, date, base method).
-6. **Register.** Add `{"ad", "yol", "tur", "durum": "aktif", "olusturma"}` to the registry (create the folder and
+6. **Register.** Add `{"ad", "yol", "durum": "aktif", "olusturma"}` to the registry (create the folder and
    file if missing; keep it a JSON list). When the structure is added to an existing project that keeps decisions in
    its own form (a decision folder, notes), also write `"karar_yeri": "<path>"`, and leave those files as they are.
-   If the folder holds more than one line of work, write `"hatlar": [{"ad", "tur"}]`.
 7. **Panel.** Run `python3 tools/durum.py` (or `python` as above) and tell the user the path of `durum.html`. Open it in the browser pane if
    one is available.
 8. **First commit and guard test.** `git add -A && git commit -m "Proje kuruldu: araştırma şablonu"` only if the user

@@ -1,6 +1,5 @@
 {
   "proje": "Depo robotu: kayan zemin (örnek)",
-  "tur": "ana",
   "olusturma": "2026-11-18",
   "temel_yontem": "Makaledeki denetleyici",
   "bozulma": "Denetleyici ıslak zeminde başarıyı %96'dan %70'e düşürüyor (3 tohum).",

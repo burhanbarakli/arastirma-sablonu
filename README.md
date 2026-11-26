@@ -58,9 +58,9 @@ Claude Code'da, projenin açılacağı klasörde:
 /proje-baslat
 ```
 
-ya da "yeni bir araştırma projesi başlat" demen yeterli. Yan iş (örneğin bir alan taraması) de böyle açılır.
+ya da "yeni bir araştırma projesi başlat" demen yeterli. Kısa bir alan taraması da böyle açılabilir.
 `proje-baslat` skill'i:
-1. odağı denetler: bir ana proje, bir yan iş; kayıt boşsa başka makinedeki projeleri sorar;
+1. klasörün kayıtta olup olmadığına bakar (aynı anda kaç proje açık olacağına sınır yok);
 2. bu klasördeki dosyaları yeni projeye kopyalar (kişisel klasör kopyalanmaz, okunur);
 3. `git init` yapar ve `tools/karar_koruma.py`'ı commit kancası olarak kurar;
 4. senden proje adını, temel yöntemi (ve koşmak için neye ihtiyaç duyduğunu), şüphelendiğin koşulu ve bu koşulun
@@ -72,7 +72,7 @@ ya da "yeni bir araştırma projesi başlat" demen yeterli. Yan iş (örneğin b
 
 ```mermaid
 flowchart TD
-  B["Başlangıç: proje-baslat<br/>odak, aile sorusu, kilit testi"] --> Q{Makalen var mı?}
+  B["Başlangıç: proje-baslat<br/>aile sorusu, kilit testi"] --> Q{Makalen var mı?}
   Q -- evet --> R["zayif-nokta-raporu: rapor<br/>bağımsız okuyucu + denetçi"]
   Q -- hayır --> T["Alan taraması A / B"]
   T -- "A: temel makale" --> R
@@ -92,7 +92,7 @@ Hangi işe hangi skill'le başlanır:
 
 | İş | Başlangıç |
 |---|---|
-| Yeni çalışma, yan iş dahil | `proje-baslat` (odak ve aile kontrolü okumadan önce) |
+| Yeni çalışma | `proje-baslat` (aile kontrolü okumadan önce) |
 | Elinde bir makale var | `zayif-nokta-raporu` rapor modu; tek tek dinlemek istersen "anlatımlı okuma" |
 | Alanı tanımak ya da temel makale bulmak | `zayif-nokta-raporu` alan taraması, amaç B ya da A |
 | "Bunu kim çözmüş?" | `arastirma-kapisi`: yalnız Kapı 3'ten sonra, yöntem arama ya da aktarım kontrolü içinden (alan taraması C). Önce istenirse DUR |
@@ -271,7 +271,7 @@ Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır. 
 
 | Aşama | Ana skill | Yardımcı | Dikkat |
 |---|---|---|---|
-| 0. Başlangıç | `proje-baslat` | | Bir ana, bir yan iş; aile sorusu; kilit engelliyor mu |
+| 0. Başlangıç | `proje-baslat` | | Aile sorusu; kilit engelliyor mu |
 | 1. Okuma | `zayif-nokta-raporu` (bağımsız okuyucu + denetçi; "anlatımlı okuma"; makale yoksa "alan taraması" A/B) | `paper-search`, `research-litnote` | Zayıf noktayı sen seç; fikirler park edilir; kaynak uyumu |
 | Kapı 1: Soru | `arastirma-kapisi` | `hypothesis-generation` (sadece ölçümden sonra) | Düşüşü sen ölç; "kimse yapmamış" = DUR |
 | Kapı 2: Yeniden üretim | `arastirma-kapisi` | | Henüz yeni yöntem kodu yok; koşu kişisel `kaynak.json`'a uyuyor mu |

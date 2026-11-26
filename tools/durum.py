@@ -332,18 +332,9 @@ def registry():
         return None
 
 
-def lines_of(reg, kind):
-    """Active lines of work of one kind. A project with "hatlar" counts each line, not the folder."""
-    out = []
-    for p in reg:
-        if p.get("durum") != "aktif":
-            continue
-        hat = p.get("hatlar")
-        if hat:
-            out += [f"{p.get('ad')} / {h.get('ad')}" for h in hat if h.get("tur") == kind]
-        elif p.get("tur") == kind:
-            out.append(p.get("ad"))
-    return out
+def active_projects(reg):
+    """Names of active projects in the registry (information only; no limit is enforced)."""
+    return [str(p.get("ad")) for p in reg if isinstance(p, dict) and p.get("durum") == "aktif"]
 
 
 def render(s, karar_path):
@@ -354,8 +345,7 @@ def render(s, karar_path):
     ch = checks(s)
     nbad = sum(1 for c in ch if c[1] in ("eksik", "durdu", "uyari"))
     reg = registry()
-    active_main = lines_of(reg or [], "ana")
-    active_side = lines_of(reg or [], "yan")
+    active = active_projects(reg or [])
     sk = s.get("son_karar") or {}
     u = s.get("uc_sayi") or {}
     best, g = gap(u)
@@ -431,19 +421,14 @@ def render(s, karar_path):
     if ovr:
         sap += ovr
     if reg is None:
-        focus = ('<div class="card warnc"><span class="lbl">Odak</span><p>Proje kaydı (~/.claude/arastirma/projeler.json) '
-                 'okunamadı: geçerli bir JSON listesi değil. Odak sayılamıyor; kaydı düzelt.</p></div>')
+        focus = ('<div class="card warnc"><span class="lbl">Aktif projeler</span><p>Proje kaydı (~/.claude/arastirma/projeler.json) '
+                 'okunamadı: geçerli bir JSON listesi değil. Aile kontrolü kaydı tarayamaz; kaydı düzelt.</p></div>')
+    elif not reg:
+        focus = ('<div class="card"><span class="lbl">Aktif projeler</span><p>Bu makinenin proje kaydı boş ya da yok; '
+                 'aile kontrolü öteki kaynaklara dayanır.</p></div>')
     else:
-        if not reg:
-            focus = ('<div class="card warnc"><span class="lbl">Odak</span><p>Bu makinenin proje kaydı boş ya da yok. Başka makinede ya da kayıt '
-                     'dışında aktif proje olabilir; ajan sormadan "tek proje" saymasın.</p></div>')
-        else:
-            names = ", ".join(esc(p) for p in active_main)
-            side = ", ".join(esc(p) for p in active_side)
-            warn = len(active_main) > 1 or len(active_side) > 1
-            focus = (f'<div class="card {"warnc" if warn else ""}"><span class="lbl">Odak</span><p><b>{len(active_main)}</b> aktif ana proje: {names or "yok"}. '
-                     f'<b>{len(active_side)}</b> yan iş: {side or "yok"}.'
-                     + (" Kural: bir ana, bir küçük yan iş. Hangisi duruyor?" if warn else "") + "</p></div>")
+        focus = (f'<div class="card"><span class="lbl">Aktif projeler</span><p><b>{len(active)}</b>: '
+                 f'{", ".join(esc(p) for p in active) or "yok"}.</p></div>')
     verdict = sk.get("karar") or "Henüz karar yok"
     vcls = {"DUR": "durdu", "KOŞULLU DEVAM": "kosullu", "DEVAM": "gecti"}.get(verdict, "bekliyor")
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -479,7 +464,7 @@ tr.ok td.i,tr.ok td.l{{color:var(--accent)}}tr.uyari td.i,tr.uyari td.l{{color:v
 .num td{{font-variant-numeric:tabular-nums}}
 @media (max-width:720px){{.top,.two{{grid-template-columns:1fr}}}}
 </style></head><body><main class="wrap">
-<header><span class="eb">Araştırma durumu · {esc(s.get('tur'))} proje · {'aktarım çalışması (iki sonuçlu)' if is_aktarim(s) else 'boşluk çalışması'}</span><h1>{esc(s.get('proje'))}</h1>
+<header><span class="eb">Araştırma durumu · {'aktarım çalışması (iki sonuçlu)' if is_aktarim(s) else 'boşluk çalışması'}</span><h1>{esc(s.get('proje'))}</h1>
 <p class="muted">{esc(karar_path)} · üretildi {now} · {nbad} açık uyarı ya da eksik</p></header>
 <div class="top">
  <div class="card"><span class="lbl">Son karar ({esc(sk.get('tarih'))})</span><span class="verdict {vcls}">{esc(verdict)}</span><p>{esc(sk.get('neden'))}</p>

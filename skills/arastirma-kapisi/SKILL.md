@@ -36,7 +36,8 @@ a step toward the user's own goal, not as a refusal.
 6. **No stop rule, many pivots** (several in a few weeks in one project).
 7. **Simulation only, results at the ceiling**, the planned real-world test never done.
 8. **Limitations weakened** ("remove it, add it back if a reviewer asks").
-9. **Too many projects at once.**
+9. **Too many projects at once.** No limit is enforced; the panel lists the active projects so their number stays
+   visible.
 10. **Returning to the same condition or task family** where simple methods already won or the condition's drop stayed below the threshold.
 
 ## Definitions
@@ -83,7 +84,7 @@ a step toward the user's own goal, not as a refusal.
     advantage of X over it of ε or more on the axis is ruled out.
   Anything else is **belirsiz** (more seeds, or written as inconclusive); a candidate behind M by more than δ is a
   closed door. "No significant difference" with a wide interval is neither A nor B: it is not equivalence.
-  Kapı 2, 4 and 6, the family check, the focus rule, the definitions, overrides and ongoing checks apply unchanged;
+  Kapı 2, 4 and 6, the family check, the definitions, overrides and ongoing checks apply unchanged;
   Kapı 1, 3, 5 and 7 take the forms in "Aktarım türü" below, and its candidate rules replace the method search and
   the transfer check.
 
@@ -107,13 +108,9 @@ is. Switching an existing project's type is a pivot, recorded as a Sapma.
 2. If `.git/hooks/pre-commit` is missing or does not call `tools/karar_koruma.py`, say so: the commit guard is off.
    If the repository has a remote and `.git/hooks/pre-push` is missing, say so too: revert and rebase bypass the
    pre-commit check, and only the push check catches them.
-3. **Focus.** Read `~/.claude/arastirma/projeler.json`. Count active lines of work, not folders: a project entry
-   with `hatlar` counts each line by its `tur`. If the registry is empty or missing, ask which projects are active on
-   any machine; never assume "only this one". If it exists but cannot be read, say so. Once per session, for each
-   active registered project that is a git repository, show the number of commits in the last 14 days and the first
-   words of recent commit subjects, as information, and ask whether it holds more than one line of work (for example
-   a paper being finished and a new study); write the answer to the registry as
-   `"hatlar": [{"ad", "tur": "ana"|"yan"}]`. Do not infer lines from commit subjects yourself.
+3. **Registry.** Read `~/.claude/arastirma/projeler.json`; the family check (step 4) searches it, archived projects
+   included. If it is empty or missing, say once that this machine has no record and rely on the other sources of
+   step 4; if it exists but cannot be read, say so. There is no limit on how many projects are active.
 4. **Family check (mistake 10).** Name the condition or task the work stresses by the physical quantity or job it
    changes (for example "the command reaches the robot k steps late"), not by a keyword: the same word can mean
    different things in two projects, and two words the same thing. Search: `kapali_kapilar.json` in the personal
@@ -295,7 +292,7 @@ point is M's measured bottleneck, never the method X. Gates run in this order: (
 Kapı 2, Kapı A3, candidate selection, Kapı 4, Kapı A5, main run, Kapı 6, Kapı A7.
 
 **Ön keşif (optional, before a project).** When the user wants ideas before any project exists, run
-`zayif-nokta-raporu` field survey purpose E (bottleneck map). It is a side task of one to two sessions (focus rule).
+`zayif-nokta-raporu` field survey purpose E (bottleneck map), time-boxed to one to two sessions.
 The map never names candidate methods; method names go to a closed `fikirler-park.md` opened only at purpose D. A row
 the user picks is a hypothesis: it enters `aktarim.on_kesif` and is committed before the first measurement, and its
 metric becomes `aktarim.eksen_olcutu` at Kapı A1 unchanged (a different metric is a Sapma). Picking another row later
@@ -417,9 +414,6 @@ Compare the request with the record and warn immediately when:
   measurement; a new axis or candidate is proposed after a result (a pivot); a "no difference" result is called
   equivalence ("Fark çıkmadı demek eşdeğer demek değil; aralık ±δ içinde mi?"); or a candidate is named before Kapı A1
   is committed;
-- a side task (`tur: yan`) that has met its own stop rule or duration opens a new question (a gate, a measurement):
-  that is a pivot and a change of kind. Record the pivot and ask once whether it becomes a main project (then the
-  focus rule applies) or stops here.
 
 Proportion: a seed, rival or setting change made **before** any result was seen is planning, not a deviation; record
 it and move on. If the field is frozen, the commit guard still asks for a `sapmalar` entry, because it cannot know what
@@ -434,12 +428,6 @@ When the user goes ahead against a DUR or KOŞULLU DEVAM, keep helping, and appe
 `{"tarih", "kapi", "karar", "gerekce"}` (the user's reason in their words), and a row in KARAR.md under "Aşılan kapı
 kararları". At the second override in a project say once: "İkinci kez bir kapı kararını aşıyoruz. Bunu danışmanınla
 konuşmanı öneririm." Never delete or edit an earlier entry; the commit guard blocks that.
-
-## Odak
-
-The rule is one main project and one small side task. If the registry or the user shows more than one active main
-project or more than one active side task, say it once per session: "Şu an N ana proje ve M yan iş var. Kural: bir
-ana, bir küçük yan iş. Hangisini durduruyoruz?" Do not nag beyond that.
 
 ## Output format
 

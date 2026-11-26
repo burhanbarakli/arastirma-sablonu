@@ -42,8 +42,7 @@ Bu klasördeki her araştırma işinde aşağıdaki yapı geçerlidir. Kullanıc
 - Aile kontrolü her soruda yapılır: eşleşme yoksa "yok" ve taranan kaynaklar yazılır. Eşik altı kalan ya da basit
   çarenin yettiği koşullar (kapalı kapılar) kişisel klasördeki `kapali_kapilar.json`'a girer (yolu
   `~/.claude/arastirma/kisisel_yolu.txt`'de).
-- Her yeni koşul, soru ya da yöntem bir dönüştür; sonuç olumlu da olsa sayılır. Durma kuralını doldurmuş bir yan iş
-  yeni bir soru açarsa bu da dönüştür ve türü yeniden sorulur.
+- Her yeni koşul, soru ya da yöntem bir dönüştür; sonuç olumlu da olsa sayılır.
 - Gerçek test platformu Kapı 2'de sorulur; eşleşen platform yoksa "iddia benzetimle sınırlı" o anda sınırlılık
   olarak yazılır. Benzetimde doğrulanmış bir sonuçtan sonraki adım gerçek dünya testidir; sonuçtan sonra
   yapılmamasına karar verilirse iddianın benzetimle sınırlı olduğu Sapma olarak yazılır.

@@ -9,8 +9,8 @@ Kısa harita: [`skill-haritasi.html`](skill-haritasi.html). Her kuralın gerekç
 
 "Yeni proje" dediğinde ya da kapı yapısı olmayan bir klasörde çalışırken devreye girer.
 
-- **Odak kontrolü.** Kayıttaki (`projeler.json`) aktif projelere bakar. Kural bir ana proje ve bir küçük yan iş. Bu
-  sınır doluysa önce hangisinin arşive kalkacağını sorar, cevap gelmeden ilerlemez.
+- **Kayıt kontrolü.** Klasör `projeler.json`'da kayıtlı mı diye bakar. Aynı anda kaç proje açık olacağına sınır yok;
+  panel aktif projeleri listeler.
 - **Kopyalama.** Şablondan `CLAUDE.md`, `KARAR.md`, `karar.json`, `README.md` ve `tools/` klasörünü kopyalar. Var olan
   hiçbir dosyanın üzerine yazmaz.
 - **Kancalar.** `git init` yapar, `pre-commit` ve `pre-push` kancalarını kurar. Kancalar, dondurulmuş bir kural sapma

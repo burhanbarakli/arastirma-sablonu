@@ -83,7 +83,7 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
   <p class="lede">Bir işe başlarken hangi skill'i ne zaman kullanacağımız. Mor sütundaki üç skill yolun kendisi; yardımcılar bir işi hızlandırır; turuncu sütun, dört ayın karnesindeki hataların tam yerinde duran uyarılar.</p>
 
   <div class="three">
-    <div class="core"><b>proje-baslat</b><p>Yeni proje ya da yan iş klasörünü kurar: karar.json, KARAR.md, durum.html paneli, commit kilidi. Odak kontrolü yapar, aile kontrolünü taratır (eşleşme yoksa "yok" ve taranan kaynaklar), kilidin engellediğini sınar.</p></div>
+    <div class="core"><b>proje-baslat</b><p>Yeni proje klasörünü kurar: karar.json, KARAR.md, durum.html paneli, commit kilidi. Aile kontrolünü taratır (eşleşme yoksa "yok" ve taranan kaynaklar), kilidin engellediğini sınar.</p></div>
     <div class="core"><b>zayif-nokta-raporu</b><p>Makaleyi sohbeti görmeyen bir ajan okur, denetçi ajan kontrol eder; ilk üç zayıf nokta çıkar, birini sen seçersin. "Alan taraması" (A, B), "anlatımlı okuma" ve kör denetim de burada.</p></div>
     <div class="core"><b>arastirma-kapisi</b><p>Adım 0 ve yedi kapı; Kapı 3'ten sonra yöntem arama, aktarım kontrolü ve "kim çözmüş" taraması (C). İkinci tür: aktarım çalışması (yeni yöntemi M'nin yerine koymak; iki sonuçlu ön kayıt, aday havuzu D). DUR / KOŞULLU DEVAM / DEVAM der, karar.json'ı günceller, kapalı kapıyı ve aşılan kararı kaydeder.</p></div>
   </div>
@@ -92,14 +92,14 @@ footer{margin-top:48px;color:var(--muted);font-size:13px}
   <div class="flow">
 <pre class="mermaid">
 flowchart TD
-  B["Başlangıç: proje-baslat&lt;br/&gt;odak, aile sorusu, kilit testi"] --&gt; Q{"Makalen var mı?"}
+  B["Başlangıç: proje-baslat&lt;br/&gt;aile sorusu, kilit testi"] --&gt; Q{"Makalen var mı?"}
   Q -- evet --&gt; R["zayif-nokta-raporu: rapor&lt;br/&gt;bağımsız okuyucu + denetçi"]
   Q -- hayır --&gt; T["Alan taraması A / B"]
   T -- "A: temel makale" --&gt; R
   T -- "B: alanı tanımak" --&gt; K["Kör nokta adayları"]
   R --&gt; S["Sen ilk üçten birini seçersin"]
   K --&gt; S
-  S --&gt; A0["Adım 0: kayıt, kanca, odak&lt;br/&gt;aile kontrolü"]
+  S --&gt; A0["Adım 0: kayıt, kanca&lt;br/&gt;aile kontrolü"]
   A0 -- "eşleşme var, öngörü yok" --&gt; D0["DUR"]
   A0 --&gt; K1["Kapı 1: önce soru, düzeyler, eşik, tek ölçüt;&lt;br/&gt;sonra kendi ölçtüğün düşüş"]
   K1 -- "düşüş &lt; eşik" --&gt; F["Kapalı kapı: bulgu yaz,&lt;br/&gt;kapali_kapilar.json, dönüş +1"]
@@ -117,7 +117,7 @@ flowchart TD
 
   <h2>Nasıl başlarım, nasıl devam ederim</h2>
   <ol class="steps">
-    <li><div><b>Klasörü aç, projeyi kur.</b> Claude Code'da yeni klasörde <code>/proje-baslat</code> (yan iş de böyle açılır). Soruları cevapla: proje adı ve amacı; temel makale, kodu ve koşmak için ne istediği; şüphelendiğin koşul; bu koşul daha önce çalışıldı mı. Cevabın yetmez: aile kontrolü <code>kapali_kapilar.json</code>'u, hafızayı ve eski projeleri tarar. Panel (<code>durum.html</code>) açılır.</div></li>
+    <li><div><b>Klasörü aç, projeyi kur.</b> Claude Code'da yeni klasörde <code>/proje-baslat</code>. Soruları cevapla: proje adı ve amacı; temel makale, kodu ve koşmak için ne istediği; şüphelendiğin koşul; bu koşul daha önce çalışıldı mı. Cevabın yetmez: aile kontrolü <code>kapali_kapilar.json</code>'u, hafızayı ve eski projeleri tarar. Panel (<code>durum.html</code>) açılır.</div></li>
     <li><div><b>Makalen yoksa alanı tara.</b> "alan taraması: konu" de. Amaç A (temel makale) ya da B (alanı tanımak); yöntem adı geçmeyen bir arama cümlesi; kartopu, kaynak uyumu sütunlu eleme tablosu, doğrulama, durma kuralı. Sonunda temel makale ya da kör nokta adayları çıkar.</div></li>
     <li><div><b>Makaleyi ver.</b> "zayıf nokta raporu: makale.pdf" de. Sohbeti ve şüpheni görmeyen bir ajan okur, denetçi ajan kontrol eder. Bulguları tek tek, okunacak yeriyle dinlemek istersen "anlatımlı okuma" de. Yöntem fikirleri park edilir.</div></li>
     <li><div><b>Zayıf noktayı sen seç.</b> İlk üç zayıf nokta en ucuz deneyleriyle gelir. Kişisel <code>kaynak.json</code>'daki "izin yok" maddelerine uyanlar aday olamaz, "ilk tercih değil" olanlar sona gider. Literatürdeki ya da ajanın çıkardığı düşüş henüz hipotezdir.</div></li>
@@ -144,7 +144,7 @@ flowchart TD
       <div class="stage"><span class="gate">0</span><div><b>Başlangıç</b><small>yeni klasör</small></div></div>
       <div class="cell m"><span class="lab">Ana skill</span><code>proje-baslat</code>: şablonu kopyalar, commit kilidini takar, projeyi kayda ekler, paneli üretir.</div>
       <div class="cell e">—</div>
-      <div class="cell w"><span class="lab">Dikkat</span>Bir ana proje, bir küçük yan iş; klasör değil çalışma hattı sayılır. Aynı fiziksel koşul daha önce kapandıysa (basit kural kazandı ya da düşüş eşik altı) "bu kez neden farklı?" sayılı öngörü ister.</div>
+      <div class="cell w"><span class="lab">Dikkat</span>Aynı fiziksel koşul daha önce kapandıysa (basit kural kazandı ya da düşüş eşik altı) "bu kez neden farklı?" sayılı öngörü ister.</div>
     </div>
 
     <div class="row">
@@ -224,7 +224,6 @@ flowchart TD
         <li>Başka alandan bir yöntem getirmek</li>
         <li>"Hızlı bir deneme", "makaleye küçük bir ek", "hakem istedi"</li>
         <li>Her yeni koşul (sonuç olumlu da olsa)</li>
-        <li>Durma kuralını doldurmuş bir yan işten yeni soru</li>
         <li>Eşik, kural, tohum veya rakip ayarı değişikliği</li>
         <li>Bir sınırlılığı çıkarmak</li>
         <li>Gönderim hazırlığı</li>

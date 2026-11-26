@@ -245,8 +245,8 @@ done X". The user's record: literature search tended to end in a method idea; ke
      are committed; if not, say so and stop (the axis comes before the candidates). The table holds at least one
      classical tool (more than 5–10 years old, or the standard tool of its field).
    - **E. Darboğaz haritası (ön keşif):** before any project exists, to choose where to measure: for a task or
-     field, the strong methods M in use and their known, measurable bottlenecks. It is a side task with a time box of
-     one to two sessions. See "Darboğaz haritası (E)" below; it never names candidate methods.
+     field, the strong methods M in use and their known, measurable bottlenecks. It has a time box of one to two
+     sessions. See "Darboğaz haritası (E)" below; it never names candidate methods.
 2. **Search sentence, not a method name.** Write it with the user: task + condition (e.g. "policies that learn
    contact-rich insertion under noisy force sensing"), plus an optional field-free property sentence. A method name
    in the sentence locks the search onto that method; say so if the user proposes one.
